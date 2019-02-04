@@ -125,7 +125,8 @@ int match(int token) {
                 fprintf(lexFile,"<RP> ");
                 break;
             case(6):
-                fprintf(lexFile,"<NUM_OR_ID> ");
+                if(isalpha(*yytext) !=0) fprintf(lexFile,"<ID> ");
+                else fprintf(lexFile,"<NUM_OR_ID> ");    
                 break;
             case(7):
                 fprintf(lexFile,"<MINUS> ");
