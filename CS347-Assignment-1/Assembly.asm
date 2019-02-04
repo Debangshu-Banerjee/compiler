@@ -1,0 +1,10 @@
+ORG 0000h
+MVI A 5
+STA _a
+LDA _a
+MVI B 5
+MUL B
+MVI B 6
+ADD B
+STA _c
+END
