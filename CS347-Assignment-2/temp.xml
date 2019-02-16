@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<GCC_XML version="0.9.0" cvs_revision="1.136">
+  <Namespace id="_1" name="::" members="_2 _3 _4 _5 _6 _7 _8 _9 _10 _11 _12 _13"/>
+  <Typedef id="_2" name="__int128_t" type="_14" context="_1" location="f0:0" file="f0" line="0"/>
+  <Typedef id="_3" name="__uint128_t" type="_15" context="_1" location="f0:0" file="f0" line="0"/>
+  <Typedef id="_4" name="__builtin_va_list" type="_16" context="_1" location="f0:0" file="f0" line="0"/>
+  <Variable id="_5" name="yytext" type="_17" context="_1" location="f1:9" file="f1" line="9" extern="1" mangled="_Z6yytext"/>
+  <Variable id="_6" name="yyleng" type="_18" context="_1" location="f1:10" file="f1" line="10" extern="1" mangled="_Z6yyleng"/>
+  <Variable id="_7" name="yylineno" type="_18" context="_1" location="f1:11" file="f1" line="11" extern="1" mangled="_Z8yylineno"/>
+  <Variable id="_8" name="h" type="_18" context="_1" location="f1:25" file="f1" line="25" mangled="_Z1h"/>
+  <Struct id="_9" name="ab" context="_1" location="f1:26" file="f1" line="26" members="_19" size="32" align="32"/>
+  <Variable id="_10" name="x" type="_9" context="_1" location="f1:29" file="f1" line="29" mangled="_Z1x"/>
+  <Function id="_11" name="lgh" returns="_18" context="_1" location="f1:31" file="f1" line="31" mangled="_Z3lgh">
+    <Argument type="_18" location="f1:31" file="f1" line="31"/>
+    <Argument type="_18" location="f1:31" file="f1" line="31"/>
+  </Function>
+  <Function id="_12" name="lff" returns="_18" context="_1" location="f1:32" file="f1" line="32" mangled="_Z3lff">
+    <Argument name="a" type="_18" location="f1:32" file="f1" line="32"/>
+    <Argument name="b" type="_18" location="f1:32" file="f1" line="32"/>
+  </Function>
+  <Function id="_13" name="main" returns="_18" context="_1" location="f1:34" file="f1" line="34"/>
+  <FundamentalType id="_14" name="__int128" size="128" align="128"/>
+  <FundamentalType id="_15" name="unsigned __int128" size="128" align="128"/>
+  <ArrayType id="_16" min="0" max="0" type="_20"/>
+  <PointerType id="_17" type="_21"/>
+  <FundamentalType id="_18" name="int" size="32" align="32"/>
+  <Field id="_19" name="g" type="_18" context="_9" access="public" location="f1:27" file="f1" line="27" offset="0"/>
+  <Typedef id="_20" name="__va_list_tag" type="_22" context="_1" location="f0:0" file="f0" line="0"/>
+  <Struct id="_22" name="__va_list_tag" context="_1" location="f0:0" file="f0" line="0" members="_23 _24 _25 _26" size="192" align="64"/>
+  <Field id="_23" name="gp_offset" type="_27" context="_22" access="public" offset="0"/>
+  <Field id="_24" name="fp_offset" type="_27" context="_22" access="public" offset="32"/>
+  <Field id="_25" name="overflow_arg_area" type="_28" context="_22" access="public" offset="64"/>
+  <Field id="_26" name="reg_save_area" type="_28" context="_22" access="public" offset="128"/>
+  <FundamentalType id="_27" name="unsigned int" size="32" align="32"/>
+  <PointerType id="_28" type="_29"/>
+  <FundamentalType id="_21" name="char" size="8" align="8"/>
+  <FundamentalType id="_29" name="void" size="0" align="8"/>
+  <File id="f0" name="&lt;builtin&gt;"/>
+  <File id="f1" name="temp.c"/>
+</GCC_XML>

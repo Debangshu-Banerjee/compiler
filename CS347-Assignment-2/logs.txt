@@ -1,0 +1,1 @@
+['/usr/bin/castxml', '-std=c89', 'temp.c', '--castxml-gccxml', '-o', 'temp.xml']
