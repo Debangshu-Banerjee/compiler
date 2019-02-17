@@ -10,7 +10,7 @@ outputfile = "output.txt"
 def line_number(filename,index):
     ct = 0
     index += 1
-    line_no =1
+    line_no = 1
     with open(filename) as f:
         for line in f.readlines():
             ct += len(line)
@@ -18,12 +18,14 @@ def line_number(filename,index):
                 return line_no
             line_no += 1
 
+
 def statements_count(filename):
     lines = 0
     with open(filename) as f:
         for line in f.readlines():
             lines += 1
     return lines
+
 
 def comments_count(filename):
     multiline_cmnt = Combine(Regex(r"/\*(?:[^*]|\*(?!/))*") + '*/').setName("c_comment")
@@ -36,18 +38,23 @@ def comments_count(filename):
         # print(cmnt_list)
     return len(cmnt_list)
     # return 0
+
+
 def total_commented_lines(filename):
     multiline_cmnt = Combine(Regex(r"/\*(?:[^*]|\*(?!/))*") + '*/').setName("c_comment")
     singleline_cmnt = Regex(r"//(?:\\\n|[^\n])*").setName("// comment") # Comment of the form //
     cppstyle_cmnt = Combine(multiline_cmnt | singleline_cmnt).setName("C++ style comment") #both sigle+multi
     with open(filename) as f:
-        res = cppstyle_cmnt.scanString(f.read())
+        cfile = f.read()
+        res = cppstyle_cmnt.scanString(cfile)
         cmnt_list = [(startPos,EndPos) for tokens, startPos, EndPos in res]
         # print(len(cmnt_list))
         total_lines = 0
         for posn in cmnt_list:
             # print(line_number(filename,posn[1]-1)-line_number(filename,posn[0])+1)
-            total_lines += line_number(filename,posn[1]-1)-line_number(filename,posn[0])+1
+            # print(lineno(posn[0],f.read()), lineno(posn[1]-1,f.read()))
+            # print(posn[0],posn[1],lineno(posn[1],cfile),lineno(posn[0],cfile))
+            total_lines += lineno(posn[1],cfile)-lineno(posn[0],cfile)+1
         # print(cmnt_list)
         return total_lines
 
@@ -60,6 +67,7 @@ def blanklines_count(filename):
                 blanks += 1
     return blanks
 
+
 def macros_count(filename):
     macrodef = "#" + ZeroOrMore(' ') + "define" + Word(alphas+"_",alphanums+"_").setResultsName("macro") + empty + restOfLine.setResultsName("value")
     with open(filename) as f:
@@ -67,6 +75,7 @@ def macros_count(filename):
         macros = [tokens.macro for tokens, startPos, EndPos in res]
         # print(macros)
     return len(macros)
+
 
 def variables_count(filename):
     tree = ET.parse(xmlfile)
@@ -92,14 +101,15 @@ def fdecl_count(filename):
             if (filelines[int(line_no) - 1].strip())[-1:] == ';':
                 fdecl += 1
                 # print(filelines[int(line_no) - 1]) #func declaration lines
-
     return fdecl
+
 
 def fdef_count(filename):
     # with open(filename) as f:
     #     for line in f.readlines():
     #         do_something(line)
     return total_functions(filename)-fdecl_count(filename)
+
 
 def total_functions(filename):
     tree = ET.parse(xmlfile)
@@ -138,5 +148,8 @@ if __name__ == "__main__":
     else:
         filename = 'temp.c'   # default file
     analyzer(filename)
-    # for i in range(15):
-    # print(line_number(filename,76))
+    # total_commented_lines(filename)
+    # with open(filename) as f:
+    #     print(lineno(645,f.read()))
+    # # for i in range(15):
+    # # print(line_number(filename,76))
