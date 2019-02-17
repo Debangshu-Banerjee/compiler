@@ -4,7 +4,7 @@
 #define TIMES           3       /* *                            */
 #define LP              4       /* (                            */
 #define RP              5       /* )                            */
-#   define NUM_OR_ID       6       /* Decimal Number or Identifier */
+#  define NUM_OR_ID       6       /* Decimal Number or Identifier */
 
 extern char *yytext;            /* in lex.c                     */
 extern int yyleng;
@@ -14,14 +14,17 @@ extern yylineno;
               hgshdhhhhhhhhhhhhhhhhhhffff
  comment here*/
 
- /*jsnjgdnmfgnnnnnnnnnnn
-                        knjdgjnjngjfd
-                        fgnmmmmmmmmmmmmmmmmmmmmmmmmm
-                        fhgn ffffffffffffffffff    hhhhhhhhhhh
-                                                                  */
+
+ /*      hhhhhhhhhhhhhhhd
+ skkdsjhj
+          sdgs        jhjhfdkjgdkgjdlkj
+                  dhjhjhhhhhhhhhhhhff
+jjjjj
+          sdfgdshhjfgdshj                                          hhhhhhhhhhhhhhhhhhhhgfd
+      xfggggggggggggggg
+                                                                            ghkj*/
 
  // okay
-
 int h;
 struct ab{
   int g;
