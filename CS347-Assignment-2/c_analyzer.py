@@ -5,6 +5,7 @@ from pyparsing import *
 
 xmlfile = "temp.xml"
 logfile = "logs.txt"
+outputfile = "output.txt"
 
 def line_number(filename,index):
     ct = 0
@@ -111,14 +112,23 @@ def total_functions(filename):
 
 
 def analyzer(filename):
+    f = open(outputfile, "w+")
     os.system("gccxml -std=c89 {} -fxml={} > {}".format(filename,xmlfile,logfile))
     print("{}) source code statements   : {}".format(1,statements_count(filename)))
+    f.write("{}) source code statements   : {}\n".format(1,statements_count(filename)))
     print("{}) comments                 : {}".format(2,total_commented_lines(filename)))
+    f.write("{}) comments                 : {}\n".format(2,total_commented_lines(filename)))
     print("{}) blank lines              : {}".format(3,blanklines_count(filename)))
+    f.write("{}) blank lines              : {}\n".format(3,blanklines_count(filename)))
     print("{}) macro definitions        : {}".format(4,macros_count(filename)))
+    f.write("{}) macro definitions        : {}\n".format(4,macros_count(filename)))
     print("{}) variable declarations    : {}".format(5,variables_count(filename)))
+    f.write("{}) variable declarations    : {}\n".format(5,variables_count(filename)))
     print("{}) function declarations    : {}".format(6,fdecl_count(filename)))
+    f.write("{}) function declarations    : {}\n".format(6,fdecl_count(filename)))
     print("{}) function definitions     : {}".format(7,fdef_count(filename)))
+    f.write("{}) function definitions     : {}\n".format(7,fdef_count(filename)))
+    f.close()
 
 
 
