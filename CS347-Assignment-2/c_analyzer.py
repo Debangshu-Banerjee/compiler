@@ -69,9 +69,13 @@ def blanklines_count(filename):
 
 
 def macros_count(filename):
-    macrodef = "#" + ZeroOrMore(' ') + "define" + Word(alphas+"_",alphanums+"_").setResultsName("macro") + empty + restOfLine.setResultsName("value")
+    macrodef = "#" + ZeroOrMore(' ') + "define" + Word(alphas+"_"+alphanums).setResultsName("macro") + empty + restOfLine.setResultsName("value")
+
     with open(filename) as f:
-        res = macrodef.scanString(f.read())
+        string = f.read()
+        string = re.sub(re.compile("/\*.*?\*/",re.DOTALL ) ,"" ,string)
+        string = re.sub(re.compile("//.*?\n" ) ,"" ,string)
+        res = macrodef.scanString(string)
         macros = [tokens.macro for tokens, startPos, EndPos in res]
         # print(macros)
     return len(macros)
