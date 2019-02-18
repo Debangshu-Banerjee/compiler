@@ -8,7 +8,20 @@ logfile = "logs.txt"
 fileid = "f1"   #default
 
 xmlfile_variable = "variable_temp.xml"
-
+def comments_file(infile):
+    lines = 0
+    with open(infile) as f:
+      while True:
+        c = f.read(1)
+        # if not c:
+        #   print "End of file"
+        #   break
+        # print "Read a character:", c
+        if c == '\n':
+            lines += 1
+        if not c:
+            break
+    return lines
 
 def find_fileid(inputfile,xmlfile):
     tree = ET.parse(xmlfile)
@@ -65,22 +78,27 @@ def comments_count(filename):
     # return 0
 
 def total_commented_lines(filename):
-    multiline_cmnt = Combine(Regex(r"/\*(?:[^*]|\*(?!/))*") + '*/').setName("c_comment")
-    singleline_cmnt = Regex(r"//(?:\\\n|[^\n])*").setName("// comment") # Comment of the form //
-    cppstyle_cmnt = Combine(multiline_cmnt | singleline_cmnt).setName("C++ style comment") #both sigle+multi
+    # multiline_cmnt1 = re.compile(r"/\*(?:[^*]|\*(?!/))*")
+    # multiline_cmnt2 = re.compile(r'*/')
+    multiline_cmnt = re.compile("/\*.*?\*/?\n",re.DOTALL )
+
     with open(filename) as f:
         cfile = f.read()
-        res = cppstyle_cmnt.scanString(cfile)
-        cmnt_list = [(startPos,EndPos) for tokens, startPos, EndPos in res]
-        # print(len(cmnt_list))
-        total_lines = 0
-        for posn in cmnt_list:
-            # print(line_number(filename,posn[1]-1)-line_number(filename,posn[0])+1)
-            # print(lineno(posn[0],f.read()), lineno(posn[1]-1,f.read()))
-            #print(posn[0],posn[1],lineno(posn[1],cfile),lineno(posn[0],cfile))
-            total_lines += lineno(posn[1],cfile)-lineno(posn[0],cfile)+1
-        # print(cmnt_list)
-        return total_lines
+        res1 = re.findall(multiline_cmnt,cfile)
+        line_no = 0
+        f4 = open("temporary1","w+")
+        for x in res1:
+            f4.write(str(x))
+        f4.close()
+        cfile = re.sub(multiline_cmnt ,"" ,cfile)
+        line_no = line_no + comments_file("temporary1")
+        res = re.findall(re.compile(r"//(?:\\\n|[^\n])*\n"),cfile)
+        f3 = open("temporary2","w+")
+        for x in res:
+            f3.write(str(x))
+        f3.close()
+        line_no = line_no + comments_file("temporary2")
+        return line_no
 
 
 def blanklines_count(filename):
