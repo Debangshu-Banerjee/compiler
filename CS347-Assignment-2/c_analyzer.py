@@ -130,8 +130,8 @@ def variables_count(filename):
     root = tree.getroot()
     variables = []
     for variable in root.findall('Variable'):
-        if variable.get('file') == fileid:
-            variables.append(variable.get('name'))
+#         if variable.get('file') == fileid:
+        variables.append(variable.get('name'))
     # print(variables)
     return len(variables)
 
