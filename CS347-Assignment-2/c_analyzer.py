@@ -18,14 +18,21 @@ def find_fileid(inputfile,xmlfile):
             return file.get('id')
     # return "f1"   #default
 
+                        
 def allvariables(infile,outfile):
     data_types = ['int','float','char','double','long','typedef']
+    tree = ET.parse(xmlfile)
+    root = tree.getroot()
+    typedefs = []
+    for typedef in root.findall('Typedef'):
+        data_types.append(typedef.get('name'))
+
     with open(infile) as a, open(outfile, 'w') as b:
         for line in a:
             for type in data_types:
                  if type in line and 'printf' not in line:
                      b.write(line + '\n')
-                     break
+                     break                        
 
 def line_number(filename,index):
     ct = 0
