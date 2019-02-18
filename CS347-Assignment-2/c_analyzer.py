@@ -231,6 +231,21 @@ def fdef_count(filename):
     #         do_something(line)
     return total_functions(filename)-fdecl_count(filename)
 
+def new_fdef_count(filename):
+    tree = ET.parse(xmlfile)
+    root = tree.getroot()
+    functions = []
+    for function in root.findall('Function'):
+        if function.get('file') == fileid:
+            functions.append(function.get('name'))
+    f_name = re.compile(r'\b(?:%s)\b[^{;]*\{' % '|'.join(functions))
+    s = ""
+    with open(filename) as f1:
+        s = f1.read()
+    s2 = re.findall(f_name,s)
+    print(s2)
+    return len(s2)
+
 
 def total_functions(filename):
     tree = ET.parse(xmlfile)
@@ -251,7 +266,7 @@ def analyzer(filename):
     s3 = blanklines_count(filename)
     s4 = macros_count(filename)
     s6 = fdecl_count(filename)
-    s7 = total_functions(filename) - s6
+    s7 = new_fdef_count(filename)
     s5 = variables_count(filename) + global_struct_vars(filename)
     output_file.write("{}) source code statements   : {} \n".format(1,s1))
     output_file.write("{}) comments                 : {} \n".format(2,s2))
