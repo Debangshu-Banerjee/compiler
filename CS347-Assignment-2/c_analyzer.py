@@ -33,7 +33,7 @@ def find_fileid(inputfile,xmlfile):
 
                         
 def allvariables(infile,outfile):
-    data_types = ['int','float','char','double','long','typedef']
+    data_types = ['int','float','char','double','long','typedef','extern']
     tree = ET.parse(xmlfile)
     root = tree.getroot()
     typedefs = []
