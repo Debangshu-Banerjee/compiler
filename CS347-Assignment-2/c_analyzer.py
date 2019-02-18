@@ -7,6 +7,8 @@ xmlfile = "temp.xml"
 logfile = "logs.txt"
 fileid = "f1"   #default
 
+# global struct_lines
+struct_lines = []
 xmlfile_variable = "variable_temp.xml"
 def comments_file(infile):
     lines = 0
@@ -31,21 +33,23 @@ def find_fileid(inputfile,xmlfile):
             return file.get('id')
     # return "f1"   #default
 
-                        
+
 def allvariables(infile,outfile):
-    data_types = ['int','float','char','double','long','typedef','extern']
+    data_types = ['int','float','char','double','long','typedef','struct','extern']
     tree = ET.parse(xmlfile)
     root = tree.getroot()
     typedefs = []
     for typedef in root.findall('Typedef'):
         data_types.append(typedef.get('name'))
-
+    # print(struct_lines)
     with open(infile) as a, open(outfile, 'w') as b:
+        for s3 in struct_lines :
+            b.write(s3 + '\n')
         for line in a:
             for type in data_types:
                  if type in line and 'printf' not in line:
                      b.write(line + '\n')
-                     break                        
+                     break
 
 def line_number(filename,index):
     ct = 0
@@ -146,39 +150,24 @@ def global_struct_vars(filename):   #all struct defined global variables
                 glob_struct_variables.append(variable.get('name'))
         # print(variables)
         return len(glob_struct_variables)
-    
-    
-def variables_inside_struct(filename):
-    inside_vars = []
-    tree = ET.parse(xmlfile)
-    root = tree.getroot()
-    for variable in root.findall('Field'):
-        if variable.get('file') == fileid:
-            inside_vars.append(variable.get('name'))
-    # print(variables)
-    return inside_vars
-
 
 def variables_count(filename):
     f2 = open("only_variable.c","w+")
     f2.close()
-    vars_inside_struct = variables_inside_struct(filename)
-    # print("here")
-    # print(vars_inside_struct)
     allvariables("temp_variable_file.c","only_variable.c")
     os.system("gccxml -std=c89 {} -fxml={} > {}".format("only_variable.c",xmlfile_variable,logfile))
     tree = ET.parse(xmlfile_variable)
     root = tree.getroot()
     variables = []
     for variable in root.findall('Variable'):
-        if variable.get('name') in vars_inside_struct: continue
+#         if variable.get('file') == fileid:
         variables.append(variable.get('name'))
-    # print("here")
     # print(variables)
     return len(variables)
 
 
 def fdecl_count(filename):
+    global struct_lines
     tree = ET.parse(xmlfile)
     root = tree.getroot()
     function_lines = []
@@ -187,10 +176,21 @@ def fdecl_count(filename):
     non_void_function_names = []
     void_function_names = []
     void_type = []
+    # struct portion starting
+    content = ""
+    with open(filename) as f10:
+        content = f10.read()
+        f10.close()
+    struct_list = []
+    struct_list.append("struct")
+    struct_re = re.compile(r'\b(?:%s)\b[^{;]*\{[^}]*\}\s*;?\n' % '|'.join(struct_list))
+    struct_lines = re.findall(struct_re,content)
+    # print(struct_lines)
+
     for fundametaltype in root.findall('FundamentalType'):
         if fundametaltype.get('name') == 'void':
             void_type.append(fundametaltype.get('id'))
-    print(void_type)
+    # print(void_type)
     declare_names = ['if','then','else','do','while','for','case','when','return']
     fdecl = 0
     for function in root.findall('Function'):
@@ -202,8 +202,8 @@ def fdecl_count(filename):
             non_void_function_names.append(function.get('name'))
         else :
             void_function_names.append(function.get('name'))
-    print( non_void_function_names)
-    print(void_function_names)
+    # print( non_void_function_names)
+    # print(void_function_names)
     f1 = open(filename,"r")
     f2 = open("temp_variable_file.c","w+")
     all_file_lines = f1.readlines()
@@ -216,6 +216,7 @@ def fdecl_count(filename):
     s1 = ""
     with open("temp_variable_file.c") as f3:
         s = f3.read()
+        s = re.sub(struct_re,"" ,s)
         s = re.sub(re.compile("/\*.*?\*/",re.DOTALL ) ,"" ,s)
         s = re.sub(re.compile("//.*?\n" ) ,"" ,s)
         declare = re.compile(r'\b(?:%s)\b.*?\n' % '|'.join(declare_names))
@@ -237,7 +238,7 @@ def fdecl_count(filename):
         for line_no in function_lines:
             if (filelines[int(line_no) - 1].strip())[-1:] == ';':
                 fdecl += 1
-                print(filelines[int(line_no) - 1]) #func declaration lines
+                # print(filelines[int(line_no) - 1]) #func declaration lines
 
     return fdecl
 
@@ -259,7 +260,7 @@ def new_fdef_count(filename):
     with open(filename) as f1:
         s = f1.read()
     s2 = re.findall(f_name,s)
-    print(s2)
+    # print(s2)
     return len(s2)
 
 
@@ -273,16 +274,6 @@ def total_functions(filename):
     # print(variables)
     return len(functions)
 
-def distinct_func_decl_lines(filename):
-    tree = ET.parse(xmlfile)
-    root = tree.getroot()
-    function_lines = set()
-    for function in root.findall('Function'):
-        if function.get('file') == fileid:
-            function_lines.add(function.get('line'))
-    # print(variables)
-    return len(function_lines)
-
 
 def analyzer(filename):
 #     os.system("gccxml -std=c89 {} -fxml={} > {}".format(filename,xmlfile,logfile))
@@ -293,7 +284,7 @@ def analyzer(filename):
     s4 = macros_count(filename)
     s6 = fdecl_count(filename)
     s7 = new_fdef_count(filename)
-    s5 = variables_count(filename) + global_struct_vars(filename)
+    s5 = variables_count(filename)
     output_file.write("{}) source code statements   : {} \n".format(1,s1))
     output_file.write("{}) comments                 : {} \n".format(2,s2))
     output_file.write("{}) blank lines              : {} \n".format(3,s3))
@@ -310,7 +301,7 @@ if __name__ == "__main__":
     else:
         filename = 'temp.c'   # default file
     os.system("gccxml -std=c89 {} -fxml={} > {}".format(filename,xmlfile,logfile))
-    fileid = find_fileid(filename,xmlfile)    
+    fileid = find_fileid(filename,xmlfile)
     analyzer(filename)
     # for i in range(15):
     # print(line_number(filename,76))
