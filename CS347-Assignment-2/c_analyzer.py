@@ -6,6 +6,16 @@ from pyparsing import *
 xmlfile = "temp.xml"
 logfile = "logs.txt"
 outputfile = "output.txt"
+fileid = "f1"   #default
+
+
+def find_fileid(inputfile,xmlfile):
+    tree = ET.parse(xmlfile)
+    root = tree.getroot()
+    for file in root.findall('File'):
+        if file.get('name') == inputfile:
+            return file.get('id')
+    # return "f1"   #default
 
 def line_number(filename,index):
     ct = 0
@@ -131,7 +141,7 @@ def total_functions(filename):
 
 def analyzer(filename):
     f = open(outputfile, "w+")
-    os.system("gccxml -std=c89 {} -fxml={} > {}".format(filename,xmlfile,logfile))
+#     os.system("gccxml -std=c89 {} -fxml={} > {}".format(filename,xmlfile,logfile))
     print("{}) source code statements   : {}".format(1,statements_count(filename)))
     f.write("{}) source code statements   : {}\n".format(1,statements_count(filename)))
     print("{}) comments                 : {}".format(2,total_commented_lines(filename)))
@@ -155,6 +165,8 @@ if __name__ == "__main__":
         filename  = sys.argv[1]
     else:
         filename = 'temp.c'   # default file
+    os.system("gccxml -std=c89 {} -fxml={} > {}".format(filename,xmlfile,logfile))
+    fileid = find_fileid(filename,xmlfile)    
     analyzer(filename)
     # total_commented_lines(filename)
     # with open(filename) as f:
