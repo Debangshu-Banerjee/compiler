@@ -5,8 +5,18 @@ from pyparsing import *
 
 xmlfile = "temp.xml"
 logfile = "logs.txt"
+fileid = "f1"   #default
 
 xmlfile_variable = "variable_temp.xml"
+
+
+def find_fileid(inputfile,xmlfile):
+    tree = ET.parse(xmlfile)
+    root = tree.getroot()
+    for file in root.findall('File'):
+        if file.get('name') == inputfile:
+            return file.get('id')
+    # return "f1"   #default
 
 def allvariables(infile,outfile):
     data_types = ['int','float','char','double','long','typedef']
@@ -95,7 +105,8 @@ def variables_count(filename):
     root = tree.getroot()
     variables = []
     for variable in root.findall('Variable'):
-        variables.append(variable.get('name'))
+        if variable.get('file') == fileid:
+            variables.append(variable.get('name'))
     # print(variables)
     return len(variables)
 
@@ -116,6 +127,7 @@ def fdecl_count(filename):
     declare_names = ['if','then','else','do','while','for','case','when','return']
     fdecl = 0
     for function in root.findall('Function'):
+        if function.get('file') != fileid: continue
         temporary = function.get('line')
         function_lines.append(temporary)
         function_lines1.append(int(temporary))
@@ -166,18 +178,20 @@ def fdef_count(filename):
     #         do_something(line)
     return total_functions(filename)-fdecl_count(filename)
 
+
 def total_functions(filename):
     tree = ET.parse(xmlfile)
     root = tree.getroot()
     functions = []
     for function in root.findall('Function'):
-        functions.append(function.get('name'))
+        if function.get('file') == fileid:
+            functions.append(function.get('name'))
     # print(variables)
     return len(functions)
 
 
 def analyzer(filename):
-    os.system("gccxml -std=c89 {} -fxml={} > {}".format(filename,xmlfile,logfile))
+#     os.system("gccxml -std=c89 {} -fxml={} > {}".format(filename,xmlfile,logfile))
     output_file = open("output.txt","w")
     s1 = statements_count(filename)
     s2 = total_commented_lines(filename)
@@ -201,6 +215,8 @@ if __name__ == "__main__":
         filename  = sys.argv[1]
     else:
         filename = 'temp.c'   # default file
+    os.system("gccxml -std=c89 {} -fxml={} > {}".format(filename,xmlfile,logfile))
+    fileid = find_fileid(filename,xmlfile)    
     analyzer(filename)
     # for i in range(15):
     # print(line_number(filename,76))
