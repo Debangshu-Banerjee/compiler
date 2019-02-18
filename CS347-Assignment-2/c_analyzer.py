@@ -174,6 +174,8 @@ def fdecl_count(filename):
     s1 = ""
     with open("temp_variable_file.c") as f3:
         s = f3.read()
+        s = re.sub(re.compile("/\*.*?\*/",re.DOTALL ) ,"" ,s)
+        s = re.sub(re.compile("//.*?\n" ) ,"" ,s)
         declare = re.compile(r'\b(?:%s)\b.*?\n' % '|'.join(declare_names))
         s = re.sub(declare ,"" ,s)
         v_f_name = re.compile(r'\b(?:%s)\b[^)\n]*?\)' % '|'.join(void_function_names))
@@ -196,6 +198,7 @@ def fdecl_count(filename):
                 print(filelines[int(line_no) - 1]) #func declaration lines
 
     return fdecl
+
 
 def fdef_count(filename):
     # with open(filename) as f:
