@@ -7,6 +7,8 @@ xmlfile = "temp.xml"
 logfile = "logs.txt"
 fileid = "f1"   #default
 
+# global struct_lines
+struct_lines = []
 xmlfile_variable = "variable_temp.xml"
 def comments_file(infile):
     lines = 0
@@ -33,14 +35,16 @@ def find_fileid(inputfile,xmlfile):
 
 
 def allvariables(infile,outfile):
-    data_types = ['int','float','char','double','long','typedef']
+    data_types = ['int','float','char','double','long','typedef','struct']
     tree = ET.parse(xmlfile)
     root = tree.getroot()
     typedefs = []
     for typedef in root.findall('Typedef'):
         data_types.append(typedef.get('name'))
-
+    # print(struct_lines)
     with open(infile) as a, open(outfile, 'w') as b:
+        for s3 in struct_lines :
+            b.write(s3 + '\n')
         for line in a:
             for type in data_types:
                  if type in line and 'printf' not in line:
@@ -154,28 +158,39 @@ def variables_count(filename):
     os.system("gccxml -std=c89 {} -fxml={} > {}".format("only_variable.c",xmlfile_variable,logfile))
     tree = ET.parse(xmlfile_variable)
     root = tree.getroot()
-    variables = set()
+    variables = []
     for variable in root.findall('Variable'):
 #         if variable.get('file') == fileid:
-        variables.add(variable.get('line'))
+        variables.append(variable.get('name'))
     # print(variables)
     return len(variables)
 
 
 def fdecl_count(filename):
+    global struct_lines
     tree = ET.parse(xmlfile)
     root = tree.getroot()
     function_lines = []
     function_lines1 = []
-    function_lines2 = set()
     function_names = []
     non_void_function_names = []
     void_function_names = []
     void_type = []
+    # struct portion starting
+    content = ""
+    with open(filename) as f10:
+        content = f10.read()
+        f10.close()
+    struct_list = []
+    struct_list.append("struct")
+    struct_re = re.compile(r'\b(?:%s)\b[^{;]*\{[^}]*\}\s*;?\n' % '|'.join(struct_list))
+    struct_lines = re.findall(struct_re,content)
+    # print(struct_lines)
+
     for fundametaltype in root.findall('FundamentalType'):
         if fundametaltype.get('name') == 'void':
             void_type.append(fundametaltype.get('id'))
-    print(void_type)
+    # print(void_type)
     declare_names = ['if','then','else','do','while','for','case','when','return']
     fdecl = 0
     for function in root.findall('Function'):
@@ -183,13 +198,12 @@ def fdecl_count(filename):
         temporary = function.get('line')
         function_lines.append(temporary)
         function_lines1.append(int(temporary))
-        function_lines2.add(int(temporary))
         if function.get('returns') not in void_type:
             non_void_function_names.append(function.get('name'))
         else :
             void_function_names.append(function.get('name'))
-    print( non_void_function_names)
-    print(void_function_names)
+    # print( non_void_function_names)
+    # print(void_function_names)
     f1 = open(filename,"r")
     f2 = open("temp_variable_file.c","w+")
     all_file_lines = f1.readlines()
@@ -202,6 +216,7 @@ def fdecl_count(filename):
     s1 = ""
     with open("temp_variable_file.c") as f3:
         s = f3.read()
+        s = re.sub(struct_re,"" ,s)
         s = re.sub(re.compile("/\*.*?\*/",re.DOTALL ) ,"" ,s)
         s = re.sub(re.compile("//.*?\n" ) ,"" ,s)
         declare = re.compile(r'\b(?:%s)\b.*?\n' % '|'.join(declare_names))
@@ -220,10 +235,10 @@ def fdecl_count(filename):
 
     with open(filename) as f:
         filelines = f.readlines()
-        for line_no in function_lines2:
+        for line_no in function_lines:
             if (filelines[int(line_no) - 1].strip())[-1:] == ';':
                 fdecl += 1
-                print(filelines[int(line_no) - 1]) #func declaration lines
+                # print(filelines[int(line_no) - 1]) #func declaration lines
 
     return fdecl
 
@@ -245,7 +260,7 @@ def new_fdef_count(filename):
     with open(filename) as f1:
         s = f1.read()
     s2 = re.findall(f_name,s)
-    print(s2)
+    # print(s2)
     return len(s2)
 
 
