@@ -80,23 +80,26 @@ def macros_count(filename):
         # print(macros)
     return len(macros)
 
-
 def variables_count(filename):
     tree = ET.parse(xmlfile)
     root = tree.getroot()
     variables = []
     for variable in root.findall('Variable'):
-        variables.append(variable.get('name'))
+        if variable.get('file') == fileid:
+            variables.append(variable.get('name'))
     # print(variables)
     return len(variables)
 
 
 def fdecl_count(filename):
+    # return total_functions(filename)
     tree = ET.parse(xmlfile)
     root = tree.getroot()
     function_lines = []
     for function in root.findall('Function'):
-        function_lines.append(function.get('line'))
+        if function.get('file') == fileid:
+            # print(function.get('file'),fileid)
+            function_lines.append(function.get('line'))
     # print(function_lines)
     fdecl = 0
     with open(filename) as f:
@@ -120,7 +123,8 @@ def total_functions(filename):
     root = tree.getroot()
     functions = []
     for function in root.findall('Function'):
-        functions.append(function.get('name'))
+        if function.get('file') == fileid:
+            functions.append(function.get('name'))
     # print(variables)
     return len(functions)
 
