@@ -257,6 +257,16 @@ def total_functions(filename):
     # print(variables)
     return len(functions)
 
+def distinct_func_decl_lines(filename):
+    tree = ET.parse(xmlfile)
+    root = tree.getroot()
+    function_lines = set()
+    for function in root.findall('Function'):
+        if function.get('file') == fileid:
+            function_lines.add(function.get('line'))
+    # print(variables)
+    return len(function_lines)
+
 
 def analyzer(filename):
 #     os.system("gccxml -std=c89 {} -fxml={} > {}".format(filename,xmlfile,logfile))
