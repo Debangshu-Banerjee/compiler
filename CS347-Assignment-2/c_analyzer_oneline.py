@@ -284,7 +284,7 @@ def analyzer(filename):
     s4 = macros_count(filename)
     s6 = fdecl_count(filename)
     s7 = new_fdef_count(filename)
-    s5 = variables_count(filename) + global_struct_vars(filename)
+    s5 = variables_count(filename)
     output_file.write("{}) source code statements   : {} \n".format(1,s1))
     output_file.write("{}) comments                 : {} \n".format(2,s2))
     output_file.write("{}) blank lines              : {} \n".format(3,s3))
