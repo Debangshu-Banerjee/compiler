@@ -146,18 +146,34 @@ def global_struct_vars(filename):   #all struct defined global variables
                 glob_struct_variables.append(variable.get('name'))
         # print(variables)
         return len(glob_struct_variables)
+    
+    
+def variables_inside_struct(filename):
+    inside_vars = []
+    tree = ET.parse(xmlfile)
+    root = tree.getroot()
+    for variable in root.findall('Field'):
+        if variable.get('file') == fileid:
+            inside_vars.append(variable.get('name'))
+    # print(variables)
+    return inside_vars
+
 
 def variables_count(filename):
     f2 = open("only_variable.c","w+")
     f2.close()
+    vars_inside_struct = variables_inside_struct(filename)
+    # print("here")
+    # print(vars_inside_struct)
     allvariables("temp_variable_file.c","only_variable.c")
     os.system("gccxml -std=c89 {} -fxml={} > {}".format("only_variable.c",xmlfile_variable,logfile))
     tree = ET.parse(xmlfile_variable)
     root = tree.getroot()
     variables = []
     for variable in root.findall('Variable'):
-#         if variable.get('file') == fileid:
+        if variable.get('name') in vars_inside_struct: continue
         variables.append(variable.get('name'))
+    # print("here")
     # print(variables)
     return len(variables)
 
