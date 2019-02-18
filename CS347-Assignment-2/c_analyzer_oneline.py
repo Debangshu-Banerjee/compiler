@@ -7,9 +7,8 @@ xmlfile = "temp.xml"
 logfile = "logs.txt"
 fileid = "f1"   #default
 
-# global struct_lines
-struct_lines = []
 xmlfile_variable = "variable_temp.xml"
+struct_lines = []
 def comments_file(infile):
     lines = 0
     with open(infile) as f:
@@ -35,13 +34,13 @@ def find_fileid(inputfile,xmlfile):
 
 
 def allvariables(infile,outfile):
-    data_types = ['int','float','char','double','long','typedef','extern','struct']
+    data_types = ['int','float','char','double','long','typedef','struct','extern']
     tree = ET.parse(xmlfile)
     root = tree.getroot()
     typedefs = []
     for typedef in root.findall('Typedef'):
         data_types.append(typedef.get('name'))
-    # print(struct_lines)
+
     with open(infile) as a, open(outfile, 'w') as b:
         for s3 in struct_lines :
             b.write(s3 + '\n')
@@ -158,10 +157,10 @@ def variables_count(filename):
     os.system("gccxml -std=c89 {} -fxml={} > {}".format("only_variable.c",xmlfile_variable,logfile))
     tree = ET.parse(xmlfile_variable)
     root = tree.getroot()
-    variables = []
+    variables = set()
     for variable in root.findall('Variable'):
 #         if variable.get('file') == fileid:
-        variables.append(variable.get('name'))
+        variables.add(variable.get('line'))
     # print(variables)
     return len(variables)
 
@@ -172,6 +171,7 @@ def fdecl_count(filename):
     root = tree.getroot()
     function_lines = []
     function_lines1 = []
+    function_lines2 = set()
     function_names = []
     non_void_function_names = []
     void_function_names = []
@@ -185,7 +185,6 @@ def fdecl_count(filename):
     struct_list.append("struct")
     struct_re = re.compile(r'\b(?:%s)\b[^{;]*\{[^}]*\}\s*;?\n' % '|'.join(struct_list))
     struct_lines = re.findall(struct_re,content)
-    # print(struct_lines)
 
     for fundametaltype in root.findall('FundamentalType'):
         if fundametaltype.get('name') == 'void':
@@ -198,6 +197,7 @@ def fdecl_count(filename):
         temporary = function.get('line')
         function_lines.append(temporary)
         function_lines1.append(int(temporary))
+        function_lines2.add(int(temporary))
         if function.get('returns') not in void_type:
             non_void_function_names.append(function.get('name'))
         else :
@@ -235,7 +235,7 @@ def fdecl_count(filename):
 
     with open(filename) as f:
         filelines = f.readlines()
-        for line_no in function_lines:
+        for line_no in function_lines2:
             if (filelines[int(line_no) - 1].strip())[-1:] == ';':
                 fdecl += 1
                 # print(filelines[int(line_no) - 1]) #func declaration lines
@@ -284,7 +284,7 @@ def analyzer(filename):
     s4 = macros_count(filename)
     s6 = fdecl_count(filename)
     s7 = new_fdef_count(filename)
-    s5 = variables_count(filename)
+    s5 = variables_count(filename) + global_struct_vars(filename)
     output_file.write("{}) source code statements   : {} \n".format(1,s1))
     output_file.write("{}) comments                 : {} \n".format(2,s2))
     output_file.write("{}) blank lines              : {} \n".format(3,s3))
