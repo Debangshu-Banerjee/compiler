@@ -121,6 +121,32 @@ def macros_count(filename):
         # print(macros)
     return len(macros)
 
+
+def global_vars(filename):    #all global variables
+        tree = ET.parse(xmlfile)
+        root = tree.getroot()
+        glob_variables = []
+        for variable in root.findall('Variable'):
+            if variable.get('file') == fileid:
+                glob_variables.append(variable.get('name'))
+        # print(variables)
+        return len(glob_variables)
+
+def global_struct_vars(filename):   #all struct defined global variables
+        tree = ET.parse(xmlfile)
+        root = tree.getroot()
+
+        struct_ids = []
+        for struct in root.findall('Struct'):
+            struct_ids.append(struct.get('id'))
+
+        glob_struct_variables = []
+        for variable in root.findall('Variable'):
+            if variable.get('file') == fileid and variable.get('type') in struct_ids:
+                glob_struct_variables.append(variable.get('name'))
+        # print(variables)
+        return len(glob_struct_variables)
+
 def variables_count(filename):
     f2 = open("only_variable.c","w+")
     f2.close()
@@ -174,8 +200,6 @@ def fdecl_count(filename):
     s1 = ""
     with open("temp_variable_file.c") as f3:
         s = f3.read()
-        s = re.sub(re.compile("/\*.*?\*/",re.DOTALL ) ,"" ,s)
-        s = re.sub(re.compile("//.*?\n" ) ,"" ,s)
         declare = re.compile(r'\b(?:%s)\b.*?\n' % '|'.join(declare_names))
         s = re.sub(declare ,"" ,s)
         v_f_name = re.compile(r'\b(?:%s)\b[^)\n]*?\)' % '|'.join(void_function_names))
@@ -198,7 +222,6 @@ def fdecl_count(filename):
                 print(filelines[int(line_no) - 1]) #func declaration lines
 
     return fdecl
-
 
 def fdef_count(filename):
     # with open(filename) as f:
@@ -227,7 +250,7 @@ def analyzer(filename):
     s4 = macros_count(filename)
     s6 = fdecl_count(filename)
     s7 = total_functions(filename) - s6
-    s5 = variables_count(filename)
+    s5 = variables_count(filename) + global_struct_vars(filename)
     output_file.write("{}) source code statements   : {} \n".format(1,s1))
     output_file.write("{}) comments                 : {} \n".format(2,s2))
     output_file.write("{}) blank lines              : {} \n".format(3,s3))
