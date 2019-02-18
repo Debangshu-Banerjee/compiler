@@ -198,7 +198,7 @@ def analyzer(filename):
     s3 = blanklines_count(filename)
     s4 = macros_count(filename)
     s6 = fdecl_count(filename)
-    s7 = fdef_count(filename)
+    s7 = total_functions(filename) - s6
     s5 = variables_count(filename)
     output_file.write("{}) source code statements   : {} \n".format(1,s1))
     output_file.write("{}) comments                 : {} \n".format(2,s2))
