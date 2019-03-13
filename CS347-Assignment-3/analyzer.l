@@ -5,8 +5,11 @@ int blanklines=0;
 int chars=0;
 int macros=0;
 int variables=0;
+int f_dec=0;
+int f_def=0;
 %}
 %x COMMENT
+%x FUNC
 %%
 "//".*   {chars++;a++;}
 "/*"     { chars++;cmnt_start=lines;BEGIN COMMENT; }
@@ -18,7 +21,15 @@ int variables=0;
 .  {chars++;}
 \n { yylineno++;lines++;if(chars==0) blanklines++;chars=0; }
 }
-("int "|"int *"|"char "|"char *"|"float "|"float *")+[a-zA-Z]+[a-zA-Z0-9]*+\s*+(;|(,|=).*;)  {chars++;variables++;}
+("int "|"int *"|"char "|"char *"|"float "|"float *")+(" ")*+[a-zA-Z]+[a-zA-Z0-9]*+(" ")*+(";"|","|"=")  {chars++;variables++;}
+("int "|"int *"|"char "|"char *"|"float "|"float *")+(" ")*+[a-zA-Z]+[a-zA-Z0-9]*+(" ")*+"("+.*+")" {chars++;BEGIN FUNC;}
+<FUNC>{
+(" ")*+";" {chars++;f_dec++;BEGIN(INITIAL);}
+(" ")*+"{" {chars++;f_def++;BEGIN(INITIAL);}
+(" ")*+"\n" {chars++;f_def++;chars=0;lines++;BEGIN(INITIAL);}
+(" ")*+("//"|"/*") {chars++;a++;}
+}
+
 "#define"+[ \t]*+[0-9a-zA-Z_]*+[ \t]* {chars++;macros++;}
 [a-zA-Z] {chars++;}
 .  {chars++;}
@@ -34,4 +45,8 @@ void main(){
     fprintf(outfile,"total commented lines %d \n",total_multilines+a);
     fprintf(outfile,"total macros %d \n",macros);
     fprintf(outfile,"total variables %d \n",variables);
+    fprintf(outfile,"function declarations: %d \n",f_dec);
+    fprintf(outfile,"function definitions: %d \n",f_def);
 }
+
+
