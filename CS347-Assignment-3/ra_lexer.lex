@@ -23,9 +23,10 @@ NUM                ({DIGITS}|{FLOAT})
 DOT             "."
 AND             "AND"
 OR              "OR"
+NOT             "NOT"
 CHAR					\'([^\']|\\.)?\'
 STRING1       \"([^\"]|\\.)*\"
-STRING2       \'([^\"]|\\.)*\'
+STRING2       \'([^\']|\\.)*\'
 STRING         ({CHAR}|{STRING1}|{STRING2})
 SELECT          "SELECT"
 PROJECT         "PROJECT"
