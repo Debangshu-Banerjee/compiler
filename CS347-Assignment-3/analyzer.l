@@ -21,8 +21,8 @@ int f_def=0;
 .  {chars++;}
 \n { yylineno++;lines++;if(chars==0) blanklines++;chars=0; }
 }
-("int "|"int *"|"char "|"char *"|"float "|"float *")+(" ")*+[a-zA-Z]+[a-zA-Z0-9]*+(" ")*+(";"|","|"=")  {chars++;variables++;}
-("int "|"int *"|"char "|"char *"|"float "|"float *")+(" ")*+[a-zA-Z]+[a-zA-Z0-9]*+(" ")*+"("+.*+")" {chars++;BEGIN FUNC;}
+[a-zA-Z]*+(" ")*+("int "|"int *"|"char "|"char *"|"float "|"float *"|"")+(" ")*+[a-zA-Z]+[a-zA-Z0-9]*+(" ")*+(";"|","|"=")  {chars++;variables++;}
+[a-zA-Z]*+(" ")*+("int "|"int *"|"char "|"char *"|"float "|"float *"|"")+(" ")*+[a-zA-Z]+[a-zA-Z0-9]*+(" ")*+"("+.*+")" {chars++;BEGIN FUNC;}
 <FUNC>{
 (" ")*+";" {chars++;f_dec++;BEGIN(INITIAL);}
 (" ")*+"{" {chars++;f_def++;BEGIN(INITIAL);}
@@ -48,5 +48,4 @@ void main(){
     fprintf(outfile,"function declarations: %d \n",f_dec);
     fprintf(outfile,"function definitions: %d \n",f_def);
 }
-
 
