@@ -21,16 +21,16 @@ int f_def=0;
 .  {chars++;}
 \n { yylineno++;lines++;if(chars==0) blanklines++;chars=0; }
 }
-[a-zA-Z]*+(" ")*+("int "|"int *"|"char "|"char *"|"float "|"float *"|"")+(" ")*+[a-zA-Z]+[a-zA-Z0-9]*+(" ")*+(";"|","|"=")  {chars++;variables++;}
-[a-zA-Z]*+(" ")*+("int "|"int *"|"char "|"char *"|"float "|"float *"|"")+(" ")*+[a-zA-Z]+[a-zA-Z0-9]*+(" ")*+"("+.*+")" {chars++;BEGIN FUNC;}
+[a-zA-Z]*[ \t]*("int "|"int *"|"char "|"char *"|"float "|"float *"|"")[ \t]*[a-zA-Z][a-zA-Z0-9]*[ \t]*(";"|","|"=")  {chars++;variables++;}
+[a-zA-Z]*[ \t]*("int "|"int *"|"char "|"char *"|"float "|"float *"|"")[ \t]*[a-zA-Z][a-zA-Z0-9]*[ \t]*"(".*")" {chars++;BEGIN FUNC;}
 <FUNC>{
-(" ")*+";" {chars++;f_dec++;BEGIN(INITIAL);}
-(" ")*+"{" {chars++;f_def++;BEGIN(INITIAL);}
-(" ")*+"\n" {chars++;f_def++;chars=0;lines++;BEGIN(INITIAL);}
-(" ")*+("//"|"/*") {chars++;a++;}
+[ \t]*";" {chars++;f_dec++;BEGIN(INITIAL);}
+[ \t]*"{" {chars++;f_def++;BEGIN(INITIAL);}
+[ \t]*"\n" {chars++;f_def++;chars=0;lines++;BEGIN(INITIAL);}
+[ \t]*("//"|"/*") {chars++;a++;}
 }
 
-"#define"+[ \t]*+[0-9a-zA-Z_]*+[ \t]* {chars++;macros++;}
+"#define"[ \t]*[0-9a-zA-Z_]*[ \t]* {chars++;macros++;}
 [a-zA-Z] {chars++;}
 .  {chars++;}
 \n { lines++;if(chars==0) blanklines++;chars=0; }
@@ -48,4 +48,3 @@ void main(){
     fprintf(outfile,"function declarations: %d \n",f_dec);
     fprintf(outfile,"function definitions: %d \n",f_def);
 }
-
