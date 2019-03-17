@@ -9,11 +9,13 @@ void yyerror(char *s){
 
 %union{ char Char;}
 
-%token <Char> ERROR NUM WHITE_SPACE SEMI LESS_THAN GRE_THAN LB_ROUND RB_ROUND AMP COMMA PLUS MINUS TIMES DIV EQUAL DOT AND OR NOT STRING SELECT PROJECT CARTESIAN_PRODUCT EQUI_JOIN ID
+%token <Char> ERROR NUM WHITE_SPACE SEMI LESS_THAN GRE_THAN LB_ROUND RB_ROUND AMP COMMA PLUS MINUS TIMES DIV EQUAL DOT AND OR NOT STRING SELECT PROJECT CARTESIAN_PRODUCT EQUI_JOIN ID ENDLN GRE_THAN_EQ LESS_THAN_EQ
 
-%start QUERY
+%start INITIAL
 
 %%
+INITIAL:          QUERY ENDLN          { printf("INITIAL -> QUERY \n"); printf("\n the string is valid\n"); return 0;}
+                  ;
 
 QUERY:             SELECTION           {printf("QUERY -> SELECTION\n");}
                   | PROJECTION          {printf("QUERY -> PROJECTION\n");}
@@ -53,6 +55,8 @@ COMPARISON_COND:   EXPR EQUAL EXPR    {printf("COMPARISON_COND -> EXPR EQUAL EXP
                   | EXPR LESS_THAN EQUAL EXPR    {printf("COMPARISON_COND -> EXPR LESS_THAN EQUAL EXPR\n");}
                   | EXPR GRE_THAN EXPR    {printf("COMPARISON_COND -> EXPR GRE_THAN EXPR\n");}
                   | EXPR LESS_THAN EXPR    {printf("COMPARISON_COND -> EXPR LESS_THAN EXPR\n");}
+                  | EXPR GRE_THAN_EQ EXPR  {printf("COMPARISON_COND -> EXPR GRE_THAN_EQUAL EXPR\n");}
+                  | EXPR LESS_THAN_EQ EXPR  {printf("COMPARISON_COND -> EXPR LESS_THAN_EQUAL EXPR\n");}
                   ;
 
 EXPR:    TERM EXPR_PRIME  {printf("EXPR -> TERM EXPR_PRIME\n");}

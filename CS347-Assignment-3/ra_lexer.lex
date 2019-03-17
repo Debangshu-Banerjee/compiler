@@ -5,11 +5,14 @@
 %}
 
 ID              [a-zA-Z]([_a-zA-Z0-9])*
-WHITE_SPACE     [ \n\t]
+WHITE_SPACE     [ \t]
+ENDLN           "\n"
 LB_ROUND				"("
 RB_ROUND        ")"
 LESS_THAN        "<"
 GRE_THAN        ">"
+GRE_THAN_EQ		">="
+LESS_THAN_EQ	"<="
 AMP							"&"
 COMMA						","
 PLUS						"+"
@@ -39,7 +42,9 @@ EQUI_JOIN            "EQUI_JOIN"
 {CARTESIAN_PRODUCT}     {return CARTESIAN_PRODUCT;}
 {EQUI_JOIN}            {return EQUI_JOIN;}
 {NUM}                 {return NUM;}
+{LESS_THAN_EQ}		  {return LESS_THAN_EQ;}
 {LESS_THAN}						{return  LESS_THAN;}
+{GRE_THAN_EQ}						{return GRE_THAN_EQ;}
 {GRE_THAN}						{return GRE_THAN;}
 {LB_ROUND}						{return LB_ROUND;}
 {RB_ROUND}						{return RB_ROUND;}
@@ -52,6 +57,7 @@ EQUI_JOIN            "EQUI_JOIN"
 {EQUAL}							{return EQUAL;}
 {DOT}               {return DOT;}
 {AND}               {return AND;}
+{ENDLN}				{return ENDLN;}
 {OR}                {return OR;}
 {ID}                {return ID ;}
 {STRING}            {return STRING;}
