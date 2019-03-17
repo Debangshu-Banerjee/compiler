@@ -1,5 +1,6 @@
 %{
 int cmnt_start = 0,total_multilines=0;
+int prev_line = -1;
 int a=0,b=0,c=0,d,lines=0;
 int blanklines=0;
 int chars=0;
@@ -21,8 +22,8 @@ int f_def=0;
 .  {chars++;}
 \n { yylineno++;lines++;if(chars==0) blanklines++;chars=0; }
 }
-[a-zA-Z]*[ \t]*("int "|"int *"|"char "|"char *"|"float "|"float *"|"")[ \t]*[a-zA-Z][a-zA-Z0-9]*[ \t]*(";"|","|"=")  {chars++;variables++;}
-[a-zA-Z]*[ \t]*("int "|"int *"|"char "|"char *"|"float "|"float *"|"")[ \t]*[a-zA-Z][a-zA-Z0-9]*[ \t]*"(".*")" {chars++;BEGIN FUNC;}
+("extern "|"signed "|"unsigned "|"")[ \t]*("int "|"int *"|"char "|"char *"|"float "|"float *"|"")[ \t]*[a-zA-Z][a-zA-Z0-9]*[ \t]*(";"|","|"=")  {chars++;if(lines!=prev_line){variables++;prev_line = lines;}}
+("extern "|"")[ \t]*("int "|"int *"|"char "|"char *"|"float "|"float *"|"")[ \t]*[a-zA-Z][a-zA-Z0-9]*[ \t]*"(".*")" {chars++;BEGIN FUNC;}
 <FUNC>{
 [ \t]*";" {chars++;f_dec++;BEGIN(INITIAL);}
 [ \t]*"{" {chars++;f_def++;BEGIN(INITIAL);}
