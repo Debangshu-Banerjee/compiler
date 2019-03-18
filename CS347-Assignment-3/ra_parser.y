@@ -47,7 +47,7 @@ CONDITION_PRIME:   AND CONDITION_SMALL CONDITION_PRIME  {printf("CONDITION_PRIME
                   | OR CONDITION_SMALL CONDITION_PRIME  {printf("CONDITION_PRIME -> OR CONDITION_SMALL CONDITION_PRIME\n");}
                   | AND NOT CONDITION_SMALL CONDITION_PRIME  {printf("CONDITION_PRIME -> AND NOT CONDITION_SMALL CONDITION_PRIME\n");}
                   | OR NOT CONDITION_SMALL CONDITION_PRIME  {printf("CONDITION_PRIME -> OR NOT CONDITION_SMALL CONDITION_PRIME\n");}
-                  | /* empty */                             {printf("EXPR_PRIME -> epsilon\n");}
+                  | /* empty */                             {printf("CONDITION_PRIME -> epsilon\n");}
                   ;
 
 COMPARISON_COND:   EXPR EQUAL EXPR    {printf("COMPARISON_COND -> EXPR EQUAL EXPR\n");}
