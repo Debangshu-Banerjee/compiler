@@ -1,5 +1,7 @@
-total lines 42 
-blank lines 7 
-total commented lines 19 
-total macros 9 
+total lines 20 
+blank lines 4 
+total commented lines 9 
+total macros 7 
 total variables 4 
+function declarations: 2 
+function definitions: 1 

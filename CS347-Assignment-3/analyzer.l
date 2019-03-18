@@ -1,6 +1,7 @@
 %{
 int cmnt_start = 0,total_multilines=0;
 int prev_line = -1;
+int prev_line_func = -1;
 int a=0,b=0,c=0,d,lines=0;
 int blanklines=0;
 int chars=0;
@@ -11,6 +12,11 @@ int f_def=0;
 %}
 %x COMMENT
 %x FUNC
+VARIABLE1  ("extern "|"signed "|"unsigned "|"")[ \t]*("int "|"char "|"float "|"double ")[ \t\*]*[a-zA-Z][a-zA-Z0-9]*[ \t]*
+VARIABLE2  ("extern ")[ \t]*[a-zA-Z][a-zA-Z0-9]*[ \t]*
+FUNCTIONAL_VAR1 ("extern "|"signed "|"unsigned "|"")[ \t]*("int "|"char "|"float "|"double ")[ \t\*]*
+FUNCTIONAL_VAR2 ("extern ")
+WHITE_SPACE [ \t]
 %%
 "//".*   {chars++;a++;}
 "/*"     { chars++;cmnt_start=lines;BEGIN COMMENT; }
@@ -18,20 +24,19 @@ int f_def=0;
 "*/"      {chars++;c++;total_multilines+=lines-cmnt_start+1;BEGIN(INITIAL);}
 [^*\n]+   {chars++;}
 "*"       {chars++;}
-[a-zA-Z] {chars++;}
-.  {chars++;}
 \n { yylineno++;lines++;if(chars==0) blanklines++;chars=0; }
 }
-("extern "|"signed "|"unsigned "|"")[ \t]*("int "|"int *"|"char "|"char *"|"float "|"float *"|"")[ \t]*[a-zA-Z][a-zA-Z0-9]*[ \t]*(";"|","|"=")  {chars++;if(lines!=prev_line){variables++;prev_line = lines;}}
-("extern "|"")[ \t]*("int "|"int *"|"char "|"char *"|"float "|"float *"|"")[ \t]*[a-zA-Z][a-zA-Z0-9]*[ \t]*"(".*")" {chars++;BEGIN FUNC;}
+
+({VARIABLE1}|{VARIABLE2})(";"|","|"=") {chars++;if(lines!=prev_line){variables++;prev_line = lines;}}
+({FUNCTIONAL_VAR1}|{FUNCTIONAL_VAR2}|("void "))[ \t]*[a-zA-Z][a-zA-Z0-9]*[ \t]*("(")[^\n\)]*(")") {chars++;BEGIN FUNC;}
 <FUNC>{
-[ \t]*";" {chars++;f_dec++;BEGIN(INITIAL);}
+[ \t]*";" {chars++;if(prev_line_func !=lines)f_dec++; prev_line_func = lines;BEGIN(INITIAL);}
 [ \t]*"{" {chars++;f_def++;BEGIN(INITIAL);}
 [ \t]*"\n" {chars++;f_def++;chars=0;lines++;BEGIN(INITIAL);}
 [ \t]*("//"|"/*") {chars++;a++;}
 }
 
-"#define"[ \t]*[0-9a-zA-Z_]*[ \t]* {chars++;macros++;}
+"#define "[ \t]*[0-9a-zA-Z_]*[ \t]* {chars++;macros++;}
 [a-zA-Z] {chars++;}
 .  {chars++;}
 \n { lines++;if(chars==0) blanklines++;chars=0; }

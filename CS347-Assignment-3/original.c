@@ -8,9 +8,10 @@
 
 extern char *yytext;            /* in lex.c                     */
 extern int yyleng;
-// extern yylineno;
+extern yylineno; 
+int **  *ab; int chh; int x(); void c();
 
-int main()
+void cc(); int main()
 {
         /* statement_block */
 
