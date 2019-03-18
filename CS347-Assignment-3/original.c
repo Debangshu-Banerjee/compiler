@@ -10,11 +10,16 @@ extern char *yytext;            /* in lex.c                     */
 extern int yyleng;
 extern yylineno; 
 int **  *ab; int chh; int x(); void c();
-
-void cc(); int main()
+struct agga {
+   int a;
+   int c;
+};
+void cc();
+int main()
 {
         /* statement_block */
-
+	struct agga abba,abba;
+	struct agga ** abba,abba;
         return 0;
 
 }

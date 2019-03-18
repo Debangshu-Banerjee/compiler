@@ -12,10 +12,13 @@ int f_def=0;
 %}
 %x COMMENT
 %x FUNC
+%x STRUCT_STATE
 VARIABLE1  ("extern "|"signed "|"unsigned "|"")[ \t]*("int "|"char "|"float "|"double ")[ \t\*]*[a-zA-Z][a-zA-Z0-9]*[ \t]*
 VARIABLE2  ("extern ")[ \t]*[a-zA-Z][a-zA-Z0-9]*[ \t]*
+VAR_STR ("extern "|"")[ \t]*("struct ")[ \t]*[a-zA-Z][a-zA-Z0-9]*(" ")[ \t\*]*[a-zA-Z][a-zA-Z0-9]*[ \t]*
 FUNCTIONAL_VAR1 ("extern "|"signed "|"unsigned "|"")[ \t]*("int "|"char "|"float "|"double ")[ \t\*]*
 FUNCTIONAL_VAR2 ("extern ")
+FUNCTIONAL_VAR_STR ("extern "|"")[ \t]*("struct ")[ \t]*[a-zA-Z][a-zA-Z0-9]*(" ")[ \t\*]*
 WHITE_SPACE [ \t]
 %%
 "//".*   {chars++;a++;}
@@ -26,13 +29,20 @@ WHITE_SPACE [ \t]
 "*"       {chars++;}
 \n { yylineno++;lines++;if(chars==0) blanklines++;chars=0; }
 }
+("struct ")[ \t]*[a-zA-Z][a-zA-Z0-9]*[ \t]*("{") {chars++;BEGIN STRUCT_STATE;}
+<STRUCT_STATE>{
+[^ \t\n\}]+ {chars++;}
+[ \t]+
+"\n" {if(chars==0) blanklines++;lines++;chars=0;}
+"}" {chars++;BEGIN(INITIAL);}
+}
 
-({VARIABLE1}|{VARIABLE2})(";"|","|"=") {chars++;if(lines!=prev_line){variables++;prev_line = lines;}}
-({FUNCTIONAL_VAR1}|{FUNCTIONAL_VAR2}|("void "))[ \t]*[a-zA-Z][a-zA-Z0-9]*[ \t]*("(")[^\n\)]*(")") {chars++;BEGIN FUNC;}
+({VARIABLE1}|{VARIABLE2}|{VAR_STR})(";"|","|"=") {chars++;if(lines!=prev_line){variables++;prev_line = lines;}}
+({FUNCTIONAL_VAR1}|{FUNCTIONAL_VAR2}|{FUNCTIONAL_VAR_STR}|("void "))[ \t]*[a-zA-Z][a-zA-Z0-9]*[ \t]*("(")[^\n\)]*(")") {chars++;BEGIN FUNC;}
 <FUNC>{
 [ \t]*";" {chars++;if(prev_line_func !=lines)f_dec++; prev_line_func = lines;BEGIN(INITIAL);}
 [ \t]*"{" {chars++;f_def++;BEGIN(INITIAL);}
-[ \t]*"\n" {chars++;f_def++;chars=0;lines++;BEGIN(INITIAL);}
+[ \t]*"\n" {f_def++;if(chars==0) blanklines++;chars=0;lines++;BEGIN(INITIAL);}
 [ \t]*("//"|"/*") {chars++;a++;}
 }
 
