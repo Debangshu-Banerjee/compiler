@@ -4,6 +4,12 @@
 	#include<string.h>
   #include "ra_parser.tab.h"
    extern char* given_input;
+struct col_list{
+	char col_name[200];
+	struct col_list* next;	
+};
+    struct col_list * col_head = NULL;
+    struct col_list * col_prev = NULL;
 %}
 
 ID              [a-zA-Z]([_a-zA-Z0-9])*
@@ -62,7 +68,19 @@ EQUI_JOIN            "EQUI_JOIN"
 {AND}               {strcat(given_input,"&&");return AND;}
 {ENDLN}				{strcat(given_input,yytext);return ENDLN;}
 {OR}                {strcat(given_input,"||");return OR;}
-{ID}                {strcat(given_input,yytext);return ID ;}
+{ID}                {strcat(given_input,yytext);
+
+struct col_list* t = (struct col_list *) malloc(sizeof(struct col_list));
+strcpy(t->col_name,yytext);
+t->next = NULL;
+if(col_prev == NULL){
+	col_head = t;
+}
+else{
+	col_prev->next = t;
+}
+col_prev = t;
+return ID ;}
 {STRING}            {
 char* tempo = malloc(250 * sizeof(char));
 strcpy(tempo,yytext);
@@ -70,10 +88,10 @@ strcpy(tempo,yytext);
 		tempo[0] = '\"';
 		tempo[strlen(tempo)-1]= '\"';
 	}
-	printf("**************** %s *******************",tempo);
+	
 	strcat(given_input,tempo);return STRING;
 }
-{WHITE_SPACE}				{ECHO;}
+{WHITE_SPACE}				{}
 .                   {strcat(given_input,yytext);return ERROR;}
 
 %%

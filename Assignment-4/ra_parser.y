@@ -6,10 +6,17 @@ void yyerror(char *s){
 	fprintf (stderr, "%s\n", s);
 
 }
+struct col_list{
+	char col_name[200];
+	struct col_list* next;	
+};
 
+extern struct col_list* col_head ;
+extern struct col_list* col_prev ;
 
 char* given_input;
 int my_type;
+int flag =1;
 
 %}
 
@@ -20,78 +27,78 @@ int my_type;
 %start INITIAL
 
 %%
-INITIAL:          QUERY ENDLN          { printf("INITIAL -> QUERY \n"); printf("\n the string is valid\n"); printf("\n%s\n",given_input); handle_cpp_file(my_type, given_input);return 0;}
+INITIAL:          QUERY ENDLN          {printf("%s\n",given_input);handle_cpp_file(my_type, given_input);return 0;}
                   ;
 
-QUERY:             SELECTION           {printf("QUERY -> SELECTION\n"); my_type = 0;}
-                  | PROJECTION          {printf("QUERY -> PROJECTION\n"); my_type = 1;}
-                  | PRODUCT_CART         {printf("QUERY -> PRODUCT_CART\n"); my_type = 2;}
-                  | JOINING             {printf("QUERY -> JOINING\n");my_type = 3;}
+QUERY:             SELECTION           {my_type = 0;}
+                  | PROJECTION          { my_type = 1;}
+                  | PRODUCT_CART         { my_type = 2;}
+                  | JOINING             {my_type = 3;}
                   ;
 
-SELECTION:      SELECT LESS_THAN CONDITION GRE_THAN LB_ROUND ID RB_ROUND     {printf("SELECTION -> SELECT <condition> (Table_Name)\n");}
+SELECTION:      SELECT LESS_THAN CONDITION GRE_THAN LB_ROUND ID RB_ROUND     
                 ;
 
-PROJECTION:     PROJECT LESS_THAN ATTRIBUTE_LIST GRE_THAN LB_ROUND ID RB_ROUND {printf("PROJECTION -> PROJECT <attribute_list> (Table_Name)\n");}
+PROJECTION:     PROJECT LESS_THAN ATTRIBUTE_LIST GRE_THAN LB_ROUND ID RB_ROUND 
                 ;
 
-PRODUCT_CART:   LESS_THAN ID GRE_THAN CARTESIAN_PRODUCT LESS_THAN ID GRE_THAN  {printf("PRODUCT_CART -> < Table_Name_1 > CARTESIAN_PRODUCT < Table_Name_2 >\n");}
+PRODUCT_CART:   LESS_THAN ID GRE_THAN CARTESIAN_PRODUCT LESS_THAN ID GRE_THAN  
                 ;
 
-JOINING:   LESS_THAN ID GRE_THAN EQUI_JOIN LESS_THAN CONDITION GRE_THAN LESS_THAN ID GRE_THAN {printf("JOINING -> < Table_Name_1 > EQUI_JOIN <condition> < Table_Name_2 >\n");}
+JOINING:   LESS_THAN ID GRE_THAN EQUI_JOIN LESS_THAN CONDITION GRE_THAN LESS_THAN ID GRE_THAN 
             ;
 
-CONDITION:    CONDITION_SMALL CONDITION_PRIME      {printf("CONDITION -> CONDITION_SMALL CONDITION_PRIME\n");strcat(given_input,"$");}
-            | NOT CONDITION_SMALL CONDITION_PRIME  {printf("CONDITION -> NOT CONDITION_SMALL CONDITION_PRIME\n");}
+CONDITION:    CONDITION_SMALL CONDITION_PRIME      {strcat(given_input,"$");}
+            | NOT CONDITION_SMALL CONDITION_PRIME  
             ;
 
-CONDITION_SMALL:   COMPARISON_COND               {printf("CONDITION_SMALL -> COMPARISON_COND \n");}
-                  | LB_ROUND CONDITION RB_ROUND   {printf("CONDITION_SMALL -> LB_ROUND CONDITION RB_ROUND \n");}
+CONDITION_SMALL:   COMPARISON_COND               
+                  | LB_ROUND CONDITION RB_ROUND   
                   ;
 
-CONDITION_PRIME:   AND CONDITION_SMALL CONDITION_PRIME  {printf("CONDITION_PRIME -> AND CONDITION_SMALL CONDITION_PRIME\n");}
-                  | OR CONDITION_SMALL CONDITION_PRIME  {printf("CONDITION_PRIME -> OR CONDITION_SMALL CONDITION_PRIME\n");}
-                  | AND NOT CONDITION_SMALL CONDITION_PRIME  {printf("CONDITION_PRIME -> AND NOT CONDITION_SMALL CONDITION_PRIME\n");}
-                  | OR NOT CONDITION_SMALL CONDITION_PRIME  {printf("CONDITION_PRIME -> OR NOT CONDITION_SMALL CONDITION_PRIME\n");}
-                  | /* empty */                             {printf("CONDITION_PRIME -> epsilon\n");}
+CONDITION_PRIME:   AND CONDITION_SMALL CONDITION_PRIME  
+                  | OR CONDITION_SMALL CONDITION_PRIME  
+                  | AND NOT CONDITION_SMALL CONDITION_PRIME  
+                  | OR NOT CONDITION_SMALL CONDITION_PRIME  
+                  | /* empty */                             
                   ;
 
-COMPARISON_COND:   EXPR EQUAL EXPR    {printf("COMPARISON_COND -> EXPR EQUAL EXPR\n");}
-                  | EXPR GRE_THAN EQUAL EXPR    {printf("COMPARISON_COND -> EXPR GRE_THAN EQUAL EXPR\n");}
-                  | EXPR LESS_THAN EQUAL EXPR    {printf("COMPARISON_COND -> EXPR LESS_THAN EQUAL EXPR\n");}
-                  | EXPR GRE_THAN EXPR    {printf("COMPARISON_COND -> EXPR GRE_THAN EXPR\n");}
-                  | EXPR LESS_THAN EXPR    {printf("COMPARISON_COND -> EXPR LESS_THAN EXPR\n");}
-                  | EXPR GRE_THAN_EQ EXPR  {printf("COMPARISON_COND -> EXPR GRE_THAN_EQUAL EXPR\n");}
-                  | EXPR LESS_THAN_EQ EXPR  {printf("COMPARISON_COND -> EXPR LESS_THAN_EQUAL EXPR\n");}
+COMPARISON_COND:   EXPR EQUAL EXPR    
+                  | EXPR GRE_THAN EQUAL EXPR    
+                  | EXPR LESS_THAN EQUAL EXPR    
+                  | EXPR GRE_THAN EXPR    
+                  | EXPR LESS_THAN EXPR    
+                  | EXPR GRE_THAN_EQ EXPR 
+                  | EXPR LESS_THAN_EQ EXPR  
                   ;
 
-EXPR:    TERM EXPR_PRIME  {printf("EXPR -> TERM EXPR_PRIME\n");}
+EXPR:    TERM EXPR_PRIME  
           ;
 
-EXPR_PRIME:    PLUS TERM EXPR_PRIME    {printf("EXPR_PRIME -> PLUS TERM EXPR_PRIME\n");}
-              | MINUS TERM EXPR_PRIME  {printf("EXPR_PRIME -> MINUS TERM EXPR_PRIME\n");}
-              |  /* empty */           {printf("EXPR_PRIME -> epsilon\n");}
+EXPR_PRIME:    PLUS TERM EXPR_PRIME    
+              | MINUS TERM EXPR_PRIME  
+              |  /* empty */           
               ;
 
-TERM:      FACTOR TERM_PRIME    {printf("TERM -> FACTOR TERM_PRIME\n");}
+TERM:      FACTOR TERM_PRIME    
             ;
 
-TERM_PRIME:    TIMES FACTOR TERM_PRIME     {printf("TERM_PRIME -> TIMES FACTOR TERM_PRIME\n");}
-              | DIV FACTOR TERM_PRIME      {printf("TERM_PRIME -> DIV FACTOR TERM_PRIME\n");}
-              | /* empty */                  {printf("TERM_PRIME -> epsilon\n");}
+TERM_PRIME:    TIMES FACTOR TERM_PRIME     
+              | DIV FACTOR TERM_PRIME      
+              | /* empty */                 
               ;
 
-FACTOR:      ID            {printf("FACTOR -> ID\n");}
-            | NUM          {printf("FACTOR -> NUM\n");}
-            | STRING       {printf("FACTOR -> STRING\n");}
-            | ID DOT ID    {printf("FACTOR -> ID DOT ID\n");}
+FACTOR:      ID            
+            | NUM          
+            | STRING       
+            | ID DOT ID    
             ;
 
-ATTRIBUTE_LIST:     ID ATTRIBUTE_LIST_PRIME    {printf("ATTRIBUTE_LIST -> ID ATTRIBUTE_LIST_PRIME\n");}
+ATTRIBUTE_LIST:     ID ATTRIBUTE_LIST_PRIME    
                     ;
 
-ATTRIBUTE_LIST_PRIME:   COMMA ID ATTRIBUTE_LIST_PRIME    {printf("ATTRIBUTE_LIST_PRIME -> COMMA ID ATTRIBUTE_LIST_PRIME\n");}
-                       | /* empty */                     {printf("ATTRIBUTE_LIST_PRIME -> epsilon\n");}
+ATTRIBUTE_LIST_PRIME:   COMMA ID ATTRIBUTE_LIST_PRIME    
+                       | /* empty */                     
                        ;
 
 %%
@@ -155,6 +162,55 @@ struct attribute* get_attributes( FILE * fp){
     	temp++;
     }
     return head;
+}
+int search_for_attribute(struct attribute * head,char* fname){
+	struct col_list * t = col_head;
+	while(t){
+		struct attribute * t1 = head;
+		int y=0; 
+		while(t1){
+			if(strcmp(t->col_name,t1->attribute_name) == 0 ){y =1 ; break;}
+			t1= t1->next;
+		}
+		if(y==0){ 
+			if(strcmp(t->col_name,fname) == 0){t= t->next;continue;}
+			printf("\n*****Error***** column `%s` not found in the given database table\n",t->col_name);
+			flag =0;
+			return 0;
+		}
+		t= t->next;
+	}
+
+	return 1;
+}
+
+int search_for_attribute1(struct attribute * head1,char* fname1,struct attribute * head2,char* fname2){
+	struct col_list * t = col_head;
+	while(t){
+		struct attribute * t1 = head1;
+		int y=0; 
+		while(t1){
+			if(strcmp(t->col_name,t1->attribute_name) == 0 ){y =1 ; break;}
+			t1= t1->next;
+		}
+		if(y== 1) {t= t->next;continue;}
+		t1 = head2;
+		while(t1){
+			if(strcmp(t->col_name,t1->attribute_name) == 0 ){y =1 ; break;}
+			t1= t1->next;
+		}
+		if(y== 1) {t= t->next;continue;}
+		if(y==0){ 
+			if(strcmp(t->col_name,fname1) == 0){t= t->next;continue;}
+			if(strcmp(t->col_name,fname2) == 0) {t= t->next;continue;}
+			printf("\n*****Error***** column `%s` not found in the given database table\n",t->col_name);
+			flag = 0;
+			return 0;
+		}
+		t= t->next;
+	}
+
+	return 1;
 }
 
 int search(struct attribute* head, char* s){
@@ -379,6 +435,7 @@ void genarate_output_file_select(char* condition,char* fname,struct attribute* h
 
 	 fprintf(fp,"string a12b;\n\n");
 	 fprintf(fp,"\ngetline(fp,a12b);\n");
+	 fprintf(fp,"\ncout<<a12b<<endl;\n");
 	 fprintf(fp,"while (getline(fp,a12b)){\n\n");/* while start*/
 	 fprintf(fp,"\tstringstream check1(a12b);\n");
 	 fprintf(fp,"\tstring intermediate;\n");
@@ -452,11 +509,16 @@ void handle_cpp_file(int my_type,char* given_input){
 		}
 		FILE * fp = fopen(fname,"r");
 		if(fp == NULL){
-			printf(" Table name entered is not present in database\n");
+			printf("*****Error***** Table name entered is not present in database\n");
+			flag = 0;
 			return;
 		}
 		struct attribute* head = get_attributes(fp);
 		fclose(fp);
+		if(search_for_attribute( head,fname) == 0){
+			return;
+		}
+
 		genarate_output_file_select(condition,fname,head);
 
 	}
@@ -512,7 +574,8 @@ void handle_cpp_file(int my_type,char* given_input){
 		}
 		FILE * fp = fopen(fname,"r");
 		if(fp == NULL){
-			printf(" Table name entered is not present in database\n");
+			printf("*****Error***** Table name entered is not present in database\n");
+			flag = 0;
 			return;
 		}
 		struct attribute* head = get_attributes(fp);
@@ -522,7 +585,8 @@ void handle_cpp_file(int my_type,char* given_input){
 		while(p_head){
 			index[j]=search(head,p_head->attribute_name);
 			if(index[j] < 0){
-				printf("The attribute is not present in database\n");
+				flag = 0;
+				printf("The attribute `%s` is not present in database\n",p_head->attribute_name);
 				return;
 			}
 			p_head = p_head-> next;
@@ -572,14 +636,16 @@ void handle_cpp_file(int my_type,char* given_input){
 		printf("%s %s\n",fname1,fname2);
 		FILE * fp = fopen(fname1,"r");
 		if(fp == NULL){
-			printf(" Table name %s entered is not present in database\n",fname1);
+			printf("*****Error***** Table name `%s` entered is not present in database\n",fname1);
+			flag = 0;
 			return;
 		}
 		struct attribute* head1 = get_attributes(fp);
 		fclose(fp);
 		fp = fopen(fname2,"r");
 		if(fp == NULL){
-			printf(" Table name %s entered is not present in database\n",fname2);
+			printf("*****Error***** Table name `%s` entered is not present in database\n",fname2);
+			flag = 0;
 			return;
 		}
 		struct attribute* head2 = get_attributes(fp);
@@ -645,18 +711,23 @@ void handle_cpp_file(int my_type,char* given_input){
 		printf("%s\n %s\n %s\n",fname1,fname2,condition);
 		FILE * fp = fopen(fname1,"r");
 		if(fp == NULL){
-			printf(" Table name %s entered is not present in database\n",fname1);
+			flag = 0;
+			printf("*****Error***** Table name `%s` entered is not present in database\n",fname1);
 			return;
 		}
 		struct attribute* head1 = get_attributes(fp);
 		fclose(fp);
 		fp = fopen(fname2,"r");
 		if(fp == NULL){
-			printf(" Table name %s entered is not present in database\n",fname2);
+			flag = 0;
+			printf("*****Error***** Table name `%s` entered is not present in database\n",fname2);
 			return;
 		}
 		struct attribute* head2 = get_attributes(fp);
 		fclose(fp);
+		if(search_for_attribute1(head1,fname1,head2,fname2) == 0){
+			return;
+		}
 		genarate_output_file_equi(condition,fname1,fname2,head1, head2);
 
 	}
@@ -668,7 +739,9 @@ int main(){
     given_input = (char*)malloc(10000*sizeof(char));
     given_input[0]= '\0';
 	yyparse();
-  //  printf("%d",my_type);
+   if(flag) printf("\nTo get output please compile and run ouput_file.cpp genarated by this code\n\n");
+  struct col_list* t= col_head;
+
 
 	return 0;
 }
