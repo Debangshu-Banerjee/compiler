@@ -1,6 +1,6 @@
 The order of execoution
-	---> make or make craete
+	---> make or make create
 	---> make run or ./ra_analyser
 	---> give input query
-	---> if no error msg compile and run output_file.cpp( set flag -std=c++11 i.e. g++ -std=c++11 output_file.cpp )
+	---> if no error msg run make output command
 	
