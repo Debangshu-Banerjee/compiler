@@ -27,7 +27,7 @@ int flag =1;
 %start INITIAL
 
 %%
-INITIAL:          QUERY ENDLN          {printf("%s\n",given_input);handle_cpp_file(my_type, given_input);return 0;}
+INITIAL:          QUERY ENDLN          {handle_cpp_file(my_type, given_input);return 0;}
                   ;
 
 QUERY:             SELECTION           {my_type = 0;}
@@ -589,7 +589,7 @@ void handle_cpp_file(int my_type,char* given_input){
 			index[j]=search(head,p_head->attribute_name);
 			if(index[j] < 0){
 				flag = 0;
-				printf("The attribute `%s` is not present in database\n",p_head->attribute_name);
+				printf("*****Error***** The attribute `%s` is not present in database\n",p_head->attribute_name);
 				return;
 			}
 			p_head = p_head-> next;
@@ -711,7 +711,6 @@ void handle_cpp_file(int my_type,char* given_input){
 			}
 			i++;
 		}
-		printf("%s\n %s\n %s\n",fname1,fname2,condition);
 		FILE * fp = fopen(fname1,"r");
 		if(fp == NULL){
 			flag = 0;
@@ -742,8 +741,8 @@ int main(){
     given_input = (char*)malloc(10000*sizeof(char));
     given_input[0]= '\0';
 	yyparse();
-   if(flag) printf("\nTo get output please compile and run ouput_file.cpp genarated by this code\n\n");
-  struct col_list* t= col_head;
+   if(flag) printf("To get output please run make output command.\n");
+  	struct col_list* t= col_head;
 
 
 	return 0;
