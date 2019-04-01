@@ -741,7 +741,7 @@ int main(){
     given_input = (char*)malloc(10000*sizeof(char));
     given_input[0]= '\0';
 	yyparse();
-   if(flag) printf("To get output please run make output command.\n");
+   if(flag && yynerrs == 0) printf("To get output please run make output command.\n");
   	struct col_list* t= col_head;
 
 
