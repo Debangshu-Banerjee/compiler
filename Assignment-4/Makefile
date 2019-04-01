@@ -8,5 +8,5 @@ create:
 run :
 	./ra_analyser
 output:
-	  if g++ -std=c++11 output_file.cpp 2>temp.err; then echo "compilation success.\n Running ./a.out to get ouput\n" ; ./a.out; else echo "Error::There is type mismatch in condition.\nCheck wheather attribute types are compatible with operator."; fi
+	  if g++ -std=c++11 output_file.cpp 2>temp.err; then echo "compilation success.\nRunning ./a.out to get ouput\n" ; ./a.out; else echo "Error::There is type mismatch in condition.\nCheck wheather attribute types are compatible with operator."; fi
 	  
