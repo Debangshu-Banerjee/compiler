@@ -18,13 +18,13 @@ LIBRARY                            (\#include[ \n\t]*\<.+\>)|((\#include[ \t\n]*
 
 %%
 
-[ \t]+                   { /* ignore all spaces */  }
+[ \t\n]+                   { /* ignore all spaces */  }
 
 
  /* -------------------- Comments ----------------------------- */
 {BEG_COMMENT}          { BEGIN(COMM); }
 <COMM>{END_COMMENT}    { BEGIN(NORMAL); }
-<COMM><<EOF>>          {}
+<COMM><<EOF>>          {cerr<< ""Input ends with unterminated comment":\t"<<endl;return(ERROR);}
 <COMM>.                { /* ignore everything else that doesn't match */ }
 {SINGLE_COMMENT}       { /* skip to end of line for // comment */ }
 
