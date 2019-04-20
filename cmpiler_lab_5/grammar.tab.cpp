@@ -62,29 +62,32 @@
 
 
 /* Copy the first part of user declarations.  */
-#line 1 "ra_parser.y" /* yacc.c:339  */
+#line 1 "grammar.ypp" /* yacc.c:339  */
 
-#include <stdio.h>
-#include<string.h>
-#include<stdlib.h>
+#define INT_TYPE -1
+#define FLOAT_TYPE -2
+#define BOOL_TYPE -3
+#define ERROR_TYPE -4 
+#define SIMPLE -1
+#define ARRAY -2
+#define PARAM -1
+#define VAR -2
+
+#include <bits/stdc++.h>
+#include "structure_def.h"
+
+using namespace std;
+
+extern int yylex();
+
 void yyerror(char *s){
 	fprintf (stderr, "%s\n", s);
-
 }
-struct col_list{
-	char col_name[200];
-	struct col_list* next;	
-};
-
-extern struct col_list* col_head ;
-extern struct col_list* col_prev ;
-
-char* given_input;
-int my_type;
-int flag =1;
 
 
-#line 88 "ra_parser.tab.c" /* yacc.c:339  */
+
+
+#line 91 "grammar.tab.cpp" /* yacc.c:339  */
 
 # ifndef YY_NULLPTR
 #  if defined __cplusplus && 201103L <= __cplusplus
@@ -103,12 +106,12 @@ int flag =1;
 #endif
 
 /* In a future release of Bison, this section will be replaced
-   by #include "ra_parser.tab.h".  */
-#ifndef YY_YY_RA_PARSER_TAB_H_INCLUDED
-# define YY_YY_RA_PARSER_TAB_H_INCLUDED
+   by #include "grammar.tab.hpp".  */
+#ifndef YY_YY_GRAMMAR_TAB_HPP_INCLUDED
+# define YY_YY_GRAMMAR_TAB_HPP_INCLUDED
 /* Debug traces.  */
 #ifndef YYDEBUG
-# define YYDEBUG 0
+# define YYDEBUG 1
 #endif
 #if YYDEBUG
 extern int yydebug;
@@ -119,34 +122,58 @@ extern int yydebug;
 # define YYTOKENTYPE
   enum yytokentype
   {
-    ERROR = 258,
-    NUM = 259,
-    WHITE_SPACE = 260,
-    SEMI = 261,
-    LESS_THAN = 262,
-    GRE_THAN = 263,
-    LB_ROUND = 264,
-    RB_ROUND = 265,
-    AMP = 266,
-    COMMA = 267,
-    PLUS = 268,
-    MINUS = 269,
-    TIMES = 270,
-    DIV = 271,
-    EQUAL = 272,
-    DOT = 273,
-    AND = 274,
-    OR = 275,
-    NOT = 276,
-    STRING = 277,
-    SELECT = 278,
-    PROJECT = 279,
-    CARTESIAN_PRODUCT = 280,
-    EQUI_JOIN = 281,
-    ID = 282,
-    ENDLN = 283,
-    GRE_THAN_EQ = 284,
-    LESS_THAN_EQ = 285
+    ELSE = 258,
+    FOR = 259,
+    IF = 260,
+    RETURN = 261,
+    WHILE = 262,
+    PTR_OP = 263,
+    INC_OP = 264,
+    DEC_OP = 265,
+    AND_OP = 266,
+    OR_OP = 267,
+    LT = 268,
+    GT = 269,
+    LE_OP = 270,
+    GE_OP = 271,
+    EQ_OP = 272,
+    NE_OP = 273,
+    DO = 274,
+    BREAK = 275,
+    LIBRARY = 276,
+    CONTINUE = 277,
+    ERROR = 278,
+    NOT = 279,
+    AMP = 280,
+    TILDE = 281,
+    STAR = 282,
+    ASSIGN = 283,
+    OPEN_BRACKET = 284,
+    CLOSE_BRACKET = 285,
+    OPEN_CURLY = 286,
+    CLOSE_CURLY = 287,
+    OPEN_SQUARE = 288,
+    CLOSE_SQUARE = 289,
+    SEMI = 290,
+    COMMA = 291,
+    DOT = 292,
+    PLUS = 293,
+    MINUS = 294,
+    DIVIDE = 295,
+    MODULUS = 296,
+    PIPE = 297,
+    XOR = 298,
+    QUES = 299,
+    COLON = 300,
+    ID = 301,
+    BOOL = 302,
+    CHAR = 303,
+    INT = 304,
+    FLOAT = 305,
+    VOID = 306,
+    NUM = 307,
+    REAL = 308,
+    UMINUS = 310
   };
 #endif
 
@@ -155,10 +182,14 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 23 "ra_parser.y" /* yacc.c:355  */
- char Char;
+#line 26 "grammar.ypp" /* yacc.c:355  */
 
-#line 162 "ra_parser.tab.c" /* yacc.c:355  */
+  char *name;          // name of a variable or function 
+  int integer_value;   // value of an integer
+  float real_value;    // value of a real number 
+  int type;            // check the define -1 for int -2 float and so on 
+
+#line 193 "grammar.tab.cpp" /* yacc.c:355  */
 };
 
 typedef union YYSTYPE YYSTYPE;
@@ -171,11 +202,11 @@ extern YYSTYPE yylval;
 
 int yyparse (void);
 
-#endif /* !YY_YY_RA_PARSER_TAB_H_INCLUDED  */
+#endif /* !YY_YY_GRAMMAR_TAB_HPP_INCLUDED  */
 
 /* Copy the second part of user declarations.  */
 
-#line 179 "ra_parser.tab.c" /* yacc.c:358  */
+#line 210 "grammar.tab.cpp" /* yacc.c:358  */
 
 #ifdef short
 # undef short
@@ -415,23 +446,23 @@ union yyalloc
 #endif /* !YYCOPY_NEEDED */
 
 /* YYFINAL -- State number of the termination state.  */
-#define YYFINAL  14
+#define YYFINAL  3
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   99
+#define YYLAST   137
 
 /* YYNTOKENS -- Number of terminals.  */
-#define YYNTOKENS  31
+#define YYNTOKENS  56
 /* YYNNTS -- Number of nonterminals.  */
-#define YYNNTS  19
+#define YYNNTS  33
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  42
+#define YYNRULES  70
 /* YYNSTATES -- Number of states.  */
-#define YYNSTATES  98
+#define YYNSTATES  130
 
 /* YYTRANSLATE[YYX] -- Symbol number corresponding to YYX as returned
    by yylex, with out-of-bounds checking.  */
 #define YYUNDEFTOK  2
-#define YYMAXUTOK   285
+#define YYMAXUTOK   310
 
 #define YYTRANSLATE(YYX)                                                \
   ((unsigned int) (YYX) <= YYMAXUTOK ? yytranslate[YYX] : YYUNDEFTOK)
@@ -468,18 +499,24 @@ static const yytype_uint8 yytranslate[] =
        2,     2,     2,     2,     2,     2,     1,     2,     3,     4,
        5,     6,     7,     8,     9,    10,    11,    12,    13,    14,
       15,    16,    17,    18,    19,    20,    21,    22,    23,    24,
-      25,    26,    27,    28,    29,    30
+      25,    26,    27,    28,    29,    30,    31,    32,    33,    34,
+      35,    36,    37,    38,    39,    40,    41,    42,    43,    44,
+      45,    46,    47,    48,    49,    50,    51,    52,    53,    54,
+      55
 };
 
 #if YYDEBUG
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    30,    30,    33,    34,    35,    36,    39,    42,    45,
-      48,    51,    54,    55,    58,    59,    62,    63,    64,    65,
-      66,    69,    70,    71,    72,    73,    74,    75,    78,    81,
-      82,    83,    86,    89,    90,    91,    94,    95,    96,    97,
-     100,   103,   104
+       0,    56,    56,    59,    61,    63,    65,    67,    69,    70,
+      71,    73,    74,    76,    77,    78,    79,    80,    81,    82,
+      83,    85,    86,    90,    92,    93,    95,    97,    99,   101,
+     103,   104,   105,   107,   108,   110,   111,   112,   113,   114,
+     115,   117,   118,   119,   121,   122,   123,   125,   127,   128,
+     129,   130,   131,   133,   134,   135,   136,   139,   140,   142,
+     144,   146,   147,   150,   151,   153,   154,   156,   157,   159,
+     160
 };
 #endif
 
@@ -488,15 +525,22 @@ static const yytype_uint8 yyrline[] =
    First, the terminals, then, starting at YYNTOKENS, nonterminals.  */
 static const char *const yytname[] =
 {
-  "$end", "error", "$undefined", "ERROR", "NUM", "WHITE_SPACE", "SEMI",
-  "LESS_THAN", "GRE_THAN", "LB_ROUND", "RB_ROUND", "AMP", "COMMA", "PLUS",
-  "MINUS", "TIMES", "DIV", "EQUAL", "DOT", "AND", "OR", "NOT", "STRING",
-  "SELECT", "PROJECT", "CARTESIAN_PRODUCT", "EQUI_JOIN", "ID", "ENDLN",
-  "GRE_THAN_EQ", "LESS_THAN_EQ", "$accept", "INITIAL", "QUERY",
-  "SELECTION", "PROJECTION", "PRODUCT_CART", "JOINING", "CONDITION1",
-  "CONDITION", "CONDITION_SMALL", "CONDITION_PRIME", "COMPARISON_COND",
-  "EXPR", "EXPR_PRIME", "TERM", "TERM_PRIME", "FACTOR", "ATTRIBUTE_LIST",
-  "ATTRIBUTE_LIST_PRIME", YY_NULLPTR
+  "$end", "error", "$undefined", "ELSE", "FOR", "IF", "RETURN", "WHILE",
+  "PTR_OP", "INC_OP", "DEC_OP", "AND_OP", "OR_OP", "LT", "GT", "LE_OP",
+  "GE_OP", "EQ_OP", "NE_OP", "DO", "BREAK", "LIBRARY", "CONTINUE", "ERROR",
+  "NOT", "AMP", "TILDE", "STAR", "ASSIGN", "OPEN_BRACKET", "CLOSE_BRACKET",
+  "OPEN_CURLY", "CLOSE_CURLY", "OPEN_SQUARE", "CLOSE_SQUARE", "SEMI",
+  "COMMA", "DOT", "PLUS", "MINUS", "DIVIDE", "MODULUS", "PIPE", "XOR",
+  "QUES", "COLON", "ID", "BOOL", "CHAR", "INT", "FLOAT", "VOID", "NUM",
+  "REAL", "\"IFX\"", "UMINUS", "$accept", "program",
+  "function_declaration", "first_curly", "last_curly", "function_head",
+  "res_id", "type", "statement_list", "statement", "selection_statement",
+  "ifexp", "iteration_statement", "whileexp", "forexp", "M", "N",
+  "conditional_expression", "expression", "rel_expression",
+  "normal_expression", "term", "factor", "unary_expression",
+  "primary_expression", "elist", "assignment_statement",
+  "variable_declaration", "id_arr", "parameter_list", "param_decl",
+  "unit_declaration", "varlist", YY_NULLPTR
 };
 #endif
 
@@ -508,16 +552,18 @@ static const yytype_uint16 yytoknum[] =
        0,   256,   257,   258,   259,   260,   261,   262,   263,   264,
      265,   266,   267,   268,   269,   270,   271,   272,   273,   274,
      275,   276,   277,   278,   279,   280,   281,   282,   283,   284,
-     285
+     285,   286,   287,   288,   289,   290,   291,   292,   293,   294,
+     295,   296,   297,   298,   299,   300,   301,   302,   303,   304,
+     305,   306,   307,   308,   309,   310
 };
 # endif
 
-#define YYPACT_NINF -39
+#define YYPACT_NINF -48
 
 #define yypact_value_is_default(Yystate) \
-  (!!((Yystate) == (-39)))
+  (!!((Yystate) == (-48)))
 
-#define YYTABLE_NINF -1
+#define YYTABLE_NINF -8
 
 #define yytable_value_is_error(Yytable_value) \
   0
@@ -526,16 +572,19 @@ static const yytype_uint16 yytoknum[] =
      STATE-NUM.  */
 static const yytype_int8 yypact[] =
 {
-      44,   -12,    15,    24,    45,    29,   -39,   -39,   -39,   -39,
-      52,     3,    53,    25,   -39,   -39,   -17,   -39,     3,    34,
-     -39,    48,    61,    -9,   -39,     6,     4,    56,    50,    70,
-      75,    77,    15,    76,    -9,    58,   -39,    12,    28,   -39,
-      36,    37,    43,    43,    43,    43,    43,   -39,    43,    43,
-     -39,    78,    60,   -39,    80,    63,    84,   -39,   -39,   -39,
-      34,    -9,    34,    -9,    43,   -39,    43,   -39,   -39,   -39,
-     -39,     4,     4,    56,    56,   -39,    70,    65,    85,    67,
-      -9,   -39,    -9,   -39,   -39,   -39,   -39,   -39,   -39,   -39,
-     -39,    86,   -39,    87,   -39,   -39,   -39,   -39
+     -48,    11,    18,   -48,    16,     9,    30,     0,   -48,   -48,
+      15,   -48,   -48,   -48,   -48,   -48,    26,    35,    58,   -48,
+     -48,    16,   -48,    16,    34,    72,    73,    57,    34,    34,
+      34,    34,    34,    34,   -48,    34,   -48,   -48,    19,   -48,
+     -48,    77,    28,   -48,   -48,   -48,   -48,    76,    34,    78,
+      81,   -48,    52,    12,   -48,    74,   106,   -48,     4,   -48,
+     -48,    34,    21,    39,   -48,   -48,   -48,    66,   -48,    34,
+      34,   -48,    34,    34,    34,    34,    34,    34,    34,    34,
+      34,    34,    34,    80,    34,   -48,   -48,    81,    71,    88,
+      83,   -48,    82,   -48,   -48,    14,   -48,   -48,   -48,   -48,
+     -48,    33,    33,    33,    33,    33,    33,    28,    28,   -48,
+     -48,    70,   -48,    86,   -48,    96,   -48,    52,   -48,   -48,
+      34,   -48,   -48,    97,   -48,    16,    25,   -48,   -48,   -48
 };
 
   /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -543,97 +592,121 @@ static const yytype_int8 yypact[] =
      means the default is an error.  */
 static const yytype_uint8 yydefact[] =
 {
-       0,     0,     0,     0,     0,     0,     3,     4,     5,     6,
-       0,     0,     0,     0,     1,     2,     0,    37,     0,     0,
-      38,    36,     0,    20,    14,     0,    31,    35,     0,    42,
-       0,     0,     0,     0,    20,     0,    11,     0,     0,    12,
-       0,     0,     0,     0,     0,     0,     0,    28,     0,     0,
-      32,     0,     0,    40,     0,     0,     0,    15,    13,    39,
-       0,    20,     0,    20,     0,    25,     0,    24,    21,    26,
-      27,    31,    31,    35,    35,     7,    42,     0,     0,     0,
-      20,    16,    20,    17,    23,    22,    29,    30,    33,    34,
-      41,     0,     9,     0,    18,    19,     8,    10
+      12,     0,    28,     1,     0,     0,     0,     0,    28,     4,
+      61,     8,     9,    10,    20,    12,     0,     0,     0,    11,
+      16,     0,    17,     0,     0,     0,     0,     0,     0,     0,
+       0,     0,     0,     0,    14,     0,    53,    54,     0,    32,
+      33,    34,    43,    46,    47,    48,    55,     0,     0,    62,
+      28,    12,    64,    61,    70,    60,    22,    24,     0,    18,
+      13,     0,     0,     0,    52,    51,    50,     0,    49,     0,
+       0,    15,     0,     0,     0,     0,     0,     0,     0,     0,
+       0,     0,     0,     0,     0,     5,    19,    28,     0,     0,
+      63,    66,     0,    29,    25,    59,    28,    23,    56,    30,
+      31,    36,    35,    38,    37,    39,    40,    41,    42,    44,
+      45,     0,    58,     0,     3,    67,     6,     0,    69,    28,
+       0,    26,    57,     0,    65,     0,     0,    68,    21,    27
 };
 
   /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-     -39,   -39,   -39,   -39,   -39,   -39,   -39,    66,    79,   -18,
-     -34,   -39,   -38,     2,    30,     5,    32,   -39,    23
+     -48,   -48,   -48,   114,    45,   -48,   -48,   -47,    -2,   -19,
+     -48,   -48,   -48,   -48,   -48,    -7,   -48,   -21,   -42,   -48,
+      50,     5,    17,    44,   -48,   -48,   -48,   -48,    -4,   -48,
+     -48,    20,   -48
 };
 
   /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
-      -1,     4,     5,     6,     7,     8,     9,    12,    22,    23,
-      39,    24,    25,    47,    26,    50,    27,    30,    53
+      -1,     1,    14,    15,    86,    16,    17,    18,     2,    19,
+      20,    21,    22,    23,    24,     4,   119,    38,    39,    40,
+      41,    42,    43,    44,    45,    49,    25,    26,    46,    89,
+      90,    91,    55
 };
 
   /* YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
      positive, shift that token.  If negative, reduce the rule whose
      number is the opposite.  If YYTABLE_NINF, syntax error.  */
-static const yytype_uint8 yytable[] =
+static const yytype_int16 yytable[] =
 {
-      58,    34,    65,    67,    68,    69,    70,    17,    31,    32,
-      37,    38,    18,    40,    41,    10,    17,    45,    46,    61,
-      63,    18,    11,    42,    19,    20,    84,    81,    85,    83,
-      21,    13,    17,    60,    20,    43,    44,    18,    17,    21,
-      17,    17,    80,    18,    82,    14,    94,    17,    95,    62,
-      20,     1,    29,    64,    66,    21,    20,    15,    20,    20,
-      16,    21,    28,    21,    21,    20,    35,     2,     3,    36,
-      21,    48,    49,    86,    87,    71,    72,    51,    88,    89,
-      73,    74,    52,    54,    55,    59,    57,    76,    75,    77,
-      78,    79,    91,    92,    93,    97,    96,    33,    56,    90
+      27,    47,    56,    58,    57,    88,    83,    62,    63,    30,
+      31,     3,    67,    50,    54,    69,    70,    27,    -2,    27,
+       5,     6,     7,     8,    32,    69,    70,    99,   100,    33,
+      69,    70,    69,    70,    94,    34,    69,    70,    28,    35,
+      95,    -7,   113,    30,    31,    48,    10,     9,    48,    87,
+      69,    70,    36,    37,    71,    80,    96,     9,    32,    29,
+     129,   111,    10,    33,    52,    11,    12,    13,    81,    97,
+      88,    78,    79,    35,    64,    65,    66,    69,    70,    68,
+      10,    69,    70,   107,   108,    61,    36,    37,   118,   120,
+      72,    73,    74,    75,    76,    77,    98,   109,   110,   126,
+     121,    11,    12,    13,    53,    82,   128,    59,    60,    93,
+      92,    84,   125,    85,   112,    78,    79,   115,   116,   117,
+     122,    27,   101,   102,   103,   104,   105,   106,    10,   123,
+      51,   127,   114,     0,     0,     0,     0,   124
 };
 
-static const yytype_uint8 yycheck[] =
+static const yytype_int8 yycheck[] =
 {
-      34,    19,    40,    41,    42,    43,    44,     4,    25,    26,
-      19,    20,     9,     7,     8,    27,     4,    13,    14,    37,
-      38,     9,     7,    17,    21,    22,    64,    61,    66,    63,
-      27,     7,     4,    21,    22,    29,    30,     9,     4,    27,
-       4,     4,    60,     9,    62,     0,    80,     4,    82,    21,
-      22,     7,    27,    17,    17,    27,    22,    28,    22,    22,
-       8,    27,     9,    27,    27,    22,    18,    23,    24,     8,
-      27,    15,    16,    71,    72,    45,    46,    27,    73,    74,
-      48,    49,    12,     8,     7,    27,    10,    27,    10,     9,
-      27,     7,    27,     8,    27,     8,    10,    18,    32,    76
+       4,     8,    21,    24,    23,    52,    48,    28,    29,     9,
+      10,     0,    33,    15,    18,    11,    12,    21,     0,    23,
+       4,     5,     6,     7,    24,    11,    12,    69,    70,    29,
+      11,    12,    11,    12,    30,    35,    11,    12,    29,    39,
+      61,    29,    84,     9,    10,    33,    46,    31,    33,    51,
+      11,    12,    52,    53,    35,    27,    35,    31,    24,    29,
+      35,    82,    46,    29,    29,    49,    50,    51,    40,    30,
+     117,    38,    39,    39,    30,    31,    32,    11,    12,    35,
+      46,    11,    12,    78,    79,    28,    52,    53,    92,    96,
+      13,    14,    15,    16,    17,    18,    30,    80,    81,   120,
+      30,    49,    50,    51,    46,    29,   125,    35,    35,     3,
+      36,    33,   119,    32,    34,    38,    39,    46,    30,    36,
+      34,   125,    72,    73,    74,    75,    76,    77,    46,    33,
+      16,    34,    87,    -1,    -1,    -1,    -1,   117
 };
 
   /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
      symbol of state STATE-NUM.  */
 static const yytype_uint8 yystos[] =
 {
-       0,     7,    23,    24,    32,    33,    34,    35,    36,    37,
-      27,     7,    38,     7,     0,    28,     8,     4,     9,    21,
-      22,    27,    39,    40,    42,    43,    45,    47,     9,    27,
-      48,    25,    26,    39,    40,    18,     8,    19,    20,    41,
-       7,     8,    17,    29,    30,    13,    14,    44,    15,    16,
-      46,    27,    12,    49,     8,     7,    38,    10,    41,    27,
-      21,    40,    21,    40,    17,    43,    17,    43,    43,    43,
-      43,    45,    45,    47,    47,    10,    27,     9,    27,     7,
-      40,    41,    40,    41,    43,    43,    44,    44,    46,    46,
-      49,    27,     8,    27,    41,    41,    10,     8
+       0,    57,    64,     0,    71,     4,     5,     6,     7,    31,
+      46,    49,    50,    51,    58,    59,    61,    62,    63,    65,
+      66,    67,    68,    69,    70,    82,    83,    84,    29,    29,
+       9,    10,    24,    29,    35,    39,    52,    53,    73,    74,
+      75,    76,    77,    78,    79,    80,    84,    71,    33,    81,
+      64,    59,    29,    46,    84,    88,    65,    65,    73,    35,
+      35,    28,    73,    73,    79,    79,    79,    73,    79,    11,
+      12,    35,    13,    14,    15,    16,    17,    18,    38,    39,
+      27,    40,    29,    74,    33,    32,    60,    64,    63,    85,
+      86,    87,    36,     3,    30,    73,    35,    30,    30,    74,
+      74,    76,    76,    76,    76,    76,    76,    77,    77,    78,
+      78,    73,    34,    74,    60,    46,    30,    36,    84,    72,
+      71,    30,    34,    33,    87,    71,    73,    34,    65,    35
 };
 
   /* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
 static const yytype_uint8 yyr1[] =
 {
-       0,    31,    32,    33,    33,    33,    33,    34,    35,    36,
-      37,    38,    39,    39,    40,    40,    41,    41,    41,    41,
-      41,    42,    42,    42,    42,    42,    42,    42,    43,    44,
-      44,    44,    45,    46,    46,    46,    47,    47,    47,    47,
-      48,    49,    49
+       0,    56,    57,    58,    59,    60,    61,    62,    63,    63,
+      63,    64,    64,    65,    65,    65,    65,    65,    65,    65,
+      65,    66,    66,    67,    68,    68,    69,    70,    71,    72,
+      73,    73,    73,    74,    74,    75,    75,    75,    75,    75,
+      75,    76,    76,    76,    77,    77,    77,    78,    79,    79,
+      79,    79,    79,    80,    80,    80,    80,    81,    81,    82,
+      83,    84,    84,    85,    85,    86,    86,    87,    87,    88,
+      88
 };
 
   /* YYR2[YYN] -- Number of symbols on the right hand side of rule YYN.  */
 static const yytype_uint8 yyr2[] =
 {
-       0,     2,     2,     1,     1,     1,     1,     5,     7,     7,
-       8,     3,     2,     3,     1,     3,     3,     3,     4,     4,
-       0,     3,     4,     4,     3,     3,     3,     3,     2,     3,
-       3,     0,     2,     3,     3,     0,     1,     1,     1,     3,
-       2,     3,     0
+       0,     2,     1,     4,     1,     1,     4,     2,     1,     1,
+       1,     3,     0,     2,     2,     3,     1,     1,     2,     3,
+       1,     6,     2,     4,     2,     3,     5,     7,     0,     0,
+       3,     3,     1,     1,     1,     3,     3,     3,     3,     3,
+       3,     3,     3,     1,     3,     3,     1,     1,     1,     2,
+       2,     2,     2,     1,     1,     1,     3,     4,     3,     3,
+       2,     1,     2,     1,     0,     3,     1,     2,     4,     3,
+       1
 };
 
 
@@ -1309,44 +1382,8 @@ yyreduce:
   YY_REDUCE_PRINT (yyn);
   switch (yyn)
     {
-        case 2:
-#line 30 "ra_parser.y" /* yacc.c:1646  */
-    {handle_cpp_file(my_type, given_input);return 0;}
-#line 1316 "ra_parser.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 3:
-#line 33 "ra_parser.y" /* yacc.c:1646  */
-    {my_type = 0;}
-#line 1322 "ra_parser.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 4:
-#line 34 "ra_parser.y" /* yacc.c:1646  */
-    { my_type = 1;}
-#line 1328 "ra_parser.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 5:
-#line 35 "ra_parser.y" /* yacc.c:1646  */
-    { my_type = 2;}
-#line 1334 "ra_parser.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 6:
-#line 36 "ra_parser.y" /* yacc.c:1646  */
-    {my_type = 3;}
-#line 1340 "ra_parser.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 11:
-#line 51 "ra_parser.y" /* yacc.c:1646  */
-    {strcat(given_input,"$");}
-#line 1346 "ra_parser.tab.c" /* yacc.c:1646  */
-    break;
-
-
-#line 1350 "ra_parser.tab.c" /* yacc.c:1646  */
+      
+#line 1387 "grammar.tab.cpp" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -1574,647 +1611,11 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 107 "ra_parser.y" /* yacc.c:1906  */
+#line 162 "grammar.ypp" /* yacc.c:1906  */
 
-struct attribute{
-	char attribute_name[200];
-	int type;                     /* int,float or double = 0 and strings = 1*/
-	struct attribute * next;	
-
-};
-
-struct projection{
-	char attribute_name [200];
-	struct projection* next ;
-};
-
-struct attribute* get_attributes( FILE * fp){
-	char * line = NULL;
-    size_t len = 0;
-    ssize_t read;
-    int temp =0;
-    struct attribute* head= NULL;
-    struct attribute* prev = NULL;
-    while((read = getline(&line, &len, fp)) != -1){
-    	if(temp >= 2) break;
-    	char *token;
-    	token=strtok(line,",\n");
-    	if(temp == 0){
-    		while(token != NULL){
-    			struct attribute* tem1 = (struct attribute*)malloc(sizeof(struct attribute));
-    			strcpy(tem1->attribute_name,token);
-    			tem1->next = NULL;
-    			tem1->type = 0;
-    			if(prev == NULL){
-    				head = tem1;
-    			}
-    			else{
-    				prev->next = tem1;
-    			}
-    			prev = tem1;
-    			token=strtok(NULL,",\n");
-    			
-    		}
-    	}
-    	else{
-    		struct attribute* t= head;
-    		while(token != NULL && t!= NULL){
-    			char *ptr = NULL;
-   				double ret = 0.0;
-   				ret = strtod(token, &ptr);
-   				if(strlen(ptr)){
-   					t->type = 1;
-   				}
-   				else{
-   					t->type = 0;
-   				}
-    			token=strtok(NULL,",\n");
-    			t= t->next;
-    		}
-
-    	}	
-    	temp++;
-    }
-    return head;
-}
-int search_for_attribute(struct attribute * head,char* fname){
-	struct col_list * t = col_head;
-	while(t){
-		struct attribute * t1 = head;
-		int y=0; 
-		while(t1){
-			if(strcmp(t->col_name,t1->attribute_name) == 0 ){y =1 ; break;}
-			t1= t1->next;
-		}
-		if(y==0){ 
-			if(strcmp(t->col_name,fname) == 0){t= t->next;continue;}
-			printf("\n*****Error***** column `%s` not found in the given database table\n",t->col_name);
-			flag =0;
-			return 0;
-		}
-		t= t->next;
-	}
-
-	return 1;
-}
-
-int search_for_attribute1(struct attribute * head1,char* fname1,struct attribute * head2,char* fname2){
-	struct col_list * t = col_head;
-	while(t){
-		struct attribute * t1 = head1;
-		int y=0; 
-		while(t1){
-			if(strcmp(t->col_name,t1->attribute_name) == 0 ){y =1 ; break;}
-			t1= t1->next;
-		}
-		if(y== 1) {t= t->next;continue;}
-		t1 = head2;
-		while(t1){
-			if(strcmp(t->col_name,t1->attribute_name) == 0 ){y =1 ; break;}
-			t1= t1->next;
-		}
-		if(y== 1) {t= t->next;continue;}
-		if(y==0){ 
-			if(strcmp(t->col_name,fname1) == 0){t= t->next;continue;}
-			if(strcmp(t->col_name,fname2) == 0) {t= t->next;continue;}
-			printf("\n*****Error***** column `%s` not found in the given database table\n",t->col_name);
-			flag = 0;
-			return 0;
-		}
-		t= t->next;
-	}
-
-	return 1;
-}
-
-int search(struct attribute* head, char* s){
-	int i=0;
-	while(head){
-		if(strcmp(head->attribute_name,s) == 0) return i;
-		i++; head = head->next;
-	}
-	return -1;
-}
-int search1(int* index,int size,int key){
-	int i=0;
-	for(i=0;i<size;i++){
-		if(index[i] == key) return 1;
-	}	
-	return 0;
-}
-void genarate_output_file_equi( char* condition,char* fname1,char* fname2,struct attribute* head1,struct attribute* head2){
-	FILE *fp = fopen("output_file.cpp","w");
-	fprintf(fp,"#include<bits/stdc++.h>\n\n");
-	fprintf(fp,"using namespace std;\n\n");
-	fprintf(fp,"int main(){\n\n"); /* opened int main()*/
-	struct attribute* t= head1;
-	while(t){
-	 	if(t->type == 0){
-	 		fprintf(fp,"double %s_%s;\n\n",fname1,t->attribute_name);
-	 	}
-	 	else{
-	 		fprintf(fp,"string %s_%s;\n\n",fname1,t->attribute_name);
-	 	}
-	 	t=t->next;
-	}
-	 t= head2;
-	 while(t){
-	 	if(t->type == 0){
-	 		fprintf(fp,"double %s_%s;\n\n",fname2,t->attribute_name);
-	 	}
-	 	else{
-	 		fprintf(fp,"string %s_%s;\n\n",fname2,t->attribute_name);
-	 	}
-	 	t=t->next;
-	}
-	char file_name[1000]; /******************needs attention***************/
-	sprintf(file_name,"ifstream fp1(\"%s\");",fname1);  /* opened file in cpp file*/
-	fprintf(fp,"%s\n\n",file_name);
-	sprintf(file_name,"ifstream fp2(\"%s\");",fname2);  /* opened file in cpp file*/
-	fprintf(fp,"%s\n\n",file_name);
-	fprintf(fp,"string a12b1;\n\n");
-	fprintf(fp,"string a12b2;\n\n");
-	fprintf(fp,"\ngetline(fp1,a12b1);\n");
-	fprintf(fp,"\ngetline(fp2,a12b2);\n");
-	fprintf(fp,"cout<<a12b1<<\" | \"<<a12b2<<endl;\n\n");
-	fprintf(fp,"fp2.close();\n\n"); /* closed file in cpp file*/
-	fprintf(fp,"while (getline(fp1,a12b1)){\n\n"); /*1st while start*/
-	sprintf(file_name,"ifstream fp2(\"%s\");",fname2);  /* opened file in cpp file*/
-	fprintf(fp,"\t%s\n",file_name);
-	fprintf(fp,"\n\tgetline(fp2,a12b2);\n");
-	fprintf(fp,"\tstringstream check11(a12b1);\n");
-	 fprintf(fp,"\tstring intermediate1;\n");
-	 t = head1;
-	 fprintf(fp,"\n\n");
-	 while(t){
-	 	fprintf(fp,"\tgetline(check11, intermediate1, ',');\n");
-	 	if(t->type == 0){
-	 		sprintf(file_name,"%s_%s = stod(intermediate1);\n",fname1,t->attribute_name);
-	 		fprintf(fp,"\t%s",file_name);
-	 	}
-	 	else{
-	 		sprintf(file_name,"%s_%s= intermediate1;\n",fname1,t->attribute_name);
-	 		fprintf(fp,"\t%s",file_name);
-	 	}
-	 	fprintf(fp,"\n\n");
-	 	t= t->next;
-	 }			
-	fprintf(fp,"\twhile (getline(fp2,a12b2)){\n"); 			/*2nd while start*/
-
-	t = head2;
-	 fprintf(fp,"\n\n");
-	 fprintf(fp,"\t\tstringstream check12(a12b2);\n");
-	 fprintf(fp,"\t\tstring intermediate2;\n");
-	 while(t){
-	 	fprintf(fp,"\t\tgetline(check12, intermediate2, ',');\n");
-	 	if(t->type == 0){
-	 		sprintf(file_name,"%s_%s = stod(intermediate2);\n",fname2,t->attribute_name);
-	 		fprintf(fp,"\t\t%s",file_name);
-	 	}
-	 	else{
-	 		sprintf(file_name,"%s_%s= intermediate2;\n",fname2,t->attribute_name);
-	 		fprintf(fp,"\t\t%s",file_name);
-	 	}
-	 	fprintf(fp,"\n\n");
-	 	t= t->next;
-	 }			
-
-	sprintf(file_name,"if(%s){\n",condition); 			/* if start*/
-	fprintf(fp,"\t\t%s",file_name);
-	fprintf(fp,"\t\t\tcout<<a12b1<<\" | \"<<a12b2<<endl;\n");
-	fprintf(fp,"\t\t}\n"); 								/* if end*/
-	fprintf(fp,"\t}\n"); 								/* 2nd while end*/
-	fprintf(fp,"fp2.close();\n\n"); 				/* closed file in cpp file*/
-	fprintf(fp,"}\n"); 									/*end of 1 st while*/
-	fprintf(fp,"fp1.close();\n\n"); 				/* closed file in cpp file*/	
-	fprintf(fp,"}\n"); 									/*end of main*/
-}
-void genarate_output_file_c_prod( char* fname1,char* fname2,struct attribute* head1,struct attribute* head2){
-	FILE *fp = fopen("output_file.cpp","w");
-	fprintf(fp,"#include<bits/stdc++.h>\n\n");
-	fprintf(fp,"using namespace std;\n\n");
-	fprintf(fp,"int main(){\n\n"); /* opened int main()*/
-	struct attribute* t= head1;
-	while(t){
-	 	if(t->type == 0){
-	 		fprintf(fp,"double %s_%s;\n\n",fname1,t->attribute_name);
-	 	}
-	 	else{
-	 		fprintf(fp,"string %s_%s;\n\n",fname1,t->attribute_name);
-	 	}
-	 	t=t->next;
-	}
-	 t= head2;
-	 while(t){
-	 	if(t->type == 0){
-	 		fprintf(fp,"double %s_%s;\n\n",fname2,t->attribute_name);
-	 	}
-	 	else{
-	 		fprintf(fp,"string %s_%s;\n\n",fname2,t->attribute_name);
-	 	}
-	 	t=t->next;
-	}
-	char file_name[1000];
-	sprintf(file_name,"ifstream fp1(\"%s\");",fname1);  /* opened file in cpp file*/
-	fprintf(fp,"%s\n\n",file_name);
-	sprintf(file_name,"ifstream fp2(\"%s\");",fname2);  /* opened file in cpp file*/
-	fprintf(fp,"%s\n\n",file_name);
-	fprintf(fp,"string a12b1;\n\n");
-	fprintf(fp,"string a12b2;\n\n");
-	fprintf(fp,"\ngetline(fp1,a12b1);\n");
-	fprintf(fp,"\ngetline(fp2,a12b2);\n");
-	fprintf(fp,"cout<<a12b1<<\" | \"<<a12b2<<endl;\n\n");
-	fprintf(fp,"fp2.close();\n\n"); /* closed file in cpp file*/
-	fprintf(fp,"while (getline(fp1,a12b1)){\n\n"); /*1st while start*/
-	sprintf(file_name,"ifstream fp2(\"%s\");",fname2);  /* opened file in cpp file*/
-	fprintf(fp,"\t%s\n",file_name);
-	fprintf(fp,"\n\tgetline(fp2,a12b2);\n");
-	fprintf(fp,"\twhile (getline(fp2,a12b2)){\n"); /*2nd while start*/
-	fprintf(fp,"\t\tcout<<a12b1<<\" | \"<<a12b2<<endl;\n");
-	fprintf(fp,"\t}\n"); /* 2nd while end*/
-	fprintf(fp,"fp2.close();\n\n"); /* closed file in cpp file*/
-	fprintf(fp,"}\n"); /* 1st while end*/
-	fprintf(fp,"fp1.close();\n\n"); /* closed file in cpp file*/	
-	fprintf(fp,"}\n");	
-
-}
-
-void genarate_output_file_project( int* index,char* fname,struct attribute* head,int size){
-	 FILE *fp = fopen("output_file.cpp","w");
-	 fprintf(fp,"#include<bits/stdc++.h>\n\n");
-	 fprintf(fp,"using namespace std;\n\n");
-	 fprintf(fp,"int main(){\n\n"); /* opened int main()*/
-	 struct attribute* t= head;
-	 while(t){
-	 	if(t->type == 0){
-	 		fprintf(fp,"double %s;\n\n",t->attribute_name);
-	 	}
-	 	else{
-	 		fprintf(fp,"string %s;\n\n",t->attribute_name);
-	 	}
-	 	t=t->next;
-	 }
-	 char file_name[1000];
-	 sprintf(file_name,"ifstream fp(\"%s\");",fname);  /* opened file in cpp file*/
-	 fprintf(fp,"%s\n\n",file_name);
-	 fprintf(fp,"string a12b;\n\n");
-	 fprintf(fp,"while (getline(fp,a12b)){\n\n");/* while start*/
-	 fprintf(fp,"\tstringstream check1(a12b);\n");
-	 fprintf(fp,"\tstring intermediate;\n");
-	 t= head;
-	 int temp_index = 0;
-	 int s_c = 0;
-	 while(t){	 
-	 	fprintf(fp,"\tgetline(check1, intermediate, ',');\n");
-	 	if(search1(index,size,temp_index) == 1){
-	 		if(s_c == 0){
-	 			s_c++;fprintf(fp,"\tcout<<intermediate;\n");
-	 		}
-	 		else{
-	 			fprintf(fp,"\tcout<<\",\"<<intermediate;\n");
-	 		}	
-	 	}
-	 	fprintf(fp,"\n\n");
-	 	t=t->next;
-	 	temp_index++;
-	 }
-	 fprintf(fp,"cout<<endl;\n\n");
-	 fprintf(fp,"}\n"); /* while end*/
-	 fprintf(fp,"fp.close();\n\n"); /* closed file in cpp file*/
-	 fprintf(fp,"}\n");	
-
-}
-
-
-
-
-void genarate_output_file_select(char* condition,char* fname,struct attribute* head){
-	 FILE *fp = fopen("output_file.cpp","w");
-	 fprintf(fp,"#include<bits/stdc++.h>\n\n");
-	 fprintf(fp,"using namespace std;\n\n");
-	 fprintf(fp,"int main(){\n\n");               /* opened int main()*/
-	 struct attribute* t= head;
-	 while(t){
-	 	if(t->type == 0){
-	 		fprintf(fp,"double %s;\n\n",t->attribute_name);
-	 	}
-	 	else{
-	 		fprintf(fp,"string %s;\n\n",t->attribute_name);
-	 	}
-	 	t=t->next;
-	 }
-	 char file_name[1000];
-	 sprintf(file_name,"ifstream fp(\"%s\");",fname);  /* opened file in cpp file*/
-	 fprintf(fp,"%s\n\n",file_name);
-
-	 fprintf(fp,"string a12b;\n\n");
-	 fprintf(fp,"\ngetline(fp,a12b);\n");
-	 fprintf(fp,"\ncout<<a12b<<endl;\n");
-	 fprintf(fp,"while (getline(fp,a12b)){\n\n");/* while start*/
-	 fprintf(fp,"\tstringstream check1(a12b);\n");
-	 fprintf(fp,"\tstring intermediate;\n");
-	 t = head;
-	 fprintf(fp,"\n\n");
-	 while(t){
-	 	fprintf(fp,"\tgetline(check1, intermediate, ',');\n");
-	 	if(t->type == 0){
-	 		sprintf(file_name,"%s = stod(intermediate);\n",t->attribute_name);
-	 		fprintf(fp,"\t%s",file_name);
-	 	}
-	 	else{
-	 		sprintf(file_name,"%s = intermediate;\n",t->attribute_name);
-	 		fprintf(fp,"\t%s",file_name);
-	 	}
-	 	fprintf(fp,"\n\n");
-	 	t= t->next;
-	 }	
-	 sprintf(file_name,"if(%s){\n",condition);
-	 fprintf(fp,"\t%s",file_name);
-	 fprintf(fp,"\t\tcout<<a12b<<endl;\n");
-	 fprintf(fp,"\t}");
-	 fprintf(fp,"\n\n");
-
-	 fprintf(fp,"}\n"); /* while end*/
-	 fprintf(fp,"fp.close();\n\n"); /* closed file in cpp file*/
-	 fprintf(fp,"}\n"); /* closed int main()*/
-	 fclose(fp);
-}
-
-
-void handle_cpp_file(int my_type,char* given_input){
-	if(my_type == 0){
-		int i =0;
-		int len = strlen(given_input);
-		while(i< len){
-			if(given_input[i] == '<'){break;}
-			i++;
-		}
-		i++;
-		char* condition = (char*) malloc(1000 * sizeof(char));
-		int j=0;
-		while(i<len){
-			if(given_input[i] == '$' ) break;
-			condition[j] = given_input[i];
-			i++;j++;
-		}
-		j--;
-		while(j>=0){
-			if(condition[j] == '>' ){
-				condition[j] = '\0';
-				break;
-			}
-			j--;
-		}
-		int s_fname = 0;
-		j=0;
-		char* fname = (char*) malloc(100 * sizeof(char));
-		while(i<len){
-			if(given_input[i] == '(' ) {s_fname = 1;i++;continue;}
-			if(s_fname == 1){
-				while(isalnum(given_input[i])){
-				   if(given_input[i] == ')') break;
-				   fname[j] = given_input[i];
-				   i++;j++;
-				}
-				fname[j]='\0';
-				break;
-			}
-		    i++;
-		}
-		FILE * fp = fopen(fname,"r");
-		if(fp == NULL){
-			printf("*****Error***** Table name entered is not present in database\n");
-			flag = 0;
-			return;
-		}
-		struct attribute* head = get_attributes(fp);
-		fclose(fp);
-		if(search_for_attribute( head,fname) == 0){
-			return;
-		}
-
-		genarate_output_file_select(condition,fname,head);
-
-	}
-	else if(my_type == 1){
-		char* str1 = (char*)malloc(2000*sizeof(char));
-		int i=0;
-		int len= strlen(given_input);
-		while(i<len){
-			if(given_input[i] == '<'){i++;break;}
-			i++;
-		}
-		int j=0;
-		while(i<len){
-			if(given_input[i] == '>'){
-				i++;
-				str1[j]='\0';break;
-			}
-			str1[j]= given_input[i];
-			i++;j++;
-		}
-		char * token = strtok(str1,",\n");
-		struct projection* p_head=NULL;
-		struct projection* p_prev = NULL;
-		while(token!=NULL){
-			struct projection* tem1 = (struct projection*)malloc(sizeof(struct projection));
-			strcpy(tem1->attribute_name,token);
-			tem1->next =NULL;
-			if(p_prev == NULL){
-				p_head = tem1;
-			}
-			else{
-				p_prev->next = tem1;
-			}
-			token=strtok(NULL,",\n");
-			p_prev = tem1;
-		}
-		j=0;
-		struct projection * t= p_head;
-
-		char* fname = (char*)malloc(100*sizeof(char));
-		int s_fname = 0;
-		while(i<len){
-			if(s_fname == 1){
-				if(given_input[i]==')'){
-					fname[j]='\0';break;
-				}
-				fname[j]= given_input[i];j++;
-			}
-			else{
-				if(given_input[i]=='(') s_fname = 1;
-			}
-			i++;	
-		}
-		FILE * fp = fopen(fname,"r");
-		if(fp == NULL){
-			printf("*****Error***** Table name entered is not present in database\n");
-			flag = 0;
-			return;
-		}
-		struct attribute* head = get_attributes(fp);
-		fclose(fp);
-		int * index = (int *)malloc(100*sizeof(int));
-		j=0;
-		while(p_head){
-			index[j]=search(head,p_head->attribute_name);
-			if(index[j] < 0){
-				flag = 0;
-				printf("*****Error***** The attribute `%s` is not present in database\n",p_head->attribute_name);
-				return;
-			}
-			p_head = p_head-> next;
-			j++;
-		}
-		genarate_output_file_project(index, fname,head,j);
-	}
-	else if(my_type == 2){
-		int i=0;
-		int len = strlen(given_input);
-		char* fname1 = (char*)malloc(200*sizeof(char));
-		char* fname2 = (char*)malloc(200*sizeof(char));
-		int s_fname =0;
-		int j=0;
-		while(i<len){
-			if(s_fname == 1){
-				if(given_input[i]== '>'){
-					fname1[j]='\0';break;
-				}
-				fname1[j]=given_input[i];
-				j++;
-			}
-			else{
-				if(given_input[i]=='<') s_fname = 1;
-			}
-			i++;
-		}
-		while(i<len){
-			if(given_input[i] == '<') break;
-			i++;
-		}
-		s_fname = 0;
-		j=0;
-		while(i<len){
-			if(s_fname == 1){
-				if(given_input[i]== '>'){
-					fname2[j]='\0';break;
-				}
-				fname2[j]=given_input[i];
-				j++;
-			}
-			else{
-				if(given_input[i]=='<') s_fname = 1;
-			}
-			i++;
-		}
-		
-		FILE * fp = fopen(fname1,"r");
-		if(fp == NULL){
-			printf("*****Error***** Table name `%s` entered is not present in database\n",fname1);
-			flag = 0;
-			return;
-		}
-		struct attribute* head1 = get_attributes(fp);
-		fclose(fp);
-		fp = fopen(fname2,"r");
-		if(fp == NULL){
-			printf("*****Error***** Table name `%s` entered is not present in database\n",fname2);
-			flag = 0;
-			return;
-		}
-		struct attribute* head2 = get_attributes(fp);
-		fclose(fp);
-		genarate_output_file_c_prod(fname1,fname2,head1, head2);
-	}
-	else if(my_type == 3){
-		int i=0;
-		int len = strlen(given_input);
-		char* fname1 = (char*)malloc(200*sizeof(char));
-		char* fname2 = (char*)malloc(200*sizeof(char));
-		int s_fname =0;
-		int j=0;
-		while(i<len){
-			if(s_fname == 1){
-				if(given_input[i]== '>'){
-					fname1[j]='\0';break;
-				}
-				fname1[j]=given_input[i];
-				j++;
-			}
-			else{
-				if(given_input[i]=='<') s_fname = 1;
-			}
-			i++;
-		}
-
-		while(i< len){
-			if(given_input[i] == '<'){break;}
-			i++;
-		}
-		i++;
-		char* condition = (char*) malloc(1000 * sizeof(char));
-		j=0;
-		while(i<len){
-			if(given_input[i] == '$' ) break;
-			condition[j] = given_input[i];
-			i++;j++;
-		}
-		j--;
-		while(j>=0){
-			if(condition[j] == '>' ){
-				condition[j] = '\0';
-				break;
-			}
-			j--;
-		}
-		s_fname = 0;
-		j=0;
-		while(i<len){
-			if(s_fname == 1){
-				if(given_input[i]== '>'){
-					fname2[j]='\0';break;
-				}
-				fname2[j]=given_input[i];
-				j++;
-			}
-			else{
-				if(given_input[i]=='<') s_fname = 1;
-			}
-			i++;
-		}
-		FILE * fp = fopen(fname1,"r");
-		if(fp == NULL){
-			flag = 0;
-			printf("*****Error***** Table name `%s` entered is not present in database\n",fname1);
-			return;
-		}
-		struct attribute* head1 = get_attributes(fp);
-		fclose(fp);
-		fp = fopen(fname2,"r");
-		if(fp == NULL){
-			flag = 0;
-			printf("*****Error***** Table name `%s` entered is not present in database\n",fname2);
-			return;
-		}
-		struct attribute* head2 = get_attributes(fp);
-		fclose(fp);
-		if(search_for_attribute1(head1,fname1,head2,fname2) == 0){
-			return;
-		}
-		genarate_output_file_equi(condition,fname1,fname2,head1, head2);
-
-	}
-	
-}
-
+#include <stdio.h>
 
 int main(){
-    given_input = (char*)malloc(10000*sizeof(char));
-    given_input[0]= '\0';
+	
 	yyparse();
-   if(flag && yynerrs == 0) printf("To get output please run make output command.\n");
-  	struct col_list* t= col_head;
-
-
-	return 0;
-}
+}        

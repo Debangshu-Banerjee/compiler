@@ -1,6 +1,6 @@
 SELECT < salary<200 > (Employee)
 
-SELECT < Name='John' AND Salary<200 > (Employee)
+SELECT < name='John' AND salary<200 > (Employee)
 
 SELECT (Employee) < salary<200 >
 

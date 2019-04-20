@@ -1,0 +1,35 @@
+ra_parser.tab.c: In function ‘yyparse’:
+ra_parser.tab.c:1234:16: warning: implicit declaration of function ‘yylex’ [-Wimplicit-function-declaration]
+       yychar = yylex ();
+                ^
+ra_parser.y:30:6: warning: implicit declaration of function ‘handle_cpp_file’ [-Wimplicit-function-declaration]
+ INITIAL:          QUERY ENDLN          {handle_cpp_file(my_type, given_input);return 0;}
+      ^
+ra_parser.y: In function ‘get_attributes’:
+ra_parser.y:152:15: warning: variable ‘ret’ set but not used [-Wunused-but-set-variable]
+        double ret = 0.0;
+               ^
+ra_parser.y: At top level:
+ra_parser.y:473:6: warning: conflicting types for ‘handle_cpp_file’
+ void handle_cpp_file(int my_type,char* given_input){
+      ^
+ra_parser.y:30:6: note: previous implicit declaration of ‘handle_cpp_file’ was here
+ INITIAL:          QUERY ENDLN          {handle_cpp_file(my_type, given_input);return 0;}
+      ^
+ra_parser.y: In function ‘handle_cpp_file’:
+ra_parser.y:503:11: warning: implicit declaration of function ‘isalnum’ [-Wimplicit-function-declaration]
+     while(isalnum(given_input[i])){
+           ^
+ra_parser.y:562:23: warning: unused variable ‘t’ [-Wunused-variable]
+   struct projection * t= p_head;
+                       ^
+ra_parser.y: In function ‘main’:
+ra_parser.y:745:21: warning: unused variable ‘t’ [-Wunused-variable]
+    struct col_list* t= col_head;
+                     ^
+lex.yy.c:1321:17: warning: ‘yyunput’ defined but not used [-Wunused-function]
+     static void yyunput (int c, char * yy_bp )
+                 ^
+lex.yy.c:1364:16: warning: ‘input’ defined but not used [-Wunused-function]
+     static int input  (void)
+                ^

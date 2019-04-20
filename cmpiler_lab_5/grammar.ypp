@@ -1,0 +1,168 @@
+%{
+#define INT_TYPE -1
+#define FLOAT_TYPE -2
+#define BOOL_TYPE -3
+#define ERROR_TYPE -4 
+#define SIMPLE -1
+#define ARRAY -2
+#define PARAM -1
+#define VAR -2
+
+#include <bits/stdc++.h>
+#include "structure_def.h"
+
+using namespace std;
+
+extern int yylex();
+
+void yyerror(char *s){
+	fprintf (stderr, "%s\n", s);
+}
+
+
+
+%}
+
+%union{
+  char *name;          // name of a variable or function 
+  int integer_value;   // value of an integer
+  float real_value;    // value of a real number 
+  int type;            // check the define -1 for int -2 float and so on 
+}  
+%token ELSE FOR IF RETURN WHILE PTR_OP INC_OP DEC_OP AND_OP OR_OP LT GT LE_OP GE_OP EQ_OP NE_OP DO BREAK LIBRARY CONTINUE ERROR
+%token NOT AMP TILDE STAR ASSIGN OPEN_BRACKET CLOSE_BRACKET OPEN_CURLY CLOSE_CURLY OPEN_SQUARE CLOSE_SQUARE
+%token SEMI COMMA DOT PLUS MINUS DIVIDE MODULUS PIPE XOR QUES COLON
+%token <name> ID
+%token <type> BOOL CHAR INT FLOAT VOID
+%token <integer_value> NUM
+%token <real_value> REAL
+
+%nonassoc "IFX"
+%nonassoc ELSE
+
+%left OR_OP
+%left AND_OP
+%left EQ_OP NE_OP
+%left GT
+%left LT
+%left PLUS MINUS
+%left STAR DIVIDE
+%right NOT
+%right UMINUS
+%right INC_OP DEC_OP
+
+%%
+
+program: statement_list;
+              
+
+function_declaration: function_head first_curly statement_list last_curly;
+
+first_curly: OPEN_CURLY;
+
+last_curly: CLOSE_CURLY;
+
+function_head: res_id OPEN_BRACKET parameter_list CLOSE_BRACKET;
+
+res_id: type ID;
+
+type: INT
+      |FLOAT
+      |VOID;
+
+statement_list: statement_list M statement
+                | /* empty */ ;
+
+statement: variable_declaration SEMI
+          |RETURN SEMI
+          |RETURN conditional_expression SEMI
+          |selection_statement
+          |iteration_statement
+          |assignment_statement SEMI
+          |first_curly statement_list last_curly
+          | function_declaration;
+
+selection_statement: ifexp  statement   ELSE N M statement
+                    |ifexp  statement %prec "IFX";
+
+/* switch case statement left */
+
+ifexp: IF OPEN_BRACKET conditional_expression CLOSE_BRACKET;
+
+iteration_statement: whileexp statement
+                    |forexp conditional_expression CLOSE_BRACKET;
+
+whileexp: WHILE M OPEN_BRACKET conditional_expression CLOSE_BRACKET;
+
+forexp: FOR OPEN_BRACKET conditional_expression SEMI M conditional_expression SEMI;
+
+M: /*empty*/;
+
+N: /*empty*/ ;
+
+conditional_expression: conditional_expression AND_OP expression
+                        |conditional_expression OR_OP expression
+                        |expression;
+
+expression: rel_expression
+          |normal_expression;
+
+rel_expression: normal_expression GT normal_expression
+                |normal_expression LT normal_expression
+                |normal_expression GE_OP normal_expression
+                |normal_expression LE_OP normal_expression
+                |normal_expression EQ_OP normal_expression
+                |normal_expression NE_OP normal_expression;
+
+normal_expression: normal_expression PLUS term
+                  |normal_expression MINUS term
+                  |term;
+
+term: term STAR factor
+      |term DIVIDE factor
+      |factor;
+
+factor: unary_expression;
+
+unary_expression: primary_expression
+                |MINUS unary_expression
+                |NOT unary_expression
+                |DEC_OP unary_expression
+                |INC_OP unary_expression;
+
+primary_expression: NUM
+                    |REAL
+                    | id_arr
+                    |OPEN_BRACKET conditional_expression CLOSE_BRACKET;
+
+
+elist: elist OPEN_SQUARE expression CLOSE_SQUARE
+      |OPEN_SQUARE expression CLOSE_SQUARE;
+
+assignment_statement: id_arr ASSIGN conditional_expression;
+
+variable_declaration: type varlist;
+
+id_arr: ID
+      |ID elist;
+
+
+parameter_list: param_decl
+              |/*empty*/;
+
+param_decl: param_decl COMMA unit_declaration
+          |unit_declaration;
+
+unit_declaration: type ID
+                |type ID OPEN_SQUARE CLOSE_SQUARE;
+
+varlist: varlist COMMA id_arr
+        |id_arr;
+
+%%
+#include <stdio.h>
+
+int main(){
+	
+	yyparse();
+}        

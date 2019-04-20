@@ -14,31 +14,23 @@ ifstream fp("Employee");
 
 string a12b;
 
-
-getline(fp,a12b);
-
-cout<<a12b<<endl;
 while (getline(fp,a12b)){
 
 	stringstream check1(a12b);
 	string intermediate;
+	getline(check1, intermediate, ',');
+	cout<<intermediate;
 
 
 	getline(check1, intermediate, ',');
-	id = stod(intermediate);
+	cout<<","<<intermediate;
 
 
 	getline(check1, intermediate, ',');
-	name = intermediate;
+	cout<<","<<intermediate;
 
 
-	getline(check1, intermediate, ',');
-	salary = stod(intermediate);
-
-
-	if((salary<200&&name=="John")||(id>3)){
-		cout<<a12b<<endl;
-	}
+cout<<endl;
 
 }
 fp.close();
