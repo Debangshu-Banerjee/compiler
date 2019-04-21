@@ -1,12 +1,5 @@
 %{
-#define INT_TYPE -1
-#define FLOAT_TYPE -2
-#define BOOL_TYPE -3
-#define ERROR_TYPE -4 
-#define SIMPLE -1
-#define ARRAY -2
-#define PARAM -1
-#define VAR -2
+
 
 #include <bits/stdc++.h>
 #include "structure_def.h"
@@ -14,12 +7,15 @@
 using namespace std;
 
 extern int yylex();
-
-void yyerror(char *s){
-	fprintf (stderr, "%s\n", s);
+extern int yylineno;
+void yyerror(string s){
+	 cerr<< s <<"at line no "<< yylineno<< endl;
 }
-
-
+int global_temp = 0;
+code_output intermediate_output;
+sym_tab symbol_table;
+int level = 0;
+int active_function_index = 0;  // -1 for any type error
 
 %}
 
@@ -28,6 +24,19 @@ void yyerror(char *s){
   int integer_value;   // value of an integer
   float real_value;    // value of a real number 
   int type;            // check the define -1 for int -2 float and so on 
+  N_* N_s;
+  M_ * M_s;
+  ifexp_ * ifexp_s;
+  loopexp_ * loopexp_s;
+  varlist_ * varlist_s;
+  id_arr_ * id_arr_s;
+  type_ * type_s;
+  elist_ * elist_s;
+  conditional_expression_ * conditional_expression_s;
+  parameter_list_ * parameter_list_s;
+  assignment_statement_ * assignment_statement_s;
+  statement_list_ * statement_list_s;
+  result_ * result_s;
 }  
 %token ELSE FOR IF RETURN WHILE PTR_OP INC_OP DEC_OP AND_OP OR_OP LT GT LE_OP GE_OP EQ_OP NE_OP DO BREAK LIBRARY CONTINUE ERROR
 %token NOT AMP TILDE STAR ASSIGN OPEN_BRACKET CLOSE_BRACKET OPEN_CURLY CLOSE_CURLY OPEN_SQUARE CLOSE_SQUARE
@@ -51,6 +60,20 @@ void yyerror(char *s){
 %right UMINUS
 %right INC_OP DEC_OP
 
+%type<N_s> N
+%type<M_s> M
+%type<ifexp_s> ifexp
+%type<loopexp_s> whileexp forexp
+%type<varlist_s> varlist         // no constructor
+%type<id_arr_s> id_arr
+%type<type_s> type
+%type<elist_s> elist   // no constructor
+%type<conditional_expression_s> conditional_expression expression rel_expression normal_expression term factor unary_expression primary_expression
+%type<parameter_list_s> parameter_list param_decl
+%type<assignment_statement_s> assignment_statement
+%type<statement_list_s> statement_list statement selection_statement iteration_statement // no constructor
+%type<result_s> res_id
+
 %%
 
 program: statement_list;
@@ -58,17 +81,32 @@ program: statement_list;
 
 function_declaration: function_head first_curly statement_list last_curly;
 
-first_curly: OPEN_CURLY;
+first_curly: OPEN_CURLY { printf("level incremented\n");}
+            ;
 
 last_curly: CLOSE_CURLY;
 
 function_head: res_id OPEN_BRACKET parameter_list CLOSE_BRACKET;
 
-res_id: type ID;
+res_id: type ID { 
+    string s($2);
+    if(symbol_table.search_func(s) != -1){
+      $$ = new result_(ERROR_TYPE);
+      yyerror("this function is declared previously\n");
+      active_function_index = -1;
+    }
+    else{
+        $$ = new result_($1->type);
+        active_function_index = symbol_table.add_function(s,$1->type);
+        level = 1;
+    }
+}
+        ;
 
-type: INT
-      |FLOAT
-      |VOID;
+type: INT    {$$ = new type_(INT_TYPE);}
+      |FLOAT {$$ = new type_(FLOAT_TYPE);}
+      |VOID {$$ = new type_(VOID_TYPE);}
+      ;
 
 statement_list: statement_list M statement
                 | /* empty */ ;
@@ -87,14 +125,14 @@ selection_statement: ifexp  statement   ELSE N M statement
 
 /* switch case statement left */
 
-ifexp: IF OPEN_BRACKET conditional_expression CLOSE_BRACKET;
+ifexp: IF OPEN_BRACKET assignment_statement CLOSE_BRACKET;
 
 iteration_statement: whileexp statement
-                    |forexp conditional_expression CLOSE_BRACKET;
+                    |forexp assignment_statement CLOSE_BRACKET statement;
 
-whileexp: WHILE M OPEN_BRACKET conditional_expression CLOSE_BRACKET;
+whileexp: WHILE M OPEN_BRACKET assignment_statement CLOSE_BRACKET;
 
-forexp: FOR OPEN_BRACKET conditional_expression SEMI M conditional_expression SEMI;
+forexp: FOR OPEN_BRACKET assignment_statement SEMI M assignment_statement SEMI;
 
 M: /*empty*/;
 
@@ -134,12 +172,15 @@ primary_expression: NUM
                     |REAL
                     | id_arr
                     |OPEN_BRACKET conditional_expression CLOSE_BRACKET;
-
+                   /* --------------- function call has to be added -----------*/ 	
 
 elist: elist OPEN_SQUARE expression CLOSE_SQUARE
       |OPEN_SQUARE expression CLOSE_SQUARE;
 
-assignment_statement: id_arr ASSIGN conditional_expression;
+assignment_statement: id_arr ASSIGN conditional_expression
+					  |	conditional_expression	
+					  | /* empty */
+					  ;
 
 variable_declaration: type varlist;
 

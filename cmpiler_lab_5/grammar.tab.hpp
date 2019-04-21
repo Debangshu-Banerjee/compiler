@@ -34,7 +34,7 @@
 # define YY_YY_GRAMMAR_TAB_HPP_INCLUDED
 /* Debug traces.  */
 #ifndef YYDEBUG
-# define YYDEBUG 1
+# define YYDEBUG 0
 #endif
 #if YYDEBUG
 extern int yydebug;
@@ -105,14 +105,27 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 26 "grammar.ypp" /* yacc.c:1909  */
+#line 22 "grammar.ypp" /* yacc.c:1909  */
 
   char *name;          // name of a variable or function 
   int integer_value;   // value of an integer
   float real_value;    // value of a real number 
   int type;            // check the define -1 for int -2 float and so on 
+  N_* N_s;
+  M_ * M_s;
+  ifexp_ * ifexp_s;
+  loopexp_ * loopexp_s;
+  varlist_ * varlist_s;
+  id_arr_ * id_arr_s;
+  type_ * type_s;
+  elist_ * elist_s;
+  conditional_expression_ * conditional_expression_s;
+  parameter_list_ * parameter_list_s;
+  assignment_statement_ * assignment_statement_s;
+  statement_list_ * statement_list_s;
+  result_ * result_s;
 
-#line 116 "grammar.tab.hpp" /* yacc.c:1909  */
+#line 129 "grammar.tab.hpp" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;

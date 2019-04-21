@@ -1,11 +1,13 @@
 %option noyywrap
 %{
 #include <bits/stdc++.h>
+#include "structure_def.h"
 #include "grammar.tab.hpp"
+
 using namespace std;
 %}
 
-
+%option yylineno
 %s NORMAL
 %x COMM
 
