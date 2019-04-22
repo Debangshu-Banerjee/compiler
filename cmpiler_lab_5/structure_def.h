@@ -145,6 +145,12 @@ class elist_{
 public:	
 	int type;
 	int no_of_expressions;
+	string temporary_name;
+};
+
+class new_num_list_{
+public:
+	vector<int> num_list;
 };
 
 class type_{
@@ -194,12 +200,19 @@ public:
 	}
 };
 
-class id_arr_{
+class id_arr_declare_{
 public:
 	int index_in_sym_tab;
-	id_arr_(int index_in_sym_tab){
+	id_arr_declare_(int index_in_sym_tab){
 		this->index_in_sym_tab = index_in_sym_tab;
 	}
+};
+class id_arr_{
+public:
+	  variable * var;
+	  id_arr_(variable * var){
+	  		this->var = var;
+	  }
 };
 
 

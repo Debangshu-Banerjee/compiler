@@ -30,6 +30,7 @@ int active_function_index = 0;  // -1 for any type error
   loopexp_ * loopexp_s;
   varlist_ * varlist_s;
   id_arr_ * id_arr_s;
+  id_arr_declare_ * id_arr_declare_s;
   type_ * type_s;
   elist_ * elist_s;
   conditional_expression_ * conditional_expression_s;
@@ -37,6 +38,7 @@ int active_function_index = 0;  // -1 for any type error
   assignment_statement_ * assignment_statement_s;
   statement_list_ * statement_list_s;
   result_ * result_s;
+  new_num_list_ * new_num_list_s;
 }  
 %token ELSE FOR IF RETURN WHILE PTR_OP INC_OP DEC_OP AND_OP OR_OP LT GT LE_OP GE_OP EQ_OP NE_OP DO BREAK LIBRARY CONTINUE ERROR
 %token NOT AMP TILDE STAR ASSIGN OPEN_BRACKET CLOSE_BRACKET OPEN_CURLY CLOSE_CURLY OPEN_SQUARE CLOSE_SQUARE
@@ -73,6 +75,8 @@ int active_function_index = 0;  // -1 for any type error
 %type<assignment_statement_s> assignment_statement
 %type<statement_list_s> statement_list statement selection_statement iteration_statement // no constructor
 %type<result_s> res_id
+%type<new_num_list_s> new_num_list
+%type<id_arr_declare_s> id_arr_declare
 
 %%
 
@@ -81,7 +85,7 @@ program: statement_list;
 
 function_declaration: function_head first_curly statement_list last_curly;
 
-first_curly: OPEN_CURLY { printf("level incremented\n");}
+first_curly: OPEN_CURLY { level++;}
             ;
 
 last_curly: CLOSE_CURLY;
@@ -99,6 +103,8 @@ res_id: type ID {
         $$ = new result_($1->type);
         active_function_index = symbol_table.add_function(s,$1->type);
         level = 1;
+        string new_s = "func_" + s + ":";
+        intermediate_output.gen(new_s);
     }
 }
         ;
@@ -184,9 +190,91 @@ assignment_statement: id_arr ASSIGN conditional_expression
 
 variable_declaration: type varlist;
 
-id_arr: ID
+id_arr: ID{
+}
       |ID elist;
 
+/* storing -1 in place of index be careful */
+id_arr_declare : ID {
+  if(active_function_index != -1){
+      string s($1);
+      variable * v_temp = symbol_table.search_variable_current(active_function_index,s,level);
+      vector<int> v;
+      v.clear();
+      if(v_temp == NULL){
+          int index = symbol_table.add_variable(active_function_index,s,SIMPLE,v,level);
+          $$ = new id_arr_declare_(index);
+      }
+      else{
+          if(v_temp->level_of_declaration != level){
+              if(level != 2){
+                  int index = symbol_table.add_variable(active_function_index,s,SIMPLE,v,level);
+                  $$ = new id_arr_declare_(index);
+              }
+              else{
+                  if(symbol_table.search_parameter(active_function_index,s) == false){
+                    int index = symbol_table.add_variable(active_function_index,s,SIMPLE,v,level);
+                    $$ = new id_arr_declare_(index);
+                  }
+                  else{
+                      yyerror("This variable is defined in this scope previously");
+                      $$ = new id_arr_declare_(-1);
+                  }
+              }
+          }
+          else{
+              yyerror("This variable is defined in this scope previously");
+              $$ = new id_arr_declare_(-1);
+          }
+      } 
+  }     
+}
+                | ID new_num_list{
+if(active_function_index != -1){
+      string s($1);
+      variable * v_temp = symbol_table.search_variable_current(active_function_index,s,level);
+      vector<int> v;
+      v.clear();
+      v = $2-> num_list;
+      if(v_temp == NULL){
+          int index = symbol_table.add_variable(active_function_index,s,ARRAY,v,level);
+          $$ = new id_arr_declare_(index);
+      }
+      else{
+          if(v_temp->level_of_declaration != level){
+              if(level != 2){
+                  int index = symbol_table.add_variable(active_function_index,s,ARRAY,v,level);
+                  $$ = new id_arr_declare_(index);
+              }
+              else{
+                  if(symbol_table.search_parameter(active_function_index,s) == false){
+                    int index = symbol_table.add_variable(active_function_index,s,ARRAY,v,level);
+                    $$ = new id_arr_declare_(index);
+                  }
+                  else{
+                      yyerror("This variable is defined in this scope previously");
+                      $$ = new id_arr_declare_(-1);
+                  }
+              }
+          }
+          else{
+              yyerror("This variable is defined in this scope previously");
+              $$ = new id_arr_declare_(-1);
+          }
+      } 
+  }
+}                
+
+                ;
+
+new_num_list : new_num_list  OPEN_SQUARE NUM CLOSE_SQUARE {
+      $$->num_list.insert($$->num_list.end(),$1->num_list.begin(),$1->num_list.end());
+      $$->num_list.push_back($3);
+}
+               | OPEN_SQUARE NUM CLOSE_SQUARE {
+    $$->num_list.push_back($2);     
+}
+               ;                   
 
 parameter_list: param_decl
               |/*empty*/;
@@ -197,8 +285,8 @@ param_decl: param_decl COMMA unit_declaration
 unit_declaration: type ID
                 |type ID OPEN_SQUARE CLOSE_SQUARE;
 
-varlist: varlist COMMA id_arr
-        |id_arr;
+varlist: varlist COMMA id_arr_declare
+        |id_arr_declare;
 
 %%
 #include <stdio.h>

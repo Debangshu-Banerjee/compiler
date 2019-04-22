@@ -117,6 +117,7 @@ union YYSTYPE
   loopexp_ * loopexp_s;
   varlist_ * varlist_s;
   id_arr_ * id_arr_s;
+  id_arr_declare_ * id_arr_declare_s;
   type_ * type_s;
   elist_ * elist_s;
   conditional_expression_ * conditional_expression_s;
@@ -124,8 +125,9 @@ union YYSTYPE
   assignment_statement_ * assignment_statement_s;
   statement_list_ * statement_list_s;
   result_ * result_s;
+  new_num_list_ * new_num_list_s;
 
-#line 129 "grammar.tab.hpp" /* yacc.c:1909  */
+#line 131 "grammar.tab.hpp" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;
