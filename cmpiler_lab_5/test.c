@@ -1,4 +1,4 @@
-int main(){
+int main(int ami){
 
 	float e;
 	for(e;e<10;++e){

@@ -93,6 +93,7 @@ bool sym_tab :: search_parameter(int active_function_index,string name){
 }
 
 int sym_tab :: add_parameter(int active_function_index,string name,int type,int eletype){
+		cout<<"*** trying to add parameter " << name << endl;
 		if( active_function_index < 0 || active_function_index >= global_sym_tab.size()) return -1;
 		parameter * t = new parameter(name,type,eletype);
 		int index = global_sym_tab[active_function_index]->param_list.size();

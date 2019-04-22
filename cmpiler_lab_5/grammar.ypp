@@ -39,6 +39,7 @@ int active_function_index = 0;  // -1 for any type error
   statement_list_ * statement_list_s;
   result_ * result_s;
   new_num_list_ * new_num_list_s;
+  unit_declaration_ * unit_declaration_s;
 }
 %token ELSE FOR IF RETURN WHILE PTR_OP INC_OP DEC_OP AND_OP OR_OP LT GT LE_OP GE_OP EQ_OP NE_OP DO BREAK LIBRARY CONTINUE ERROR
 %token NOT AMP TILDE STAR ASSIGN OPEN_BRACKET CLOSE_BRACKET OPEN_CURLY CLOSE_CURLY OPEN_SQUARE CLOSE_SQUARE
@@ -77,6 +78,7 @@ int active_function_index = 0;  // -1 for any type error
 %type<result_s> res_id
 %type<new_num_list_s> new_num_list
 %type<id_arr_declare_s> id_arr_declare
+%type<unit_declaration_s> unit_declaration
 
 %%
 
@@ -175,8 +177,27 @@ unary_expression: primary_expression
                 |INC_OP unary_expression;
 
 primary_expression: NUM
+{
+$$ = new conditional_expression_(INT_TYPE);
+std::ostringstream out;
+out << $$->temporary_name << " = " << $1;
+string s = out.str();
+intermediate_output.gen(s);
+}
+
                     |REAL
+{
+$$ = new conditional_expression_(FLOAT_TYPE);
+std::ostringstream out;
+out << $$->temporary_name << " = " << $1;
+string s = out.str();
+intermediate_output.gen(s);
+}
+
                     | id_arr
+{
+
+}
                     |OPEN_BRACKET conditional_expression CLOSE_BRACKET;
                    /* --------------- function call has to be added -----------*/
 
@@ -191,7 +212,7 @@ assignment_statement: id_arr ASSIGN conditional_expression
 variable_declaration: type varlist{
 if(active_function_index != -1 ){
 	symbol_table.patch_variable(active_function_index,$2->list_of_indexes,$1->type);
-	/* if you want to set offset do it here */
+
  }
 }
 
@@ -286,13 +307,70 @@ new_num_list : new_num_list  OPEN_SQUARE NUM CLOSE_SQUARE {
                ;
 
 parameter_list: param_decl
-              |/*empty*/;
+							{ $$ = new parameter_list_($1->no_of_parameter);
+								symbol_table.patch_function_parameter_no(active_function_index,$$->no_of_parameter);
+							}
+              |/*empty*/
+							{ $$ = new parameter_list_(0);
+							 symbol_table.patch_function_parameter_no(active_function_index,$$->no_of_parameter);
+							}
+              ;
 
 param_decl: param_decl COMMA unit_declaration
-          |unit_declaration;
 
-unit_declaration: type ID
-                |type ID OPEN_SQUARE CLOSE_SQUARE;
+{
+if(active_function_index != -1){
+	 if($3->type != ERROR_TYPE){
+	 $$ = new parameter_list_($1->no_of_parameter + 1);;
+	 }
+	 else{
+	  	$$ = new parameter_list_($1->no_of_parameter);
+	 }
+}
+}
+
+
+          |unit_declaration
+{
+if(active_function_index != -1){
+	 if($1->type != ERROR_TYPE){
+	 $$ = new parameter_list_(1);
+	 }
+	 else{
+	  	$$ = new parameter_list_(0);
+	 }
+}
+}
+          ;
+
+unit_declaration: type ID{
+if(active_function_index != -1){
+	string s($2);
+	if(symbol_table.search_parameter(active_function_index,s) == false ){
+		int index = symbol_table.add_parameter(active_function_index,s,SIMPLE,$1->type);
+		$$ = new unit_declaration_ ($1->type);
+	}
+	else{
+			yyerror("This parameter has been passed early");
+			$$ = new unit_declaration_ (ERROR_TYPE);
+	}
+}
+}
+                |type ID OPEN_SQUARE CLOSE_SQUARE
+{
+if(active_function_index != -1){
+	string s($2);
+	if(symbol_table.search_parameter(active_function_index,s) == false ){
+		int index = symbol_table.add_parameter(active_function_index,s,ARRAY,$1->type);
+		$$ = new unit_declaration_ ($1->type);
+	}
+	else{
+			yyerror("This parameter has been passed early");
+			$$ = new unit_declaration_ (ERROR_TYPE);
+	}
+}
+}
+               ;
 
 varlist: varlist COMMA id_arr_declare{
 	  $$ = new varlist_();
@@ -301,7 +379,7 @@ varlist: varlist COMMA id_arr_declare{
 }
         |id_arr_declare{
           $$ = new varlist_();
-					$$->list_of_indexes.push_back($1->index_in_sym_tab);
+		  $$->list_of_indexes.push_back($1->index_in_sym_tab);
         }
 
         ;

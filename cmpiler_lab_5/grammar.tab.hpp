@@ -126,8 +126,9 @@ union YYSTYPE
   statement_list_ * statement_list_s;
   result_ * result_s;
   new_num_list_ * new_num_list_s;
+  unit_declaration_ * unit_declaration_s;
 
-#line 131 "grammar.tab.hpp" /* yacc.c:1909  */
+#line 132 "grammar.tab.hpp" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;

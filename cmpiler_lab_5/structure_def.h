@@ -235,6 +235,12 @@ public:
 	  		this->var = var;
 	  }
 };
-
+class unit_declaration_{
+public:
+	int type;
+	unit_declaration_(int type){
+		this->type = type;
+	}
+};
 
 #endif
