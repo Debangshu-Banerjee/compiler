@@ -180,10 +180,10 @@ union YYSTYPE
 {
 #line 22 "grammar.ypp" /* yacc.c:355  */
 
-  char *name;          // name of a variable or function 
+  char *name;          // name of a variable or function
   int integer_value;   // value of an integer
-  float real_value;    // value of a real number 
-  int type;            // check the define -1 for int -2 float and so on 
+  float real_value;    // value of a real number
+  int type;            // check the define -1 for int -2 float and so on
   N_* N_s;
   M_ * M_s;
   ifexp_ * ifexp_s;
@@ -526,8 +526,8 @@ static const yytype_uint16 yyrline[] =
      147,   148,   149,   151,   152,   154,   155,   156,   157,   158,
      159,   161,   162,   163,   165,   166,   167,   169,   171,   172,
      173,   174,   175,   177,   178,   179,   180,   183,   184,   186,
-     187,   188,   191,   193,   195,   198,   232,   270,   274,   279,
-     280,   282,   283,   285,   286,   288,   289
+     187,   188,   191,   200,   202,   205,   239,   277,   282,   288,
+     289,   291,   292,   294,   295,   297,   302
 };
 #endif
 
@@ -1408,7 +1408,7 @@ yyreduce:
 
   case 7:
 #line 95 "grammar.ypp" /* yacc.c:1646  */
-    { 
+    {
     string s((yyvsp[0].name));
     if(symbol_table.search_func(s) != -1){
       (yyval.result_s) = new result_(ERROR_TYPE);
@@ -1444,15 +1444,26 @@ yyreduce:
 #line 1445 "grammar.tab.cpp" /* yacc.c:1646  */
     break;
 
+  case 62:
+#line 191 "grammar.ypp" /* yacc.c:1646  */
+    {
+if(active_function_index != -1 ){
+	symbol_table.patch_variable(active_function_index,(yyvsp[0].varlist_s)->list_of_indexes,(yyvsp[-1].type_s)->type);
+	/* if you want to set offset do it here */
+ }
+}
+#line 1456 "grammar.tab.cpp" /* yacc.c:1646  */
+    break;
+
   case 63:
-#line 193 "grammar.ypp" /* yacc.c:1646  */
+#line 200 "grammar.ypp" /* yacc.c:1646  */
     {
 }
-#line 1452 "grammar.tab.cpp" /* yacc.c:1646  */
+#line 1463 "grammar.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 65:
-#line 198 "grammar.ypp" /* yacc.c:1646  */
+#line 205 "grammar.ypp" /* yacc.c:1646  */
     {
   if(active_function_index != -1){
       string s((yyvsp[0].name));
@@ -1484,14 +1495,14 @@ yyreduce:
               yyerror("This variable is defined in this scope previously");
               (yyval.id_arr_declare_s) = new id_arr_declare_(-1);
           }
-      } 
-  }     
+      }
+  }
 }
-#line 1491 "grammar.tab.cpp" /* yacc.c:1646  */
+#line 1502 "grammar.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 66:
-#line 232 "grammar.ypp" /* yacc.c:1646  */
+#line 239 "grammar.ypp" /* yacc.c:1646  */
     {
 if(active_function_index != -1){
       string s((yyvsp[-1].name));
@@ -1524,31 +1535,52 @@ if(active_function_index != -1){
               yyerror("This variable is defined in this scope previously");
               (yyval.id_arr_declare_s) = new id_arr_declare_(-1);
           }
-      } 
+      }
   }
 }
-#line 1531 "grammar.tab.cpp" /* yacc.c:1646  */
+#line 1542 "grammar.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 67:
-#line 270 "grammar.ypp" /* yacc.c:1646  */
+#line 277 "grammar.ypp" /* yacc.c:1646  */
     {
+      (yyval.new_num_list_s)  = new new_num_list_();
       (yyval.new_num_list_s)->num_list.insert((yyval.new_num_list_s)->num_list.end(),(yyvsp[-3].new_num_list_s)->num_list.begin(),(yyvsp[-3].new_num_list_s)->num_list.end());
       (yyval.new_num_list_s)->num_list.push_back((yyvsp[-1].integer_value));
 }
-#line 1540 "grammar.tab.cpp" /* yacc.c:1646  */
+#line 1552 "grammar.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 68:
-#line 274 "grammar.ypp" /* yacc.c:1646  */
+#line 282 "grammar.ypp" /* yacc.c:1646  */
     {
-    (yyval.new_num_list_s)->num_list.push_back((yyvsp[-1].integer_value));     
+    (yyval.new_num_list_s)  = new new_num_list_();
+    (yyval.new_num_list_s)->num_list.push_back((yyvsp[-1].integer_value));
 }
-#line 1548 "grammar.tab.cpp" /* yacc.c:1646  */
+#line 1561 "grammar.tab.cpp" /* yacc.c:1646  */
+    break;
+
+  case 75:
+#line 297 "grammar.ypp" /* yacc.c:1646  */
+    {
+	  (yyval.varlist_s) = new varlist_();
+		(yyval.varlist_s)->list_of_indexes.insert((yyval.varlist_s)->list_of_indexes.end(),(yyvsp[-2].varlist_s)->list_of_indexes.begin(),(yyvsp[-2].varlist_s)->list_of_indexes.end());
+		(yyval.varlist_s)->list_of_indexes.push_back((yyvsp[0].id_arr_declare_s)->index_in_sym_tab);
+}
+#line 1571 "grammar.tab.cpp" /* yacc.c:1646  */
+    break;
+
+  case 76:
+#line 302 "grammar.ypp" /* yacc.c:1646  */
+    {
+          (yyval.varlist_s) = new varlist_();
+					(yyval.varlist_s)->list_of_indexes.push_back((yyvsp[0].id_arr_declare_s)->index_in_sym_tab);
+        }
+#line 1580 "grammar.tab.cpp" /* yacc.c:1646  */
     break;
 
 
-#line 1552 "grammar.tab.cpp" /* yacc.c:1646  */
+#line 1584 "grammar.tab.cpp" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -1776,11 +1808,12 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 291 "grammar.ypp" /* yacc.c:1906  */
+#line 309 "grammar.ypp" /* yacc.c:1906  */
 
 #include <stdio.h>
 
 int main(){
-	
+
 	yyparse();
-}        
+  symbol_table.display();
+}

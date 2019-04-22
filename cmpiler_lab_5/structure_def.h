@@ -4,15 +4,33 @@
 #define FLOAT_TYPE -2
 #define BOOL_TYPE -3
 #define VOID_TYPE -5
-#define ERROR_TYPE -4 
+#define ERROR_TYPE -4
 #define SIMPLE -1
 #define ARRAY -2
 #define PARAM -1
 #define VAR -2
+#define INT_TYPE_SIZE 4
+#define FLOAT_TYPE_SIZE 8
 
 #include<bits/stdc++.h>
 using namespace std;
 extern int global_temp;
+
+class gloabal_offset_structure{
+public:
+	int curr_offset;
+	gloabal_offset_structure(){
+		curr_offset = 0;
+	}
+	int get_curr_offset(){
+		return curr_offset;
+	}
+	void update_curr_offset(int addition){
+		this->curr_offset = this->curr_offset + addition;
+	}
+};
+
+
 class variable{
 public :
 	string name;
@@ -20,12 +38,14 @@ public :
 	int eletype;
 	vector<int> dimlist;
 	int level_of_declaration;
+	int offset;
 	variable(string name,int type,int eletype,vector<int> dimlist,int level_of_declaration){
 		this->name = name;
 		this->type = type;
 		this->eletype = eletype;
 		this->dimlist = dimlist;
-		this->level_of_declaration = level_of_declaration; 
+		this->level_of_declaration = level_of_declaration;
+		this->offset = -1;
 	}
 };
 class parameter{
@@ -81,6 +101,7 @@ public:
 	int add_parameter(int active_function_index,string name,int type,int eletype);
 	bool patch_variable(int active_function_index,vector<int> var_index,int eletype);
 	bool patch_function_parameter_no(int active_function_index,int no_of_parameter);
+	void display();
 };
 
 class result_{
@@ -122,14 +143,14 @@ public:
 
 class parameter_list_{
 public:
-	int no_of_parameter; 
+	int no_of_parameter;
 	parameter_list_(int no_of_parameter){
 		this->no_of_parameter = no_of_parameter;
 	}
 };
 
 class conditional_expression_{
-public:	
+public:
 	int type;
 	string temporary_name;
 	conditional_expression_(int type){
@@ -142,7 +163,7 @@ public:
 };
 
 class elist_{
-public:	
+public:
 	int type;
 	int no_of_expressions;
 	string temporary_name;
@@ -154,7 +175,7 @@ public:
 };
 
 class type_{
-public:	
+public:
 	int type;
 	type_(int type){
 		this->type = type;
@@ -168,7 +189,7 @@ public:
 
 class ifexp_{
 public:
-	vector<int> false_list; 
+	vector<int> false_list;
 	ifexp_(int index){
 		this->false_list.push_back(index);
 	}
@@ -216,4 +237,4 @@ public:
 };
 
 
-#endif 
+#endif

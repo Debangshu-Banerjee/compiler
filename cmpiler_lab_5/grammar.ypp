@@ -20,10 +20,10 @@ int active_function_index = 0;  // -1 for any type error
 %}
 
 %union{
-  char *name;          // name of a variable or function 
+  char *name;          // name of a variable or function
   int integer_value;   // value of an integer
-  float real_value;    // value of a real number 
-  int type;            // check the define -1 for int -2 float and so on 
+  float real_value;    // value of a real number
+  int type;            // check the define -1 for int -2 float and so on
   N_* N_s;
   M_ * M_s;
   ifexp_ * ifexp_s;
@@ -39,7 +39,7 @@ int active_function_index = 0;  // -1 for any type error
   statement_list_ * statement_list_s;
   result_ * result_s;
   new_num_list_ * new_num_list_s;
-}  
+}
 %token ELSE FOR IF RETURN WHILE PTR_OP INC_OP DEC_OP AND_OP OR_OP LT GT LE_OP GE_OP EQ_OP NE_OP DO BREAK LIBRARY CONTINUE ERROR
 %token NOT AMP TILDE STAR ASSIGN OPEN_BRACKET CLOSE_BRACKET OPEN_CURLY CLOSE_CURLY OPEN_SQUARE CLOSE_SQUARE
 %token SEMI COMMA DOT PLUS MINUS DIVIDE MODULUS PIPE XOR QUES COLON
@@ -81,7 +81,7 @@ int active_function_index = 0;  // -1 for any type error
 %%
 
 program: statement_list;
-              
+
 
 function_declaration: function_head first_curly statement_list last_curly;
 
@@ -92,7 +92,7 @@ last_curly: CLOSE_CURLY;
 
 function_head: res_id OPEN_BRACKET parameter_list CLOSE_BRACKET;
 
-res_id: type ID { 
+res_id: type ID {
     string s($2);
     if(symbol_table.search_func(s) != -1){
       $$ = new result_(ERROR_TYPE);
@@ -178,17 +178,24 @@ primary_expression: NUM
                     |REAL
                     | id_arr
                     |OPEN_BRACKET conditional_expression CLOSE_BRACKET;
-                   /* --------------- function call has to be added -----------*/ 	
+                   /* --------------- function call has to be added -----------*/
 
 elist: elist OPEN_SQUARE expression CLOSE_SQUARE
       |OPEN_SQUARE expression CLOSE_SQUARE;
 
 assignment_statement: id_arr ASSIGN conditional_expression
-					  |	conditional_expression	
+					  |	conditional_expression
 					  | /* empty */
 					  ;
 
-variable_declaration: type varlist;
+variable_declaration: type varlist{
+if(active_function_index != -1 ){
+	symbol_table.patch_variable(active_function_index,$2->list_of_indexes,$1->type);
+	/* if you want to set offset do it here */
+ }
+}
+
+;
 
 id_arr: ID{
 }
@@ -226,8 +233,8 @@ id_arr_declare : ID {
               yyerror("This variable is defined in this scope previously");
               $$ = new id_arr_declare_(-1);
           }
-      } 
-  }     
+      }
+  }
 }
                 | ID new_num_list{
 if(active_function_index != -1){
@@ -261,20 +268,22 @@ if(active_function_index != -1){
               yyerror("This variable is defined in this scope previously");
               $$ = new id_arr_declare_(-1);
           }
-      } 
+      }
   }
-}                
+}
 
                 ;
 
 new_num_list : new_num_list  OPEN_SQUARE NUM CLOSE_SQUARE {
+      $$  = new new_num_list_();
       $$->num_list.insert($$->num_list.end(),$1->num_list.begin(),$1->num_list.end());
       $$->num_list.push_back($3);
 }
                | OPEN_SQUARE NUM CLOSE_SQUARE {
-    $$->num_list.push_back($2);     
+    $$  = new new_num_list_();
+    $$->num_list.push_back($2);
 }
-               ;                   
+               ;
 
 parameter_list: param_decl
               |/*empty*/;
@@ -285,13 +294,23 @@ param_decl: param_decl COMMA unit_declaration
 unit_declaration: type ID
                 |type ID OPEN_SQUARE CLOSE_SQUARE;
 
-varlist: varlist COMMA id_arr_declare
-        |id_arr_declare;
+varlist: varlist COMMA id_arr_declare{
+	  $$ = new varlist_();
+		$$->list_of_indexes.insert($$->list_of_indexes.end(),$1->list_of_indexes.begin(),$1->list_of_indexes.end());
+		$$->list_of_indexes.push_back($3->index_in_sym_tab);
+}
+        |id_arr_declare{
+          $$ = new varlist_();
+					$$->list_of_indexes.push_back($1->index_in_sym_tab);
+        }
+
+        ;
 
 %%
 #include <stdio.h>
 
 int main(){
-	
+
 	yyparse();
-}        
+  symbol_table.display();
+}

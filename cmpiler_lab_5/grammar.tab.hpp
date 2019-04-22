@@ -107,10 +107,10 @@ union YYSTYPE
 {
 #line 22 "grammar.ypp" /* yacc.c:1909  */
 
-  char *name;          // name of a variable or function 
+  char *name;          // name of a variable or function
   int integer_value;   // value of an integer
-  float real_value;    // value of a real number 
-  int type;            // check the define -1 for int -2 float and so on 
+  float real_value;    // value of a real number
+  int type;            // check the define -1 for int -2 float and so on
   N_* N_s;
   M_ * M_s;
   ifexp_ * ifexp_s;
