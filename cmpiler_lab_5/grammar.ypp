@@ -498,23 +498,35 @@ unary_expression: primary_expression
 
 primary_expression: NUM
 {
-$$ = new conditional_expression_($1->type,$1->temporary_name);
+	$$ = new conditional_expression_(INT_TYPE);
+	std::ostringstream out;
+	out << " = " << $1 << " --- " << $$->temporary_name;
+	string s = out.str();
+	intermediate_output.gen(s);
 }
 
                     |REAL
 {
-$$ = new conditional_expression_($1->type,$1->temporary_name);
+	$$ = new conditional_expression_(FLOAT_TYPE);
+	std::ostringstream out;
+	out << " = " << $1 << " --- " << $$->temporary_name;
+	string s = out.str();
+	intermediate_output.gen(s);
 }
 
                     | id_arr
 {
-	if($1->var == NULL){
-			yyerror("The used variable is not declared");
-			$$ = new conditional_expression_(ERROR_TYPE);
-	}
-	else{
-			$$ = new conditional_expression_($1->type,$1->temporary_name);
-	}
+if($1->var == NULL){
+		yyerror("The used variable is not declared");
+		$$ = new conditional_expression_(ERROR_TYPE);
+}
+else{
+		$$ = new conditional_expression_($1->var->eletype);
+		std::ostringstream out;
+		out << " = " << $1->var->name <<"_"<< $1->var->offset << " --- " << $$->temporary_name;
+		string s = out.str();
+		intermediate_output.gen(s);
+}
 
 }
                     |OPEN_BRACKET conditional_expression CLOSE_BRACKET
@@ -596,7 +608,7 @@ id_arr: ID
 
 		if(var != NULL){
 
-		}		
+		}
 	}
 }
 			;
