@@ -15,7 +15,9 @@ int get_compatible_type_non_bool(int type1 ,int type2){
 	if(type1 == INT_TYPE && type2 == INT_TYPE){
 		return INT_TYPE;
 	}
-	if(type1 == FLOAT_TYPE && type2 == FLOAT_TYPE){
+	if(type1 == FLOAT_TYPE || type2 == FLOAT_TYPE){
+		/* try for type casting */
+		
 		return FLOAT_TYPE;
 	}
 	return ERROR_TYPE;
@@ -183,4 +185,11 @@ void code_output :: print(){
 		cout<<this->intermediate_code[i]<<endl;
 	}
 	cout<<endl<<"-----------------end------------------"<<endl;
+}
+
+void code_output :: gen_special(string op,string operand1,string operand2,string result){
+	std::ostringstream out;
+	out<< op << " "<<operand1<<" "<<operand2 <<" "<<result;
+	string s = out.str();
+	this->gen(s);
 }

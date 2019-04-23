@@ -86,6 +86,7 @@ public:
 	void gen(string s);
 	int get_next();
 	void print();
+	void gen_special(string op,string operand1,string operand2,string result);
 };
 
 class sym_tab{
@@ -249,8 +250,20 @@ public:
 class id_arr_{
 public:
 	  variable * var;
-	  id_arr_(variable * var){
-	  		this->var = var;
+		string offset_temp;
+	  id_arr_(variable * var1,string offset_temp){
+	  		this->var = var1;
+				if(var1 == NULL){
+					this->offset_temp = "ERR";
+				}
+				else{
+					if(var1->type == SIMPLE){
+						this->offset_temp = "NONE";
+					}
+					else{
+						this->offset_temp = offset_temp;
+					}
+				}
 	  }
 };
 class unit_declaration_{

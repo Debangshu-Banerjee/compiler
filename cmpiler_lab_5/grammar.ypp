@@ -516,14 +516,23 @@ primary_expression: NUM
 
                     | id_arr
 {
+/* don't put error msg here*/
 if($1->var == NULL){
-		yyerror("The used variable is not declared");
+		//yyerror("The used variable is not declared");
 		$$ = new conditional_expression_(ERROR_TYPE);
 }
 else{
 		$$ = new conditional_expression_($1->var->eletype);
 		std::ostringstream out;
-		out << " = " << $1->var->name <<"_"<< $1->var->offset << " --- " << $$->temporary_name;
+		if($1->var->type == SIMPLE){
+			out << "= " << $1->var->name <<"_"<< $1->var->offset << " --- " << $$->temporary_name;
+		}
+		else{
+			string temp_address = "T" + to_string(global_temp);
+			global_temp ++;
+			intermediate_output.gen_special("addr",$1->var->name+"_"+to_string($1->var->offset),"---",temp_address);
+			out << "= " <<temp_address<< "["<<$1->offset_temp<<"] " << $$->temporary_name;
+		}
 		string s = out.str();
 		intermediate_output.gen(s);
 }
@@ -573,8 +582,45 @@ elist: elist OPEN_SQUARE expression CLOSE_SQUARE
 			;
 
 assignment_statement: id_arr ASSIGN conditional_expression
+{ /* don't put error msg here */
+	if($1->var != NULL){
+			cout<< "**********hi in assigning things "<<endl;
+			int temp_type = get_compatible_type_non_bool($1->var->eletype,$3->type);
+			if(temp_type == ERROR_TYPE){
+				if($1->var->type != ERROR_TYPE && $3->type != ERROR_TYPE){
+						yyerror("Incompatible data types are used for assignment");
+				}
+				$$ = new assignment_statement_(ERROR_TYPE,"ERR");
+			}
+			else{
+				if($1->var->type == SIMPLE){
+					intermediate_output.gen_special("=",$3->temporary_name,"---",$1->var->name+"_"+to_string($1->var->offset));
+				}
+				else{
+					std::ostringstream out;
+					string temp_address = "T" + to_string(global_temp);
+					global_temp ++;
+					intermediate_output.gen_special("addr",$1->var->name+"_"+to_string($1->var->offset),"---",temp_address);
+					out << "= " << $3->temporary_name <<" " << temp_address<< "["<<$1->offset_temp<<"] " ;
+					string s_1 = out.str();
+					intermediate_output.gen(s_1);
+				}
+				$$ = new assignment_statement_(temp_type,"ERR");
+			}
+	}
+	else{
+			$$ = new assignment_statement_(ERROR_TYPE,"ERR");
+	}
+}
 					  |	conditional_expression
+{
+		$$ = new assignment_statement_($1->type,$1->temporary_name);
+}
 					  | /* empty */
+{
+	$$ = new assignment_statement_(ERROR_TYPE,"ERR");
+}
+
 					  ;
 
 variable_declaration: type varlist
@@ -591,24 +637,80 @@ id_arr: ID
 	if(active_function_index != -1){
 		string s($1);
 		variable * var =symbol_table.search_variable_global(active_function_index,s,level);
-		$$ = new id_arr_(var);
+		if(var == NULL){
+			std::ostringstream out1;
+			out1<<"varible with name "<<s<< " should be declared before use";
+			string s_1 = out1.str();
+			yyerror(s_1);
+		}
+		else{
+			if(var-> type != SIMPLE){
+				var = NULL;
+				std::ostringstream out1;
+				out1<<"varible with name "<<s<< "is declared as array";
+				string s_1 = out1.str();
+				yyerror(s_1);
+			}
+		}
+		$$ = new id_arr_(var,"NONE");
 	}
 }
       |ID elist
 {
 	if(active_function_index != -1){
 		string s($1);
+		string offset_temp = "NONE";
 		variable * var =symbol_table.search_variable_global(active_function_index,s,level);
+		if(var == NULL){
+			std::ostringstream out1;
+			out1<<"varible with name "<<s<< " should be declared before use";
+			string s_1 = out1.str();
+			yyerror(s_1);
+		}
+
 		if(var != NULL){
 			if(var->type != ARRAY){
-				yyerror("Expected array type variable");
+				yyerror("variable "+ s + "is not array ");
 				var = NULL;
 			}
 		}
-
+		/* var != NULL signifies it is an array type */
 		if(var != NULL){
-
+			if($2->type == ERROR_TYPE || ($2->name_list.size() == 0) || ($2->name_list.size() != var->dimlist.size() ) ){
+				var = NULL;
+				std::ostringstream out1;
+				out1<<"for variable "<<s<<" either array index is not integer " <<" or does not fit its declaration";
+				string s_1 = out1.str();
+				yyerror(s_1);
+			}
+			else{
+					string temp_index = "T" + to_string(global_temp);
+					global_temp ++;
+					intermediate_output.gen_special("=",$2->name_list[0],"---",temp_index);
+					string prev_index = temp_index;
+					for(int i=1;i<$2->name_list.size();i++){
+						string temp_index_new_1 = "T" + to_string(global_temp);
+						global_temp ++;
+						string temp_index_new_2 = "T" + to_string(global_temp);
+						global_temp ++;
+						intermediate_output.gen_special("*",prev_index,to_string(var->dimlist[i]),temp_index_new_1);
+						intermediate_output.gen_special("+",temp_index_new_1,$2->name_list[i],temp_index_new_2);
+						prev_index = temp_index_new_2;
+					}
+					string final_index = "T" + to_string(global_temp);
+					global_temp++;
+					string temp_final_result = "T" + to_string(global_temp);
+					global_temp ++;
+					if(var->eletype == FLOAT_TYPE){
+						intermediate_output.gen_special("*",prev_index,to_string(FLOAT_TYPE_SIZE),final_index);
+					}
+					else {
+						intermediate_output.gen_special("*",prev_index,to_string(INT_TYPE_SIZE),final_index);
+					}
+						offset_temp = final_index;
+			}
 		}
+			$$ = new id_arr_(var,offset_temp);
 	}
 }
 			;
