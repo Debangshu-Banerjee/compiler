@@ -183,36 +183,18 @@ conditional_expression: conditional_expression AND_OP expression
 
                         |expression
 {
-	$$ = new conditional_expression_($1->type);
-	std::ostringstream out;
-	if($1->type != ERROR_TYPE){
-		out << " = " << $1->temporary_name << " --- " << $$->temporary_name;
-		string s = out.str();
-		intermediate_output.gen(s);
-	}
+	$$ = new conditional_expression_($1->type,$1->temporary_name);
 }
 
 												;
 
 expression: rel_expression
 {
-	$$ = new conditional_expression_($1->type);
-	std::ostringstream out;
-	if($1->type != ERROR_TYPE){
-		out << " = " << $1->temporary_name << " --- " << $$->temporary_name;
-		string s = out.str();
-		intermediate_output.gen(s);
-	}
+	$$ = new conditional_expression_($1->type,$1->temporary_name);
 }
           |normal_expression
 {
-	$$ = new conditional_expression_($1->type);
-	std::ostringstream out;
-	if($1->type != ERROR_TYPE){
-		out << " = " << $1->temporary_name << " --- " << $$->temporary_name;
-		string s = out.str();
-		intermediate_output.gen(s);
-	}
+	$$ = new conditional_expression_($1->type,$1->temporary_name);
 }
 					;
 
@@ -388,13 +370,7 @@ normal_expression: normal_expression PLUS term
 
                   |term
 {
-	$$ = new conditional_expression_($1->type);
-	std::ostringstream out;
-	if($1->type != ERROR_TYPE){
-		out << " = " << $1->temporary_name << " --- " << $$->temporary_name;
-		string s = out.str();
-		intermediate_output.gen(s);
-	}
+	$$ = new conditional_expression_($1->type,$1->temporary_name);
 }
 
 									;
@@ -434,13 +410,7 @@ term: term STAR factor
 
       |factor
 {
-	$$ = new conditional_expression_($1->type);
-	std::ostringstream out;
-	if($1->type != ERROR_TYPE){
-		out << " = " << $1->temporary_name << " --- " << $$->temporary_name;
-		string s = out.str();
-		intermediate_output.gen(s);
-	}
+	$$ = new conditional_expression_($1->type,$1->temporary_name);
 
 }
 
@@ -448,25 +418,13 @@ term: term STAR factor
 
 factor: unary_expression
 {
-	$$ = new conditional_expression_($1->type);
-	std::ostringstream out;
-	if($1->type != ERROR_TYPE){
-		out << " = " << $1->temporary_name << " --- " << $$->temporary_name;
-		string s = out.str();
-		intermediate_output.gen(s);
-	}
+	$$ = new conditional_expression_($1->type,$1->temporary_name);
 }
 ;
 
 unary_expression: primary_expression
 {
-	$$ = new conditional_expression_($1->type);
-	std::ostringstream out;
-	if($1->type != ERROR_TYPE ){
-			out << " = " << $1->temporary_name << " --- " << $$->temporary_name;
-			string s = out.str();
-			intermediate_output.gen(s);
-	}
+	$$ = new conditional_expression_($1->type,$1->temporary_name);
 
 }
                 |MINUS unary_expression %prec UMINUS
@@ -540,20 +498,12 @@ unary_expression: primary_expression
 
 primary_expression: NUM
 {
-$$ = new conditional_expression_(INT_TYPE);
-std::ostringstream out;
-out << " = " << $1 << " --- " << $$->temporary_name;
-string s = out.str();
-intermediate_output.gen(s);
+$$ = new conditional_expression_($1->type,$1->temporary_name);
 }
 
                     |REAL
 {
-$$ = new conditional_expression_(FLOAT_TYPE);
-std::ostringstream out;
-out << " = " << $1 << " --- " << $$->temporary_name;
-string s = out.str();
-intermediate_output.gen(s);
+$$ = new conditional_expression_($1->type,$1->temporary_name);
 }
 
                     | id_arr
@@ -563,11 +513,7 @@ intermediate_output.gen(s);
 			$$ = new conditional_expression_(ERROR_TYPE);
 	}
 	else{
-			$$ = new conditional_expression_($1->var->eletype);
-			std::ostringstream out;
-			out << " = " << $1->var->name <<"_"<< $1->var->offset << " --- " << $$->temporary_name;
-			string s = out.str();
-			intermediate_output.gen(s);
+			$$ = new conditional_expression_($1->type,$1->temporary_name);
 	}
 
 }
