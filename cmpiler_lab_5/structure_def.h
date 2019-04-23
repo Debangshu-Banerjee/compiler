@@ -184,8 +184,7 @@ public:
 class elist_{
 public:
 	int type;
-	int no_of_expressions;
-	string temporary_name;
+	vector<string> name_list;
 };
 
 class new_num_list_{

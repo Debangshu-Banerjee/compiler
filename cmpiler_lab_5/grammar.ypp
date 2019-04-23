@@ -581,7 +581,38 @@ intermediate_output.gen(s);
                    /* --------------- function call has to be added -----------*/
 
 elist: elist OPEN_SQUARE expression CLOSE_SQUARE
-      |OPEN_SQUARE expression CLOSE_SQUARE;
+{
+	$$ = new elist_();
+	$$->name_list.insert($$->name_list.end(),$1->name_list.begin(),$1->name_list.end());
+	if($3->type != INT_TYPE){
+		$$->type = ERROR_TYPE;
+		if($3->type != ERROR_TYPE){
+			yyerror("Expected an integer data type for array index");
+		}
+		$$->name_list.push_back("ERR");
+	}
+	else{
+		$$->type = INT_TYPE;
+		$$->name_list.push_back($3->temporary_name);
+	}
+}
+      |OPEN_SQUARE expression CLOSE_SQUARE
+{
+	$$ = new elist_();
+	if($2->type != INT_TYPE){
+		$$->type = ERROR_TYPE;
+		if($2->type != ERROR_TYPE){
+			yyerror("Expected an integer data type for array index");
+		}
+		$$->name_list.push_back("ERR");
+	}
+	else{
+		$$->type = INT_TYPE;
+		$$->name_list.push_back($2->temporary_name);
+	}
+}
+
+			;
 
 assignment_statement: id_arr ASSIGN conditional_expression
 					  |	conditional_expression
@@ -596,12 +627,31 @@ variable_declaration: type varlist
 }
 
 ;
-
+/* check where id_arr is used it is null or not */
 id_arr: ID
 {
+	if(active_function_index != -1){
+		string s($1);
+		variable * var =symbol_table.search_variable_global(active_function_index,s,level);
+		$$ = new id_arr_(var);
+	}
 }
       |ID elist
 {
+	if(active_function_index != -1){
+		string s($1);
+		variable * var =symbol_table.search_variable_global(active_function_index,s,level);
+		if(var != NULL){
+			if(var->type != ARRAY){
+				yyerror("Expected array type variable");
+				var = NULL;
+			}
+		}
+
+		if(var != NULL){
+
+		}		
+	}
 }
 			;
 
