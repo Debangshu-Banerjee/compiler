@@ -5,6 +5,43 @@ using namespace std;
 
 gloabal_offset_structure global_offset;
 
+int get_compatible_type_non_bool(int type1 ,int type2){
+	if(type1 == ERROR_TYPE || type2 == ERROR_TYPE){
+		return ERROR_TYPE;
+	}
+	if(type1 == BOOL_TYPE || type2 == BOOL_TYPE){
+		return ERROR_TYPE;
+	}
+	if(type1 == INT_TYPE && type2 == INT_TYPE){
+		return INT_TYPE;
+	}
+	if(type1 == FLOAT_TYPE && type2 == FLOAT_TYPE){
+		return FLOAT_TYPE;
+	}
+	return ERROR_TYPE;
+}
+
+int get_compatible_type_bool_only(int type1 ,int type2){
+		if(type1 == BOOL_TYPE && type2 == BOOL_TYPE){
+			return BOOL_TYPE;
+		}
+		else{
+			return ERROR_TYPE;
+		}
+}
+int get_compatible_type_rel_op(int type1, int type2){
+	if(type1 == ERROR_TYPE || type2 == ERROR_TYPE){
+		return ERROR_TYPE;
+	}
+	if(type1 == BOOL_TYPE && type2 != BOOL_TYPE){
+		return ERROR_TYPE;
+	}
+	if(type1 != BOOL_TYPE && type2 == BOOL_TYPE){
+		return ERROR_TYPE;
+	}
+	return BOOL_TYPE;
+}
+
 void sym_tab :: display(){
 		if(global_sym_tab.size() == 0){
 			cout << "symbol table is empty" << "\n";
@@ -93,7 +130,7 @@ bool sym_tab :: search_parameter(int active_function_index,string name){
 }
 
 int sym_tab :: add_parameter(int active_function_index,string name,int type,int eletype){
-		cout<<"*** trying to add parameter " << name << endl;
+
 		if( active_function_index < 0 || active_function_index >= global_sym_tab.size()) return -1;
 		parameter * t = new parameter(name,type,eletype);
 		int index = global_sym_tab[active_function_index]->param_list.size();

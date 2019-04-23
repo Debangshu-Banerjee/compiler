@@ -15,6 +15,9 @@
 #include<bits/stdc++.h>
 using namespace std;
 extern int global_temp;
+int get_compatible_type_non_bool(int type1 ,int type2);
+int get_compatible_type_bool_only(int type1 ,int type2);
+int get_compatible_type_rel_op(int type1 ,int type2);
 
 class gloabal_offset_structure{
 public:
@@ -154,11 +157,27 @@ public:
 	int type;
 	string temporary_name;
 	conditional_expression_(int type){
-		this->type = type;
-		string t = to_string(global_temp);
-		global_temp++;
-		this->temporary_name = "T";
-		temporary_name = temporary_name + t;
+
+			this->type = type;
+			if(type != ERROR_TYPE){
+					string t = to_string(global_temp);
+					global_temp++;
+					this->temporary_name = "T";
+					temporary_name = temporary_name + t;
+			}
+			else{
+				this->temporary_name = "ERR";
+			}
+	}
+	conditional_expression_(int type,string temporary_name){
+
+			this->type = type;
+			if(type != ERROR_TYPE){
+					this->temporary_name = temporary_name;
+			}
+			else{
+				this->temporary_name = "ERR";
+			}
 	}
 };
 

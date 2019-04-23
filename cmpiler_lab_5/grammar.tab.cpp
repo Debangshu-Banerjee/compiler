@@ -521,14 +521,14 @@ static const yytype_uint8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint16 yyrline[] =
 {
-       0,    85,    85,    88,    90,    93,    95,    97,   114,   115,
-     116,   119,   120,   122,   123,   124,   125,   126,   127,   128,
-     129,   131,   132,   136,   138,   139,   141,   143,   145,   147,
-     149,   150,   151,   153,   154,   156,   157,   158,   159,   160,
-     161,   163,   164,   165,   167,   168,   169,   171,   173,   174,
-     175,   176,   177,   179,   188,   197,   201,   204,   205,   207,
-     208,   209,   212,   221,   223,   226,   260,   298,   303,   309,
-     314,   319,   333,   346,   359,   375,   380
+       0,    85,    85,    88,    90,    93,    95,    97,   115,   116,
+     117,   120,   121,   123,   124,   125,   126,   127,   128,   129,
+     130,   132,   133,   137,   139,   140,   142,   144,   146,   148,
+     150,   167,   184,   197,   207,   219,   242,   266,   289,   311,
+     333,   356,   372,   389,   402,   418,   435,   449,   461,   472,
+     488,   504,   521,   541,   550,   559,   574,   583,   584,   586,
+     587,   588,   591,   600,   603,   609,   643,   681,   687,   695,
+     700,   705,   719,   732,   746,   762,   767
 };
 #endif
 
@@ -1410,6 +1410,7 @@ yyreduce:
   case 7:
 #line 97 "grammar.ypp" /* yacc.c:1646  */
     {
+	cout<< "find a function \n";
     string s((yyvsp[0].name));
     if(symbol_table.search_func(s) != -1){
       (yyval.result_s) = new result_(ERROR_TYPE);
@@ -1424,79 +1425,562 @@ yyreduce:
         intermediate_output.gen(new_s);
     }
 }
-#line 1428 "grammar.tab.cpp" /* yacc.c:1646  */
+#line 1429 "grammar.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 8:
-#line 114 "grammar.ypp" /* yacc.c:1646  */
+#line 115 "grammar.ypp" /* yacc.c:1646  */
     {(yyval.type_s) = new type_(INT_TYPE);}
-#line 1434 "grammar.tab.cpp" /* yacc.c:1646  */
+#line 1435 "grammar.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 9:
-#line 115 "grammar.ypp" /* yacc.c:1646  */
+#line 116 "grammar.ypp" /* yacc.c:1646  */
     {(yyval.type_s) = new type_(FLOAT_TYPE);}
-#line 1440 "grammar.tab.cpp" /* yacc.c:1646  */
+#line 1441 "grammar.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 10:
-#line 116 "grammar.ypp" /* yacc.c:1646  */
+#line 117 "grammar.ypp" /* yacc.c:1646  */
     {(yyval.type_s) = new type_(VOID_TYPE);}
-#line 1446 "grammar.tab.cpp" /* yacc.c:1646  */
+#line 1447 "grammar.tab.cpp" /* yacc.c:1646  */
+    break;
+
+  case 30:
+#line 151 "grammar.ypp" /* yacc.c:1646  */
+    {
+
+ 	int temp_type = get_compatible_type_bool_only((yyvsp[-2].conditional_expression_s)->type,(yyvsp[0].conditional_expression_s)->type);
+ 	(yyval.conditional_expression_s) = new conditional_expression_(temp_type);
+ 	std::ostringstream out;
+ 	if(temp_type != ERROR_TYPE){
+	 	out << " && " << (yyvsp[-2].conditional_expression_s)->temporary_name <<"     "<<(yyvsp[0].conditional_expression_s)->temporary_name << (yyval.conditional_expression_s)->temporary_name;
+	 	string s = out.str();
+	 	intermediate_output.gen(s);
+ 	}
+	else{
+		if((yyvsp[-2].conditional_expression_s)->type != ERROR_TYPE && (yyvsp[0].conditional_expression_s)->type != ERROR_TYPE){
+				yyerror("Expected boolean data types for both operand");
+		}
+	}
+}
+#line 1468 "grammar.tab.cpp" /* yacc.c:1646  */
+    break;
+
+  case 31:
+#line 168 "grammar.ypp" /* yacc.c:1646  */
+    {
+ 	int temp_type = get_compatible_type_bool_only((yyvsp[-2].conditional_expression_s)->type,(yyvsp[0].conditional_expression_s)->type);
+ 	(yyval.conditional_expression_s) = new conditional_expression_(temp_type);
+ 	std::ostringstream out;
+ 	if(temp_type != ERROR_TYPE){
+	 	out << " || " << (yyvsp[-2].conditional_expression_s)->temporary_name <<"     "<<(yyvsp[0].conditional_expression_s)->temporary_name << (yyval.conditional_expression_s)->temporary_name;
+	 	string s = out.str();
+	 	intermediate_output.gen(s);
+ 	}
+	else{
+		if((yyvsp[-2].conditional_expression_s)->type != ERROR_TYPE && (yyvsp[0].conditional_expression_s)->type != ERROR_TYPE){
+				yyerror("Expected boolean data types for both operand");
+		}
+	}
+}
+#line 1488 "grammar.tab.cpp" /* yacc.c:1646  */
+    break;
+
+  case 32:
+#line 185 "grammar.ypp" /* yacc.c:1646  */
+    {
+	(yyval.conditional_expression_s) = new conditional_expression_((yyvsp[0].conditional_expression_s)->type);
+	std::ostringstream out;
+	if((yyvsp[0].conditional_expression_s)->type != ERROR_TYPE){
+		out << " = " << (yyvsp[0].conditional_expression_s)->temporary_name << " --- " << (yyval.conditional_expression_s)->temporary_name;
+		string s = out.str();
+		intermediate_output.gen(s);
+	}
+}
+#line 1502 "grammar.tab.cpp" /* yacc.c:1646  */
+    break;
+
+  case 33:
+#line 198 "grammar.ypp" /* yacc.c:1646  */
+    {
+	(yyval.conditional_expression_s) = new conditional_expression_((yyvsp[0].conditional_expression_s)->type);
+	std::ostringstream out;
+	if((yyvsp[0].conditional_expression_s)->type != ERROR_TYPE){
+		out << " = " << (yyvsp[0].conditional_expression_s)->temporary_name << " --- " << (yyval.conditional_expression_s)->temporary_name;
+		string s = out.str();
+		intermediate_output.gen(s);
+	}
+}
+#line 1516 "grammar.tab.cpp" /* yacc.c:1646  */
+    break;
+
+  case 34:
+#line 208 "grammar.ypp" /* yacc.c:1646  */
+    {
+	(yyval.conditional_expression_s) = new conditional_expression_((yyvsp[0].conditional_expression_s)->type);
+	std::ostringstream out;
+	if((yyvsp[0].conditional_expression_s)->type != ERROR_TYPE){
+		out << " = " << (yyvsp[0].conditional_expression_s)->temporary_name << " --- " << (yyval.conditional_expression_s)->temporary_name;
+		string s = out.str();
+		intermediate_output.gen(s);
+	}
+}
+#line 1530 "grammar.tab.cpp" /* yacc.c:1646  */
+    break;
+
+  case 35:
+#line 220 "grammar.ypp" /* yacc.c:1646  */
+    {
+	int temp_type = get_compatible_type_rel_op((yyvsp[-2].conditional_expression_s)->type,(yyvsp[0].conditional_expression_s)->type);
+	(yyval.conditional_expression_s) = new conditional_expression_(temp_type);
+	std::ostringstream out;
+	if(temp_type != ERROR_TYPE){
+		out << " > " << (yyvsp[-2].conditional_expression_s)->temporary_name <<"     "<<(yyvsp[0].conditional_expression_s)->temporary_name << (yyval.conditional_expression_s)->temporary_name;
+		string s = out.str();
+		intermediate_output.gen(s);
+	}
+	else{
+		if((yyvsp[-2].conditional_expression_s)->type != ERROR_TYPE &&  (yyvsp[0].conditional_expression_s)->type != ERROR_TYPE){
+			if((yyvsp[-2].conditional_expression_s)->type == BOOL_TYPE &&  (yyvsp[0].conditional_expression_s)->type != BOOL_TYPE){
+				yyerror("Incompatible data types with relational operator");
+			}
+			if((yyvsp[-2].conditional_expression_s)->type != BOOL_TYPE &&  (yyvsp[0].conditional_expression_s)->type == BOOL_TYPE){
+				yyerror("Incompatible data types with relational operator");
+			}
+		}
+	}
+
+}
+#line 1556 "grammar.tab.cpp" /* yacc.c:1646  */
+    break;
+
+  case 36:
+#line 244 "grammar.ypp" /* yacc.c:1646  */
+    {
+	int temp_type = get_compatible_type_rel_op((yyvsp[-2].conditional_expression_s)->type,(yyvsp[0].conditional_expression_s)->type);
+	(yyval.conditional_expression_s) = new conditional_expression_(temp_type);
+	std::ostringstream out;
+	if(temp_type != ERROR_TYPE){
+		out << " < " << (yyvsp[-2].conditional_expression_s)->temporary_name <<"     "<<(yyvsp[0].conditional_expression_s)->temporary_name << (yyval.conditional_expression_s)->temporary_name;
+		string s = out.str();
+		intermediate_output.gen(s);
+	}
+	else{
+		if((yyvsp[-2].conditional_expression_s)->type != ERROR_TYPE &&  (yyvsp[0].conditional_expression_s)->type != ERROR_TYPE){
+			if((yyvsp[-2].conditional_expression_s)->type == BOOL_TYPE &&  (yyvsp[0].conditional_expression_s)->type != BOOL_TYPE){
+				yyerror("Incompatible data types with relational operator");
+			}
+			if((yyvsp[-2].conditional_expression_s)->type != BOOL_TYPE &&  (yyvsp[0].conditional_expression_s)->type == BOOL_TYPE){
+				yyerror("Incompatible data types with relational operator");
+			}
+		}
+	}
+
+}
+#line 1582 "grammar.tab.cpp" /* yacc.c:1646  */
+    break;
+
+  case 37:
+#line 267 "grammar.ypp" /* yacc.c:1646  */
+    {
+	int temp_type = get_compatible_type_rel_op((yyvsp[-2].conditional_expression_s)->type,(yyvsp[0].conditional_expression_s)->type);
+	(yyval.conditional_expression_s) = new conditional_expression_(temp_type);
+	std::ostringstream out;
+	if(temp_type != ERROR_TYPE){
+		out << " >= " << (yyvsp[-2].conditional_expression_s)->temporary_name <<"     "<<(yyvsp[0].conditional_expression_s)->temporary_name << (yyval.conditional_expression_s)->temporary_name;
+		string s = out.str();
+		intermediate_output.gen(s);
+	}
+	else{
+		if((yyvsp[-2].conditional_expression_s)->type != ERROR_TYPE &&  (yyvsp[0].conditional_expression_s)->type != ERROR_TYPE){
+			if((yyvsp[-2].conditional_expression_s)->type == BOOL_TYPE &&  (yyvsp[0].conditional_expression_s)->type != BOOL_TYPE){
+				yyerror("Incompatible data types with relational operator");
+			}
+			if((yyvsp[-2].conditional_expression_s)->type != BOOL_TYPE &&  (yyvsp[0].conditional_expression_s)->type == BOOL_TYPE){
+				yyerror("Incompatible data types with relational operator");
+			}
+		}
+	}
+
+}
+#line 1608 "grammar.tab.cpp" /* yacc.c:1646  */
+    break;
+
+  case 38:
+#line 290 "grammar.ypp" /* yacc.c:1646  */
+    {
+	int temp_type = get_compatible_type_rel_op((yyvsp[-2].conditional_expression_s)->type,(yyvsp[0].conditional_expression_s)->type);
+	(yyval.conditional_expression_s) = new conditional_expression_(temp_type);
+	std::ostringstream out;
+	if(temp_type != ERROR_TYPE){
+		out << " <= " << (yyvsp[-2].conditional_expression_s)->temporary_name <<"     "<<(yyvsp[0].conditional_expression_s)->temporary_name << (yyval.conditional_expression_s)->temporary_name;
+		string s = out.str();
+		intermediate_output.gen(s);
+	}
+	else{
+		if((yyvsp[-2].conditional_expression_s)->type != ERROR_TYPE &&  (yyvsp[0].conditional_expression_s)->type != ERROR_TYPE){
+			if((yyvsp[-2].conditional_expression_s)->type == BOOL_TYPE &&  (yyvsp[0].conditional_expression_s)->type != BOOL_TYPE){
+				yyerror("Incompatible data types with relational operator");
+			}
+			if((yyvsp[-2].conditional_expression_s)->type != BOOL_TYPE &&  (yyvsp[0].conditional_expression_s)->type == BOOL_TYPE){
+				yyerror("Incompatible data types with relational operator");
+			}
+		}
+	}
+
+}
+#line 1634 "grammar.tab.cpp" /* yacc.c:1646  */
+    break;
+
+  case 39:
+#line 312 "grammar.ypp" /* yacc.c:1646  */
+    {
+	int temp_type = get_compatible_type_rel_op((yyvsp[-2].conditional_expression_s)->type,(yyvsp[0].conditional_expression_s)->type);
+	(yyval.conditional_expression_s) = new conditional_expression_(temp_type);
+	std::ostringstream out;
+	if(temp_type != ERROR_TYPE){
+		out << " == " << (yyvsp[-2].conditional_expression_s)->temporary_name <<"     "<<(yyvsp[0].conditional_expression_s)->temporary_name << (yyval.conditional_expression_s)->temporary_name;
+		string s = out.str();
+		intermediate_output.gen(s);
+	}
+	else{
+		if((yyvsp[-2].conditional_expression_s)->type != ERROR_TYPE &&  (yyvsp[0].conditional_expression_s)->type != ERROR_TYPE){
+			if((yyvsp[-2].conditional_expression_s)->type == BOOL_TYPE &&  (yyvsp[0].conditional_expression_s)->type != BOOL_TYPE){
+				yyerror("Incompatible data types with relational operator");
+			}
+			if((yyvsp[-2].conditional_expression_s)->type != BOOL_TYPE &&  (yyvsp[0].conditional_expression_s)->type == BOOL_TYPE){
+				yyerror("Incompatible data types with relational operator");
+			}
+		}
+	}
+
+}
+#line 1660 "grammar.tab.cpp" /* yacc.c:1646  */
+    break;
+
+  case 40:
+#line 334 "grammar.ypp" /* yacc.c:1646  */
+    {
+	int temp_type = get_compatible_type_rel_op((yyvsp[-2].conditional_expression_s)->type,(yyvsp[0].conditional_expression_s)->type);
+	(yyval.conditional_expression_s) = new conditional_expression_(temp_type);
+	std::ostringstream out;
+	if(temp_type != ERROR_TYPE){
+		out << " != " << (yyvsp[-2].conditional_expression_s)->temporary_name <<"     "<<(yyvsp[0].conditional_expression_s)->temporary_name << (yyval.conditional_expression_s)->temporary_name;
+		string s = out.str();
+		intermediate_output.gen(s);
+	}
+	else{
+		if((yyvsp[-2].conditional_expression_s)->type != ERROR_TYPE &&  (yyvsp[0].conditional_expression_s)->type != ERROR_TYPE){
+			if((yyvsp[-2].conditional_expression_s)->type == BOOL_TYPE &&  (yyvsp[0].conditional_expression_s)->type != BOOL_TYPE){
+				yyerror("Incompatible data types with relational operator");
+			}
+			if((yyvsp[-2].conditional_expression_s)->type != BOOL_TYPE &&  (yyvsp[0].conditional_expression_s)->type == BOOL_TYPE){
+				yyerror("Incompatible data types with relational operator");
+			}
+		}
+	}
+}
+#line 1685 "grammar.tab.cpp" /* yacc.c:1646  */
+    break;
+
+  case 41:
+#line 357 "grammar.ypp" /* yacc.c:1646  */
+    {
+	int temp_type = get_compatible_type_non_bool((yyvsp[-2].conditional_expression_s)->type,(yyvsp[0].conditional_expression_s)->type);
+	(yyval.conditional_expression_s) = new conditional_expression_(temp_type);
+	std::ostringstream out;
+	if(temp_type != ERROR_TYPE){
+		out << " + " << (yyvsp[-2].conditional_expression_s)->temporary_name <<"     "<<(yyvsp[0].conditional_expression_s)->temporary_name << (yyval.conditional_expression_s)->temporary_name;
+		string s = out.str();
+		intermediate_output.gen(s);
+	}
+	else{
+		if((yyvsp[-2].conditional_expression_s)->type == BOOL_TYPE &&  (yyvsp[0].conditional_expression_s)->type == BOOL_TYPE){
+			yyerror("Trying to add with a boolean data type");
+		}
+	}
+}
+#line 1705 "grammar.tab.cpp" /* yacc.c:1646  */
+    break;
+
+  case 42:
+#line 373 "grammar.ypp" /* yacc.c:1646  */
+    {
+	int temp_type = get_compatible_type_non_bool((yyvsp[-2].conditional_expression_s)->type,(yyvsp[0].conditional_expression_s)->type);
+	(yyval.conditional_expression_s) = new conditional_expression_(temp_type);
+	std::ostringstream out;
+	if(temp_type != ERROR_TYPE){
+		out << " - " << (yyvsp[-2].conditional_expression_s)->temporary_name <<"     "<<(yyvsp[0].conditional_expression_s)->temporary_name << (yyval.conditional_expression_s)->temporary_name;
+		string s = out.str();
+		intermediate_output.gen(s);
+	}
+	else{
+		if((yyvsp[-2].conditional_expression_s)->type == BOOL_TYPE &&  (yyvsp[0].conditional_expression_s)->type == BOOL_TYPE){
+			yyerror("Trying to subtract with a boolean data type");
+		}
+	}
+}
+#line 1725 "grammar.tab.cpp" /* yacc.c:1646  */
+    break;
+
+  case 43:
+#line 390 "grammar.ypp" /* yacc.c:1646  */
+    {
+	(yyval.conditional_expression_s) = new conditional_expression_((yyvsp[0].conditional_expression_s)->type);
+	std::ostringstream out;
+	if((yyvsp[0].conditional_expression_s)->type != ERROR_TYPE){
+		out << " = " << (yyvsp[0].conditional_expression_s)->temporary_name << " --- " << (yyval.conditional_expression_s)->temporary_name;
+		string s = out.str();
+		intermediate_output.gen(s);
+	}
+}
+#line 1739 "grammar.tab.cpp" /* yacc.c:1646  */
+    break;
+
+  case 44:
+#line 403 "grammar.ypp" /* yacc.c:1646  */
+    {
+	int temp_type = get_compatible_type_non_bool((yyvsp[-2].conditional_expression_s)->type,(yyvsp[0].conditional_expression_s)->type);
+	(yyval.conditional_expression_s) = new conditional_expression_(temp_type);
+	std::ostringstream out;
+	if(temp_type != ERROR_TYPE){
+		out << " * " << (yyvsp[-2].conditional_expression_s)->temporary_name <<"     "<<(yyvsp[0].conditional_expression_s)->temporary_name << (yyval.conditional_expression_s)->temporary_name;
+		string s = out.str();
+		intermediate_output.gen(s);
+	}
+	else{
+		if((yyvsp[-2].conditional_expression_s)->type == BOOL_TYPE &&  (yyvsp[0].conditional_expression_s)->type == BOOL_TYPE){
+			yyerror("Trying to multiply with a boolean data type");
+		}
+	}
+}
+#line 1759 "grammar.tab.cpp" /* yacc.c:1646  */
+    break;
+
+  case 45:
+#line 419 "grammar.ypp" /* yacc.c:1646  */
+    {
+	int temp_type = get_compatible_type_non_bool((yyvsp[-2].conditional_expression_s)->type,(yyvsp[0].conditional_expression_s)->type);
+	(yyval.conditional_expression_s) = new conditional_expression_(temp_type);
+	std::ostringstream out;
+	if(temp_type != ERROR_TYPE){
+		out << " / " << (yyvsp[-2].conditional_expression_s)->temporary_name <<"     "<<(yyvsp[0].conditional_expression_s)->temporary_name << (yyval.conditional_expression_s)->temporary_name;
+		string s = out.str();
+		intermediate_output.gen(s);
+	}
+	else{
+		if((yyvsp[-2].conditional_expression_s)->type == BOOL_TYPE &&  (yyvsp[0].conditional_expression_s)->type == BOOL_TYPE){
+		 	yyerror("Trying to divide with a boolean data type");
+		}
+	}
+}
+#line 1779 "grammar.tab.cpp" /* yacc.c:1646  */
+    break;
+
+  case 46:
+#line 436 "grammar.ypp" /* yacc.c:1646  */
+    {
+	(yyval.conditional_expression_s) = new conditional_expression_((yyvsp[0].conditional_expression_s)->type);
+	std::ostringstream out;
+	if((yyvsp[0].conditional_expression_s)->type != ERROR_TYPE){
+		out << " = " << (yyvsp[0].conditional_expression_s)->temporary_name << " --- " << (yyval.conditional_expression_s)->temporary_name;
+		string s = out.str();
+		intermediate_output.gen(s);
+	}
+
+}
+#line 1794 "grammar.tab.cpp" /* yacc.c:1646  */
+    break;
+
+  case 47:
+#line 450 "grammar.ypp" /* yacc.c:1646  */
+    {
+	(yyval.conditional_expression_s) = new conditional_expression_((yyvsp[0].conditional_expression_s)->type);
+	std::ostringstream out;
+	if((yyvsp[0].conditional_expression_s)->type != ERROR_TYPE){
+		out << " = " << (yyvsp[0].conditional_expression_s)->temporary_name << " --- " << (yyval.conditional_expression_s)->temporary_name;
+		string s = out.str();
+		intermediate_output.gen(s);
+	}
+}
+#line 1808 "grammar.tab.cpp" /* yacc.c:1646  */
+    break;
+
+  case 48:
+#line 462 "grammar.ypp" /* yacc.c:1646  */
+    {
+	(yyval.conditional_expression_s) = new conditional_expression_((yyvsp[0].conditional_expression_s)->type);
+	std::ostringstream out;
+	if((yyvsp[0].conditional_expression_s)->type != ERROR_TYPE ){
+			out << " = " << (yyvsp[0].conditional_expression_s)->temporary_name << " --- " << (yyval.conditional_expression_s)->temporary_name;
+			string s = out.str();
+			intermediate_output.gen(s);
+	}
+
+}
+#line 1823 "grammar.tab.cpp" /* yacc.c:1646  */
+    break;
+
+  case 49:
+#line 473 "grammar.ypp" /* yacc.c:1646  */
+    {
+	if((yyvsp[0].conditional_expression_s)->type != BOOL_TYPE){
+		(yyval.conditional_expression_s) = new conditional_expression_((yyvsp[0].conditional_expression_s)->type);
+		std::ostringstream out;
+		if((yyvsp[0].conditional_expression_s)->type != ERROR_TYPE ){
+			out << " UMINUS " << (yyvsp[0].conditional_expression_s)->temporary_name << " --- " << (yyval.conditional_expression_s)->temporary_name;
+			string s = out.str();
+			intermediate_output.gen(s);
+		}
+	}
+	else{
+		yyerror("Trying to negate a boolean data type");
+		(yyval.conditional_expression_s) = new conditional_expression_(ERROR_TYPE);
+	}
+}
+#line 1843 "grammar.tab.cpp" /* yacc.c:1646  */
+    break;
+
+  case 50:
+#line 489 "grammar.ypp" /* yacc.c:1646  */
+    {
+	std::ostringstream out;
+	if((yyvsp[0].conditional_expression_s)->type == FLOAT_TYPE ){
+		(yyval.conditional_expression_s) = new conditional_expression_(ERROR_TYPE);
+		yyerror("can not use not operator on a float data type");
+	}
+	else{
+				(yyval.conditional_expression_s) = new conditional_expression_((yyvsp[0].conditional_expression_s)->type);
+		}
+	if((yyvsp[0].conditional_expression_s)->type != ERROR_TYPE && (yyvsp[0].conditional_expression_s)->type != FLOAT_TYPE ){
+				out << " NOT " << (yyvsp[0].conditional_expression_s)->temporary_name << " --- " << (yyval.conditional_expression_s)->temporary_name;
+				string s = out.str();
+				intermediate_output.gen(s);
+		}
+}
+#line 1863 "grammar.tab.cpp" /* yacc.c:1646  */
+    break;
+
+  case 51:
+#line 505 "grammar.ypp" /* yacc.c:1646  */
+    {
+	if((yyvsp[0].conditional_expression_s)->type != BOOL_TYPE){
+		(yyval.conditional_expression_s) = new conditional_expression_((yyvsp[0].conditional_expression_s)->type);
+		std::ostringstream out;
+		if((yyvsp[0].conditional_expression_s)->type != ERROR_TYPE){
+			out << " - " << (yyvsp[0].conditional_expression_s)->temporary_name << " 1 " << (yyval.conditional_expression_s)->temporary_name;
+			string s = out.str();
+			intermediate_output.gen(s);
+		}
+	}
+	else{
+		yyerror("Trying to decrement a boolean data type");
+		(yyval.conditional_expression_s) = new conditional_expression_(ERROR_TYPE);
+	}
+
+}
+#line 1884 "grammar.tab.cpp" /* yacc.c:1646  */
+    break;
+
+  case 52:
+#line 522 "grammar.ypp" /* yacc.c:1646  */
+    {
+	if((yyvsp[0].conditional_expression_s)->type != BOOL_TYPE){
+		(yyval.conditional_expression_s) = new conditional_expression_((yyvsp[0].conditional_expression_s)->type);
+		std::ostringstream out;
+		if((yyvsp[0].conditional_expression_s)->type != ERROR_TYPE){
+			out << " + " << (yyvsp[0].conditional_expression_s)->temporary_name << " 1 " << (yyval.conditional_expression_s)->temporary_name;
+			string s = out.str();
+			intermediate_output.gen(s);
+		}
+	}
+	else{
+		yyerror("Trying to increment a boolean data type");
+		(yyval.conditional_expression_s) = new conditional_expression_(ERROR_TYPE);
+	}
+
+}
+#line 1905 "grammar.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 53:
-#line 180 "grammar.ypp" /* yacc.c:1646  */
+#line 542 "grammar.ypp" /* yacc.c:1646  */
     {
 (yyval.conditional_expression_s) = new conditional_expression_(INT_TYPE);
 std::ostringstream out;
-out << (yyval.conditional_expression_s)->temporary_name << " = " << (yyvsp[0].integer_value);
+out << " = " << (yyvsp[0].integer_value) << " --- " << (yyval.conditional_expression_s)->temporary_name;
 string s = out.str();
 intermediate_output.gen(s);
 }
-#line 1458 "grammar.tab.cpp" /* yacc.c:1646  */
+#line 1917 "grammar.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 54:
-#line 189 "grammar.ypp" /* yacc.c:1646  */
+#line 551 "grammar.ypp" /* yacc.c:1646  */
     {
 (yyval.conditional_expression_s) = new conditional_expression_(FLOAT_TYPE);
 std::ostringstream out;
-out << (yyval.conditional_expression_s)->temporary_name << " = " << (yyvsp[0].real_value);
+out << " = " << (yyvsp[0].real_value) << " --- " << (yyval.conditional_expression_s)->temporary_name;
 string s = out.str();
 intermediate_output.gen(s);
 }
-#line 1470 "grammar.tab.cpp" /* yacc.c:1646  */
+#line 1929 "grammar.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 55:
-#line 198 "grammar.ypp" /* yacc.c:1646  */
+#line 560 "grammar.ypp" /* yacc.c:1646  */
     {
+	if((yyvsp[0].id_arr_s)->var == NULL){
+			yyerror("The used variable is not declared");
+			(yyval.conditional_expression_s) = new conditional_expression_(ERROR_TYPE);
+	}
+	else{
+			(yyval.conditional_expression_s) = new conditional_expression_((yyvsp[0].id_arr_s)->var->eletype);
+			std::ostringstream out;
+			out << " = " << (yyvsp[0].id_arr_s)->var->name <<"_"<< (yyvsp[0].id_arr_s)->var->offset << " --- " << (yyval.conditional_expression_s)->temporary_name;
+			string s = out.str();
+			intermediate_output.gen(s);
+	}
 
 }
-#line 1478 "grammar.tab.cpp" /* yacc.c:1646  */
+#line 1948 "grammar.tab.cpp" /* yacc.c:1646  */
+    break;
+
+  case 56:
+#line 575 "grammar.ypp" /* yacc.c:1646  */
+    {
+  (yyval.conditional_expression_s) = new conditional_expression_((yyvsp[-1].conditional_expression_s)->type,(yyvsp[-1].conditional_expression_s)->temporary_name);
+}
+#line 1956 "grammar.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 62:
-#line 212 "grammar.ypp" /* yacc.c:1646  */
+#line 592 "grammar.ypp" /* yacc.c:1646  */
     {
-if(active_function_index != -1 ){
-	symbol_table.patch_variable(active_function_index,(yyvsp[0].varlist_s)->list_of_indexes,(yyvsp[-1].type_s)->type);
-
- }
+	if(active_function_index != -1 ){
+		symbol_table.patch_variable(active_function_index,(yyvsp[0].varlist_s)->list_of_indexes,(yyvsp[-1].type_s)->type);
+ 	}
 }
-#line 1489 "grammar.tab.cpp" /* yacc.c:1646  */
+#line 1966 "grammar.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 63:
-#line 221 "grammar.ypp" /* yacc.c:1646  */
+#line 601 "grammar.ypp" /* yacc.c:1646  */
     {
 }
-#line 1496 "grammar.tab.cpp" /* yacc.c:1646  */
+#line 1973 "grammar.tab.cpp" /* yacc.c:1646  */
+    break;
+
+  case 64:
+#line 604 "grammar.ypp" /* yacc.c:1646  */
+    {
+}
+#line 1980 "grammar.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 65:
-#line 226 "grammar.ypp" /* yacc.c:1646  */
+#line 609 "grammar.ypp" /* yacc.c:1646  */
     {
   if(active_function_index != -1){
       string s((yyvsp[0].name));
@@ -1531,11 +2015,11 @@ if(active_function_index != -1 ){
       }
   }
 }
-#line 1535 "grammar.tab.cpp" /* yacc.c:1646  */
+#line 2019 "grammar.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 66:
-#line 260 "grammar.ypp" /* yacc.c:1646  */
+#line 643 "grammar.ypp" /* yacc.c:1646  */
     {
 if(active_function_index != -1){
       string s((yyvsp[-1].name));
@@ -1571,46 +2055,48 @@ if(active_function_index != -1){
       }
   }
 }
-#line 1575 "grammar.tab.cpp" /* yacc.c:1646  */
+#line 2059 "grammar.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 67:
-#line 298 "grammar.ypp" /* yacc.c:1646  */
+#line 681 "grammar.ypp" /* yacc.c:1646  */
     {
+			cout<<"Trying to reduce new num list\n";
       (yyval.new_num_list_s)  = new new_num_list_();
       (yyval.new_num_list_s)->num_list.insert((yyval.new_num_list_s)->num_list.end(),(yyvsp[-3].new_num_list_s)->num_list.begin(),(yyvsp[-3].new_num_list_s)->num_list.end());
       (yyval.new_num_list_s)->num_list.push_back((yyvsp[-1].integer_value));
 }
-#line 1585 "grammar.tab.cpp" /* yacc.c:1646  */
+#line 2070 "grammar.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 68:
-#line 303 "grammar.ypp" /* yacc.c:1646  */
+#line 688 "grammar.ypp" /* yacc.c:1646  */
     {
+		cout<<"Trying to reduce new num list\n";
     (yyval.new_num_list_s)  = new new_num_list_();
     (yyval.new_num_list_s)->num_list.push_back((yyvsp[-1].integer_value));
 }
-#line 1594 "grammar.tab.cpp" /* yacc.c:1646  */
+#line 2080 "grammar.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 69:
-#line 310 "grammar.ypp" /* yacc.c:1646  */
+#line 696 "grammar.ypp" /* yacc.c:1646  */
     { (yyval.parameter_list_s) = new parameter_list_((yyvsp[0].parameter_list_s)->no_of_parameter);
 								symbol_table.patch_function_parameter_no(active_function_index,(yyval.parameter_list_s)->no_of_parameter);
 							}
-#line 1602 "grammar.tab.cpp" /* yacc.c:1646  */
+#line 2088 "grammar.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 70:
-#line 314 "grammar.ypp" /* yacc.c:1646  */
+#line 700 "grammar.ypp" /* yacc.c:1646  */
     { (yyval.parameter_list_s) = new parameter_list_(0);
 							 symbol_table.patch_function_parameter_no(active_function_index,(yyval.parameter_list_s)->no_of_parameter);
 							}
-#line 1610 "grammar.tab.cpp" /* yacc.c:1646  */
+#line 2096 "grammar.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 71:
-#line 321 "grammar.ypp" /* yacc.c:1646  */
+#line 707 "grammar.ypp" /* yacc.c:1646  */
     {
 if(active_function_index != -1){
 	 if((yyvsp[0].unit_declaration_s)->type != ERROR_TYPE){
@@ -1621,11 +2107,11 @@ if(active_function_index != -1){
 	 }
 }
 }
-#line 1625 "grammar.tab.cpp" /* yacc.c:1646  */
+#line 2111 "grammar.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 72:
-#line 334 "grammar.ypp" /* yacc.c:1646  */
+#line 720 "grammar.ypp" /* yacc.c:1646  */
     {
 if(active_function_index != -1){
 	 if((yyvsp[0].unit_declaration_s)->type != ERROR_TYPE){
@@ -1636,29 +2122,29 @@ if(active_function_index != -1){
 	 }
 }
 }
-#line 1640 "grammar.tab.cpp" /* yacc.c:1646  */
+#line 2126 "grammar.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 73:
-#line 346 "grammar.ypp" /* yacc.c:1646  */
+#line 733 "grammar.ypp" /* yacc.c:1646  */
     {
-if(active_function_index != -1){
-	string s((yyvsp[0].name));
-	if(symbol_table.search_parameter(active_function_index,s) == false ){
-		int index = symbol_table.add_parameter(active_function_index,s,SIMPLE,(yyvsp[-1].type_s)->type);
-		(yyval.unit_declaration_s) = new unit_declaration_ ((yyvsp[-1].type_s)->type);
-	}
-	else{
+	if(active_function_index != -1){
+		string s((yyvsp[0].name));
+		if(symbol_table.search_parameter(active_function_index,s) == false ){
+			int index = symbol_table.add_parameter(active_function_index,s,SIMPLE,(yyvsp[-1].type_s)->type);
+			(yyval.unit_declaration_s) = new unit_declaration_ ((yyvsp[-1].type_s)->type);
+		}
+		else{
 			yyerror("This parameter has been passed early");
 			(yyval.unit_declaration_s) = new unit_declaration_ (ERROR_TYPE);
+			}
 	}
 }
-}
-#line 1658 "grammar.tab.cpp" /* yacc.c:1646  */
+#line 2144 "grammar.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 74:
-#line 360 "grammar.ypp" /* yacc.c:1646  */
+#line 747 "grammar.ypp" /* yacc.c:1646  */
     {
 if(active_function_index != -1){
 	string s((yyvsp[-2].name));
@@ -1672,30 +2158,30 @@ if(active_function_index != -1){
 	}
 }
 }
-#line 1676 "grammar.tab.cpp" /* yacc.c:1646  */
+#line 2162 "grammar.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 75:
-#line 375 "grammar.ypp" /* yacc.c:1646  */
+#line 762 "grammar.ypp" /* yacc.c:1646  */
     {
 	  (yyval.varlist_s) = new varlist_();
 		(yyval.varlist_s)->list_of_indexes.insert((yyval.varlist_s)->list_of_indexes.end(),(yyvsp[-2].varlist_s)->list_of_indexes.begin(),(yyvsp[-2].varlist_s)->list_of_indexes.end());
 		(yyval.varlist_s)->list_of_indexes.push_back((yyvsp[0].id_arr_declare_s)->index_in_sym_tab);
 }
-#line 1686 "grammar.tab.cpp" /* yacc.c:1646  */
+#line 2172 "grammar.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 76:
-#line 380 "grammar.ypp" /* yacc.c:1646  */
+#line 767 "grammar.ypp" /* yacc.c:1646  */
     {
           (yyval.varlist_s) = new varlist_();
 		  (yyval.varlist_s)->list_of_indexes.push_back((yyvsp[0].id_arr_declare_s)->index_in_sym_tab);
         }
-#line 1695 "grammar.tab.cpp" /* yacc.c:1646  */
+#line 2181 "grammar.tab.cpp" /* yacc.c:1646  */
     break;
 
 
-#line 1699 "grammar.tab.cpp" /* yacc.c:1646  */
+#line 2185 "grammar.tab.cpp" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -1923,7 +2409,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 387 "grammar.ypp" /* yacc.c:1906  */
+#line 774 "grammar.ypp" /* yacc.c:1906  */
 
 #include <stdio.h>
 
@@ -1931,4 +2417,5 @@ int main(){
 
 	yyparse();
   symbol_table.display();
+	intermediate_output.print();
 }

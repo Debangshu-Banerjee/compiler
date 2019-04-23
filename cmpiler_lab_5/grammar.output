@@ -16,7 +16,6 @@ Terminals unused in grammar
    COLON
    BOOL
    CHAR
-   UMINUS
 
 
 Grammar
