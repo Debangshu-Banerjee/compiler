@@ -232,7 +232,7 @@ int code_output :: get_next(){
 }
 void code_output :: print(){
 	for(int i=0;i<this->intermediate_code.size();i++){
-		cout<<this->intermediate_code[i]<<endl;
+		cout<<(i+1)<<this->intermediate_code[i]<<endl;
 	}
 	cout<<endl<<"-----------------end------------------"<<endl;
 }
@@ -309,8 +309,21 @@ void code_output :: patch_tag(string tag,vector<int> indexes,int index){
 }
 
 void code_output :: patch_switch_con(string tag,vector<int> indexes){
+	if(indexes.empty()) return;
 	for(int i=0;i<indexes.size();i++){
 		if(indexes[i]<0 || indexes[i] >= this->intermediate_code.size()) continue;
 		this->back_patch_special("_prev","_prev",tag,"_prev",indexes[i]);
 	}
+}
+void code_output :: patch_tag_no_put(string tag,vector<int> indexes,int index){
+	for(int i=0;i<indexes.size();i++){
+		if(indexes[i]<0 || indexes[i] >= this->intermediate_code.size()) continue;
+		this->back_patch_special("_prev","_prev","_prev",tag,indexes[i]);
+	}
+}
+void code_output :: gen_at_pos(string tag,int index){
+	if(index < 0 || index >= this->intermediate_code.size() ) {
+		return;
+	}
+	this->intermediate_code[index] = tag;
 }

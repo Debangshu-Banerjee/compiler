@@ -122,7 +122,9 @@ public:
 	void back_patch_special(string op,string op1,string op2,string result,int index);
 	void gen_special(string op,string operand1,string operand2,string result);
 	void patch_tag(string tag,vector<int> indexes,int index);
+  void patch_tag_no_put(string tag,vector<int> indexes,int index);
 	void patch_switch_con(string tag,vector<int> indexes);
+	void gen_at_pos(string tag,int index);
 };
 
 class sym_tab{
@@ -168,9 +170,10 @@ public:
 	vector<int> break_list;
 	vector<int> continue_list;
 	int can_appear_in_global; // 0 variables both global and local 1 for local only 2 global only
- 														// 0 --> variables 1 --> if/while/for 2 --> functions
+ 	bool error;													// 0 --> variables 1 --> if/while/for 2 --> functions
 	 statement_list_(int can_appear_in_global){
 		 this->can_appear_in_global = can_appear_in_global;
+		 this->error = false;
 	 }
 };
 
