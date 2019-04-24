@@ -39,6 +39,9 @@ continue                        { return(CONTINUE); }
 float                           { yylval.type = FLOAT; return(FLOAT); }
 for                             { return(FOR); }
 if                              { return(IF); }
+switch                          {return(SWITCH); }
+case                            { return(CASE);}
+default                         { return(DEFAULT);}
 int                             { yylval.type = INT; return(INT); }
 return                          { return(RETURN); }
 void                            { yylval.type = VOID; return(VOID); }
@@ -73,11 +76,11 @@ bool                            { yylval.type = BOOL; return(BOOL); }
 "}"                             { return(CLOSE_CURLY); }
 "]"                             { return(CLOSE_SQUARE); }
 "["                             { return(OPEN_SQUARE); }
-[0-9]*"."[0-9]+                 { yylval.real_value = atof(yytext); return(REAL); } 
+[0-9]*"."[0-9]+                 { yylval.real_value = atof(yytext); return(REAL); }
 [0-9]+                          { yylval.integer_value = atoi(yytext); return(NUM);}
-{ALPHA}({ALPHA}|{DIGIT})*       {   
+{ALPHA}({ALPHA}|{DIGIT})*       {
                                   yylval.name = strdup(yytext);
-                                  return(ID); 
+                                  return(ID);
                                 }
 ";"                             { return(SEMI);}
 ","                             { return(COMMA); }
@@ -86,6 +89,5 @@ bool                            { yylval.type = BOOL; return(BOOL); }
 "|"                             { return(PIPE); }
 "?"                             { return(QUES); }
 .                               { cerr<< "TOKEN CANNOT BE MATCHED :\t"<< yytext <<"\t"<<endl;return(ERROR);}
-                                  
-%%
 
+%%

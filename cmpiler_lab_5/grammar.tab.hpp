@@ -88,15 +88,18 @@ extern int yydebug;
     XOR = 298,
     QUES = 299,
     COLON = 300,
-    ID = 301,
-    BOOL = 302,
-    CHAR = 303,
-    INT = 304,
-    FLOAT = 305,
-    VOID = 306,
-    NUM = 307,
-    REAL = 308,
-    UMINUS = 310
+    SWITCH = 301,
+    CASE = 302,
+    DEFAULT = 303,
+    ID = 304,
+    BOOL = 305,
+    CHAR = 306,
+    INT = 307,
+    FLOAT = 308,
+    VOID = 309,
+    NUM = 310,
+    REAL = 311,
+    UMINUS = 314
   };
 #endif
 
@@ -105,7 +108,7 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 22 "grammar.ypp" /* yacc.c:1909  */
+#line 25 "grammar.ypp" /* yacc.c:1909  */
 
   char *name;          // name of a variable or function
   int integer_value;   // value of an integer
@@ -127,8 +130,11 @@ union YYSTYPE
   result_ * result_s;
   new_num_list_ * new_num_list_s;
   unit_declaration_ * unit_declaration_s;
+	elist_func_call_ * elist_func_call_s;
+	case_name_ * case_name_s;
+	case_list_ * case_list_s;
 
-#line 132 "grammar.tab.hpp" /* yacc.c:1909  */
+#line 138 "grammar.tab.hpp" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;

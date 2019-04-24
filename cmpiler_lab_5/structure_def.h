@@ -32,7 +32,33 @@ public:
 		this->curr_offset = this->curr_offset + addition;
 	}
 };
+class loop_tag_genarator{
+public:
+	int tag_no;
+	loop_tag_genarator(){
+			tag_no =0;
+	}
+	string get_loop_tag(){
+		string t = "LOOP";
+		t = t + to_string(this->tag_no)+ ":";
+		tag_no++;
+		return t;
+	}
+};
 
+class conditional_tag_genator{
+public:
+	int tag_no;
+ 		conditional_tag_genator(){
+		 	tag_no =0;
+ 		}
+		string get_conditional_tag(){
+			 string t = "COND";
+			 t = t + to_string(this->tag_no) + ":";
+			 tag_no++;
+			 return t;
+		}
+};
 
 class variable{
 public :
@@ -50,6 +76,11 @@ public :
 		this->level_of_declaration = level_of_declaration;
 		this->offset = -1;
 	}
+};
+class elist_func_call_{
+public:
+		vector<int> type_list;
+		vector<string> name_list;
 };
 class parameter{
 public :
@@ -86,7 +117,12 @@ public:
 	void gen(string s);
 	int get_next();
 	void print();
+	void put_tag(int index,string tag);
+	void back_patch(string s,int index);
+	void back_patch_special(string op,string op1,string op2,string result,int index);
 	void gen_special(string op,string operand1,string operand2,string result);
+	void patch_tag(string tag,vector<int> indexes,int index);
+	void patch_switch_con(string tag,vector<int> indexes);
 };
 
 class sym_tab{
@@ -105,6 +141,8 @@ public:
 	int add_parameter(int active_function_index,string name,int type,int eletype);
 	bool patch_variable(int active_function_index,vector<int> var_index,int eletype);
 	bool patch_function_parameter_no(int active_function_index,int no_of_parameter);
+	int check_param_compatible(int call_function_index,vector<int> type_list);
+	string genarate_function_call(int call_function_index,elist_func_call_ * temp);
 	void display();
 };
 
@@ -127,8 +165,13 @@ public :
 class statement_list_{
 public:
 	vector<int> next;
+	vector<int> break_list;
+	vector<int> continue_list;
 	int can_appear_in_global; // 0 variables both global and local 1 for local only 2 global only
-	bool error ; 			// 0 --> variables 1 --> if/while/for 2 --> functions
+ 														// 0 --> variables 1 --> if/while/for 2 --> functions
+	 statement_list_(int can_appear_in_global){
+		 this->can_appear_in_global = can_appear_in_global;
+	 }
 };
 
 class assignment_statement_{
@@ -163,8 +206,7 @@ public:
 			if(type != ERROR_TYPE){
 					string t = to_string(global_temp);
 					global_temp++;
-					this->temporary_name = "T";
-					temporary_name = temporary_name + t;
+					this->temporary_name = "T" + t;
 			}
 			else{
 				this->temporary_name = "ERR";
@@ -186,6 +228,27 @@ class elist_{
 public:
 	int type;
 	vector<string> name_list;
+};
+
+class case_name_{
+public:
+	int first_address;
+	case_name_(int first_address){
+		this->first_address = first_address;
+	}
+};
+
+class case_list_{
+public:
+	vector<int> next;
+	vector<int> break_list;
+	int first_address;
+	int second_address;
+	vector<int> false_list;
+	case_list_(int first_address,int second_address){
+		this->first_address = first_address;
+		this->second_address = second_address;
+	}
 };
 
 class new_num_list_{

@@ -4,6 +4,8 @@
 using namespace std;
 
 gloabal_offset_structure global_offset;
+extern void yyerror(string s);
+extern code_output intermediate_output;
 
 int get_compatible_type_non_bool(int type1 ,int type2){
 	if(type1 == ERROR_TYPE || type2 == ERROR_TYPE){
@@ -17,7 +19,7 @@ int get_compatible_type_non_bool(int type1 ,int type2){
 	}
 	if(type1 == FLOAT_TYPE || type2 == FLOAT_TYPE){
 		/* try for type casting */
-		
+
 		return FLOAT_TYPE;
 	}
 	return ERROR_TYPE;
@@ -170,6 +172,54 @@ bool sym_tab :: patch_function_parameter_no(int active_function_index,int no_of_
 	if( active_function_index < 0 || active_function_index >= global_sym_tab.size()) return false;
 	this->global_sym_tab[active_function_index]->no_of_parameter = no_of_parameter;
 }
+/* this function also prints error msgs*/
+int sym_tab :: check_param_compatible(int call_function_index,vector<int> type_list){
+	if(call_function_index < 0 || call_function_index >= this->global_sym_tab.size()) return ERROR_TYPE;
+	if(this->global_sym_tab[call_function_index]->param_list.size() != type_list.size()){
+			yyerror("No of arguments passed does not match defination of "+this->global_sym_tab[call_function_index]->function_name);
+			return ERROR_TYPE;
+	}
+	else{
+		bool flag = true;
+		for(int i=0;i<type_list.size();i++){
+			if(type_list[i] != this->global_sym_tab[call_function_index]->param_list[i]->eletype){
+				yyerror( to_string(i+1)+" argument passed does not match defination of "+this->global_sym_tab[call_function_index]->function_name);
+				flag = false;
+			}
+		}
+		if(flag == false){
+			return ERROR_TYPE;
+		}
+		else{
+			return 	this->global_sym_tab[call_function_index]->result_type;
+		}
+	}
+}
+
+string sym_tab :: genarate_function_call(int call_function_index,elist_func_call_ * temp){
+	if(call_function_index < 0 || call_function_index >= this->global_sym_tab.size()) return "ERR";
+	for(int i=0;i<temp->type_list.size();i++){
+		if(this->global_sym_tab[call_function_index]->param_list[i]->type == SIMPLE){
+				intermediate_output.gen_special("param",temp->name_list[i],"---","---");
+		}
+		else{
+			intermediate_output.gen_special("refparam",temp->name_list[i],"---","---");
+		}
+	}
+	if(this->global_sym_tab[call_function_index]->result_type != VOID_TYPE){
+		string t = to_string(global_temp);
+		global_temp++;
+		string temporary_name = "T";
+		temporary_name = temporary_name + t;
+		intermediate_output.gen_special("refparam",temporary_name,"---","---");
+		intermediate_output.gen_special("call",this->global_sym_tab[call_function_index]->function_name,to_string(temp->type_list.size()+1),"---");
+		return temporary_name;
+	}
+	else{
+		intermediate_output.gen_special("call",this->global_sym_tab[call_function_index]->function_name,to_string(temp->type_list.size()),"---");
+		return "ERR";
+	}
+}
 
 void code_output :: gen(string s){
 	this->intermediate_code.push_back(s);
@@ -192,4 +242,75 @@ void code_output :: gen_special(string op,string operand1,string operand2,string
 	out<< op << " "<<operand1<<" "<<operand2 <<" "<<result;
 	string s = out.str();
 	this->gen(s);
+}
+void 	code_output :: back_patch(string s,int index){
+	if(index < 0 || index >= this->intermediate_code.size() ) {
+		return;
+	}
+	this->intermediate_code[index] = this->intermediate_code[index] + s ;
+}
+void code_output :: back_patch_special(string op,string op1,string op2,string result,int index){
+	vector<string>v(4,"");
+	string s = this->intermediate_code[index];
+	int d = s.length();
+	int i = 0;
+	int count = 0;
+	string temp = "";
+	while(i<d){
+		if(s[i] == ' '){
+			if(i>0){
+				if(s[i] == ' ' && s[i-1]!= ' '){
+					if(count<=3){
+						v[count] = temp;
+					}
+					count++;
+
+					temp = "";
+				}
+			}
+		}
+		else{
+			temp+=s[i];
+		}
+		i++;
+		if(i == d && count<=3){
+			v[count] = temp;
+		}
+	}
+
+	if(op!="_prev"){
+		v[0] = op;
+	}
+	if(op1!="_prev"){
+		v[1] = op1;
+	}
+	if(op2!="_prev"){
+		v[2] = op2;
+	}
+	if(result!="_prev"){
+		v[3] = result;
+	}
+	string final = v[0] + " " + v[1] + " " + v[2] + " " + v[3];
+	this->intermediate_code[index] = final;
+
+}
+void code_output :: put_tag(int index,string tag){
+	if(index < 0 || index >= this->intermediate_code.size() ) {
+		return;
+	}
+	this->intermediate_code[index] = tag;
+}
+void code_output :: patch_tag(string tag,vector<int> indexes,int index){
+		this->put_tag(index,tag);
+		for(int i=0;i<indexes.size();i++){
+			if(indexes[i]<0 || indexes[i] >= this->intermediate_code.size()) continue;
+			this->back_patch_special("_prev","_prev","_prev",tag,indexes[i]);
+		}
+}
+
+void code_output :: patch_switch_con(string tag,vector<int> indexes){
+	for(int i=0;i<indexes.size();i++){
+		if(indexes[i]<0 || indexes[i] >= this->intermediate_code.size()) continue;
+		this->back_patch_special("_prev","_prev",tag,"_prev",indexes[i]);
+	}
 }

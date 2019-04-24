@@ -13,7 +13,6 @@ Terminals unused in grammar
    PIPE
    XOR
    QUES
-   COLON
    BOOL
    CHAR
 
@@ -48,221 +47,276 @@ Grammar
    16          | iteration_statement
    17          | assignment_statement SEMI
    18          | first_curly statement_list last_curly
-   19          | function_declaration
+   19          | switch_statement
+   20          | function_declaration
 
-   20 selection_statement: ifexp statement ELSE N M statement
-   21                    | ifexp statement
+   21 selection_statement: ifexp statement ELSE N M statement
+   22                    | ifexp statement
 
-   22 ifexp: IF OPEN_BRACKET assignment_statement CLOSE_BRACKET
+   23 switch_statement: SWITCH OPEN_BRACKET normal_expression CLOSE_BRACKET OPEN_CURLY case_list CLOSE_CURLY
 
-   23 iteration_statement: whileexp statement
-   24                    | forexp assignment_statement CLOSE_BRACKET statement
+   24 case_list: case_list_minor default_statement
+   25          | case_list_minor
 
-   25 whileexp: WHILE M OPEN_BRACKET assignment_statement CLOSE_BRACKET
+   26 case_list_minor: case_list_minor case_statement
+   27                | case_statement
 
-   26 forexp: FOR OPEN_BRACKET assignment_statement SEMI M assignment_statement SEMI
+   28 default_statement: default_name statement
 
-   27 M: %empty
+   29 default_name: DEFAULT COLON
 
-   28 N: %empty
+   30 case_statement: case_name normal_expression COLON N_new M statement
 
-   29 conditional_expression: conditional_expression AND_OP expression
-   30                       | conditional_expression OR_OP expression
-   31                       | expression
+   31 case_name: CASE
 
-   32 expression: rel_expression
-   33           | normal_expression
+   32 ifexp: IF OPEN_BRACKET assignment_statement CLOSE_BRACKET
 
-   34 rel_expression: normal_expression GT normal_expression
-   35               | normal_expression LT normal_expression
-   36               | normal_expression GE_OP normal_expression
-   37               | normal_expression LE_OP normal_expression
-   38               | normal_expression EQ_OP normal_expression
-   39               | normal_expression NE_OP normal_expression
+   33 iteration_statement: whileexp statement
+   34                    | forexp M assignment_statement M CLOSE_BRACKET statement
 
-   40 normal_expression: normal_expression PLUS term
-   41                  | normal_expression MINUS term
-   42                  | term
+   35 whileexp: WHILE M OPEN_BRACKET assignment_statement CLOSE_BRACKET
 
-   43 term: term STAR factor
-   44     | term DIVIDE factor
-   45     | factor
+   36 forexp: FOR OPEN_BRACKET assignment_statement SEMI M assignment_statement SEMI
 
-   46 factor: unary_expression
+   37 N_new: %empty
 
-   47 unary_expression: primary_expression
-   48                 | MINUS unary_expression
-   49                 | NOT unary_expression
-   50                 | DEC_OP unary_expression
-   51                 | INC_OP unary_expression
+   38 M: %empty
 
-   52 primary_expression: NUM
-   53                   | REAL
-   54                   | id_arr
-   55                   | OPEN_BRACKET conditional_expression CLOSE_BRACKET
+   39 N: %empty
 
-   56 elist: elist OPEN_SQUARE expression CLOSE_SQUARE
-   57      | OPEN_SQUARE expression CLOSE_SQUARE
+   40 conditional_expression: conditional_expression AND_OP expression
+   41                       | conditional_expression OR_OP expression
+   42                       | expression
 
-   58 assignment_statement: id_arr ASSIGN conditional_expression
-   59                     | conditional_expression
-   60                     | %empty
+   43 expression: rel_expression
+   44           | normal_expression
 
-   61 variable_declaration: type varlist
+   45 rel_expression: normal_expression GT normal_expression
+   46               | normal_expression LT normal_expression
+   47               | normal_expression GE_OP normal_expression
+   48               | normal_expression LE_OP normal_expression
+   49               | normal_expression EQ_OP normal_expression
+   50               | normal_expression NE_OP normal_expression
 
-   62 id_arr: ID
-   63       | ID elist
+   51 normal_expression: normal_expression PLUS term
+   52                  | normal_expression MINUS term
+   53                  | term
 
-   64 id_arr_declare: ID
-   65               | ID new_num_list
+   54 term: term STAR factor
+   55     | term DIVIDE factor
+   56     | factor
 
-   66 new_num_list: new_num_list OPEN_SQUARE NUM CLOSE_SQUARE
-   67             | OPEN_SQUARE NUM CLOSE_SQUARE
+   57 factor: unary_expression
 
-   68 parameter_list: param_decl
-   69               | %empty
+   58 unary_expression: primary_expression
+   59                 | MINUS unary_expression
+   60                 | NOT unary_expression
+   61                 | DEC_OP unary_expression
+   62                 | INC_OP unary_expression
 
-   70 param_decl: param_decl COMMA unit_declaration
-   71           | unit_declaration
+   63 primary_expression: NUM
+   64                   | REAL
+   65                   | id_arr
+   66                   | OPEN_BRACKET conditional_expression CLOSE_BRACKET
+   67                   | func_call
 
-   72 unit_declaration: type ID
-   73                 | type ID OPEN_SQUARE CLOSE_SQUARE
+   68 elist: elist OPEN_SQUARE expression CLOSE_SQUARE
+   69      | OPEN_SQUARE expression CLOSE_SQUARE
 
-   74 varlist: varlist COMMA id_arr_declare
-   75        | id_arr_declare
+   70 func_call: ID OPEN_BRACKET elist_super CLOSE_BRACKET
+
+   71 elist_super: elist_func_call
+   72            | %empty
+
+   73 elist_func_call: elist_func_call COMMA expression
+   74                | expression
+
+   75 assignment_statement: id_arr ASSIGN conditional_expression
+   76                     | conditional_expression
+   77                     | %empty
+
+   78 variable_declaration: type varlist
+
+   79 id_arr: ID
+   80       | ID elist
+
+   81 id_arr_declare: ID
+   82               | ID new_num_list
+
+   83 new_num_list: new_num_list OPEN_SQUARE NUM CLOSE_SQUARE
+   84             | OPEN_SQUARE NUM CLOSE_SQUARE
+
+   85 parameter_list: param_decl
+   86               | %empty
+
+   87 param_decl: param_decl COMMA unit_declaration
+   88           | unit_declaration
+
+   89 unit_declaration: type ID
+   90                 | type ID OPEN_SQUARE CLOSE_SQUARE
+
+   91 varlist: varlist COMMA id_arr_declare
+   92        | id_arr_declare
 
 
 Terminals, with rules where they appear
 
 $end (0) 0
 error (256)
-ELSE (258) 20
-FOR (259) 26
-IF (260) 22
+ELSE (258) 21
+FOR (259) 36
+IF (260) 32
 RETURN (261) 13 14
-WHILE (262) 25
+WHILE (262) 35
 PTR_OP (263)
-INC_OP (264) 51
-DEC_OP (265) 50
-AND_OP (266) 29
-OR_OP (267) 30
-LT (268) 35
-GT (269) 34
-LE_OP (270) 37
-GE_OP (271) 36
-EQ_OP (272) 38
-NE_OP (273) 39
+INC_OP (264) 62
+DEC_OP (265) 61
+AND_OP (266) 40
+OR_OP (267) 41
+LT (268) 46
+GT (269) 45
+LE_OP (270) 48
+GE_OP (271) 47
+EQ_OP (272) 49
+NE_OP (273) 50
 DO (274)
 BREAK (275)
 LIBRARY (276)
 CONTINUE (277)
 ERROR (278)
-NOT (279) 49
+NOT (279) 60
 AMP (280)
 TILDE (281)
-STAR (282) 43
-ASSIGN (283) 58
-OPEN_BRACKET (284) 5 22 25 26 55
-CLOSE_BRACKET (285) 5 22 24 25 55
-OPEN_CURLY (286) 3
-CLOSE_CURLY (287) 4
-OPEN_SQUARE (288) 56 57 66 67 73
-CLOSE_SQUARE (289) 56 57 66 67 73
-SEMI (290) 12 13 14 17 26
-COMMA (291) 70 74
+STAR (282) 54
+ASSIGN (283) 75
+OPEN_BRACKET (284) 5 23 32 35 36 66 70
+CLOSE_BRACKET (285) 5 23 32 34 35 66 70
+OPEN_CURLY (286) 3 23
+CLOSE_CURLY (287) 4 23
+OPEN_SQUARE (288) 68 69 83 84 90
+CLOSE_SQUARE (289) 68 69 83 84 90
+SEMI (290) 12 13 14 17 36
+COMMA (291) 73 87 91
 DOT (292)
-PLUS (293) 40
-MINUS (294) 41 48
-DIVIDE (295) 44
+PLUS (293) 51
+MINUS (294) 52 59
+DIVIDE (295) 55
 MODULUS (296)
 PIPE (297)
 XOR (298)
 QUES (299)
-COLON (300)
-ID (301) 6 62 63 64 65 72 73
-BOOL (302)
-CHAR (303)
-INT (304) 7
-FLOAT (305) 8
-VOID (306) 9
-NUM (307) 52 66 67
-REAL (308) 53
-"IFX" (309)
-UMINUS (310)
+COLON (300) 29 30
+SWITCH (301) 23
+CASE (302) 31
+DEFAULT (303) 29
+ID (304) 6 70 79 80 81 82 89 90
+BOOL (305)
+CHAR (306)
+INT (307) 7
+FLOAT (308) 8
+VOID (309) 9
+NUM (310) 63 83 84
+REAL (311) 64
+"IFS" (312)
+"IFX" (313)
+UMINUS (314)
 
 
 Nonterminals, with rules where they appear
 
-$accept (56)
+$accept (60)
     on left: 0
-program (57)
+program (61)
     on left: 1, on right: 0
-function_declaration (58)
-    on left: 2, on right: 19
-first_curly (59)
+function_declaration (62)
+    on left: 2, on right: 20
+first_curly (63)
     on left: 3, on right: 2 18
-last_curly (60)
+last_curly (64)
     on left: 4, on right: 2 18
-function_head (61)
+function_head (65)
     on left: 5, on right: 2
-res_id (62)
+res_id (66)
     on left: 6, on right: 5
-type (63)
-    on left: 7 8 9, on right: 6 61 72 73
-statement_list (64)
+type (67)
+    on left: 7 8 9, on right: 6 78 89 90
+statement_list (68)
     on left: 10 11, on right: 1 2 10 18
-statement (65)
-    on left: 12 13 14 15 16 17 18 19, on right: 10 20 21 23 24
-selection_statement (66)
-    on left: 20 21, on right: 15
-ifexp (67)
-    on left: 22, on right: 20 21
-iteration_statement (68)
-    on left: 23 24, on right: 16
-whileexp (69)
-    on left: 25, on right: 23
-forexp (70)
-    on left: 26, on right: 24
-M (71)
-    on left: 27, on right: 10 20 25 26
-N (72)
-    on left: 28, on right: 20
-conditional_expression (73)
-    on left: 29 30 31, on right: 14 29 30 55 58 59
-expression (74)
-    on left: 32 33, on right: 29 30 31 56 57
-rel_expression (75)
-    on left: 34 35 36 37 38 39, on right: 32
-normal_expression (76)
-    on left: 40 41 42, on right: 33 34 35 36 37 38 39 40 41
-term (77)
-    on left: 43 44 45, on right: 40 41 42 43 44
-factor (78)
-    on left: 46, on right: 43 44 45
-unary_expression (79)
-    on left: 47 48 49 50 51, on right: 46 48 49 50 51
-primary_expression (80)
-    on left: 52 53 54 55, on right: 47
-elist (81)
-    on left: 56 57, on right: 56 63
-assignment_statement (82)
-    on left: 58 59 60, on right: 17 22 24 25 26
-variable_declaration (83)
-    on left: 61, on right: 12
-id_arr (84)
-    on left: 62 63, on right: 54 58
-id_arr_declare (85)
-    on left: 64 65, on right: 74 75
-new_num_list (86)
-    on left: 66 67, on right: 65 66
-parameter_list (87)
-    on left: 68 69, on right: 5
-param_decl (88)
-    on left: 70 71, on right: 68 70
-unit_declaration (89)
-    on left: 72 73, on right: 70 71
-varlist (90)
-    on left: 74 75, on right: 61 74
+statement (69)
+    on left: 12 13 14 15 16 17 18 19 20, on right: 10 21 22 28 30 33
+    34
+selection_statement (70)
+    on left: 21 22, on right: 15
+switch_statement (71)
+    on left: 23, on right: 19
+case_list (72)
+    on left: 24 25, on right: 23
+case_list_minor (73)
+    on left: 26 27, on right: 24 25 26
+default_statement (74)
+    on left: 28, on right: 24
+default_name (75)
+    on left: 29, on right: 28
+case_statement (76)
+    on left: 30, on right: 26 27
+case_name (77)
+    on left: 31, on right: 30
+ifexp (78)
+    on left: 32, on right: 21 22
+iteration_statement (79)
+    on left: 33 34, on right: 16
+whileexp (80)
+    on left: 35, on right: 33
+forexp (81)
+    on left: 36, on right: 34
+N_new (82)
+    on left: 37, on right: 30
+M (83)
+    on left: 38, on right: 10 21 30 34 35 36
+N (84)
+    on left: 39, on right: 21
+conditional_expression (85)
+    on left: 40 41 42, on right: 14 40 41 66 75 76
+expression (86)
+    on left: 43 44, on right: 40 41 42 68 69 73 74
+rel_expression (87)
+    on left: 45 46 47 48 49 50, on right: 43
+normal_expression (88)
+    on left: 51 52 53, on right: 23 30 44 45 46 47 48 49 50 51 52
+term (89)
+    on left: 54 55 56, on right: 51 52 53 54 55
+factor (90)
+    on left: 57, on right: 54 55 56
+unary_expression (91)
+    on left: 58 59 60 61 62, on right: 57 59 60 61 62
+primary_expression (92)
+    on left: 63 64 65 66 67, on right: 58
+elist (93)
+    on left: 68 69, on right: 68 80
+func_call (94)
+    on left: 70, on right: 67
+elist_super (95)
+    on left: 71 72, on right: 70
+elist_func_call (96)
+    on left: 73 74, on right: 71 73
+assignment_statement (97)
+    on left: 75 76 77, on right: 17 32 34 35 36
+variable_declaration (98)
+    on left: 78, on right: 12
+id_arr (99)
+    on left: 79 80, on right: 65 75
+id_arr_declare (100)
+    on left: 81 82, on right: 91 92
+new_num_list (101)
+    on left: 83 84, on right: 82 83
+parameter_list (102)
+    on left: 85 86, on right: 5
+param_decl (103)
+    on left: 87 88, on right: 85 87
+unit_declaration (104)
+    on left: 89 90, on right: 87 88
+varlist (105)
+    on left: 91 92, on right: 78 91
 
 
 State 0
@@ -288,7 +342,7 @@ State 2
    10 statement_list: statement_list . M statement
 
     $end      reduce using rule 1 (program)
-    $default  reduce using rule 27 (M)
+    $default  reduce using rule 38 (M)
 
     M  go to state 4
 
@@ -314,51 +368,54 @@ State 4
     OPEN_BRACKET  shift, and go to state 12
     OPEN_CURLY    shift, and go to state 13
     MINUS         shift, and go to state 14
-    ID            shift, and go to state 15
-    INT           shift, and go to state 16
-    FLOAT         shift, and go to state 17
-    VOID          shift, and go to state 18
-    NUM           shift, and go to state 19
-    REAL          shift, and go to state 20
+    SWITCH        shift, and go to state 15
+    ID            shift, and go to state 16
+    INT           shift, and go to state 17
+    FLOAT         shift, and go to state 18
+    VOID          shift, and go to state 19
+    NUM           shift, and go to state 20
+    REAL          shift, and go to state 21
 
-    $default  reduce using rule 60 (assignment_statement)
+    $default  reduce using rule 77 (assignment_statement)
 
-    function_declaration    go to state 21
-    first_curly             go to state 22
-    function_head           go to state 23
-    res_id                  go to state 24
-    type                    go to state 25
-    statement               go to state 26
-    selection_statement     go to state 27
-    ifexp                   go to state 28
-    iteration_statement     go to state 29
-    whileexp                go to state 30
-    forexp                  go to state 31
-    conditional_expression  go to state 32
-    expression              go to state 33
-    rel_expression          go to state 34
-    normal_expression       go to state 35
-    term                    go to state 36
-    factor                  go to state 37
-    unary_expression        go to state 38
-    primary_expression      go to state 39
-    assignment_statement    go to state 40
-    variable_declaration    go to state 41
-    id_arr                  go to state 42
+    function_declaration    go to state 22
+    first_curly             go to state 23
+    function_head           go to state 24
+    res_id                  go to state 25
+    type                    go to state 26
+    statement               go to state 27
+    selection_statement     go to state 28
+    switch_statement        go to state 29
+    ifexp                   go to state 30
+    iteration_statement     go to state 31
+    whileexp                go to state 32
+    forexp                  go to state 33
+    conditional_expression  go to state 34
+    expression              go to state 35
+    rel_expression          go to state 36
+    normal_expression       go to state 37
+    term                    go to state 38
+    factor                  go to state 39
+    unary_expression        go to state 40
+    primary_expression      go to state 41
+    func_call               go to state 42
+    assignment_statement    go to state 43
+    variable_declaration    go to state 44
+    id_arr                  go to state 45
 
 
 State 5
 
-   26 forexp: FOR . OPEN_BRACKET assignment_statement SEMI M assignment_statement SEMI
+   36 forexp: FOR . OPEN_BRACKET assignment_statement SEMI M assignment_statement SEMI
 
-    OPEN_BRACKET  shift, and go to state 43
+    OPEN_BRACKET  shift, and go to state 46
 
 
 State 6
 
-   22 ifexp: IF . OPEN_BRACKET assignment_statement CLOSE_BRACKET
+   32 ifexp: IF . OPEN_BRACKET assignment_statement CLOSE_BRACKET
 
-    OPEN_BRACKET  shift, and go to state 44
+    OPEN_BRACKET  shift, and go to state 47
 
 
 State 7
@@ -370,108 +427,113 @@ State 7
     DEC_OP        shift, and go to state 10
     NOT           shift, and go to state 11
     OPEN_BRACKET  shift, and go to state 12
-    SEMI          shift, and go to state 45
+    SEMI          shift, and go to state 48
     MINUS         shift, and go to state 14
-    ID            shift, and go to state 15
-    NUM           shift, and go to state 19
-    REAL          shift, and go to state 20
+    ID            shift, and go to state 16
+    NUM           shift, and go to state 20
+    REAL          shift, and go to state 21
 
-    conditional_expression  go to state 46
-    expression              go to state 33
-    rel_expression          go to state 34
-    normal_expression       go to state 35
-    term                    go to state 36
-    factor                  go to state 37
-    unary_expression        go to state 38
-    primary_expression      go to state 39
-    id_arr                  go to state 47
+    conditional_expression  go to state 49
+    expression              go to state 35
+    rel_expression          go to state 36
+    normal_expression       go to state 37
+    term                    go to state 38
+    factor                  go to state 39
+    unary_expression        go to state 40
+    primary_expression      go to state 41
+    func_call               go to state 42
+    id_arr                  go to state 50
 
 
 State 8
 
-   25 whileexp: WHILE . M OPEN_BRACKET assignment_statement CLOSE_BRACKET
+   35 whileexp: WHILE . M OPEN_BRACKET assignment_statement CLOSE_BRACKET
 
-    $default  reduce using rule 27 (M)
+    $default  reduce using rule 38 (M)
 
-    M  go to state 48
+    M  go to state 51
 
 
 State 9
 
-   51 unary_expression: INC_OP . unary_expression
+   62 unary_expression: INC_OP . unary_expression
 
     INC_OP        shift, and go to state 9
     DEC_OP        shift, and go to state 10
     NOT           shift, and go to state 11
     OPEN_BRACKET  shift, and go to state 12
     MINUS         shift, and go to state 14
-    ID            shift, and go to state 15
-    NUM           shift, and go to state 19
-    REAL          shift, and go to state 20
+    ID            shift, and go to state 16
+    NUM           shift, and go to state 20
+    REAL          shift, and go to state 21
 
-    unary_expression    go to state 49
-    primary_expression  go to state 39
-    id_arr              go to state 47
+    unary_expression    go to state 52
+    primary_expression  go to state 41
+    func_call           go to state 42
+    id_arr              go to state 50
 
 
 State 10
 
-   50 unary_expression: DEC_OP . unary_expression
+   61 unary_expression: DEC_OP . unary_expression
 
     INC_OP        shift, and go to state 9
     DEC_OP        shift, and go to state 10
     NOT           shift, and go to state 11
     OPEN_BRACKET  shift, and go to state 12
     MINUS         shift, and go to state 14
-    ID            shift, and go to state 15
-    NUM           shift, and go to state 19
-    REAL          shift, and go to state 20
+    ID            shift, and go to state 16
+    NUM           shift, and go to state 20
+    REAL          shift, and go to state 21
 
-    unary_expression    go to state 50
-    primary_expression  go to state 39
-    id_arr              go to state 47
+    unary_expression    go to state 53
+    primary_expression  go to state 41
+    func_call           go to state 42
+    id_arr              go to state 50
 
 
 State 11
 
-   49 unary_expression: NOT . unary_expression
+   60 unary_expression: NOT . unary_expression
 
     INC_OP        shift, and go to state 9
     DEC_OP        shift, and go to state 10
     NOT           shift, and go to state 11
     OPEN_BRACKET  shift, and go to state 12
     MINUS         shift, and go to state 14
-    ID            shift, and go to state 15
-    NUM           shift, and go to state 19
-    REAL          shift, and go to state 20
+    ID            shift, and go to state 16
+    NUM           shift, and go to state 20
+    REAL          shift, and go to state 21
 
-    unary_expression    go to state 51
-    primary_expression  go to state 39
-    id_arr              go to state 47
+    unary_expression    go to state 54
+    primary_expression  go to state 41
+    func_call           go to state 42
+    id_arr              go to state 50
 
 
 State 12
 
-   55 primary_expression: OPEN_BRACKET . conditional_expression CLOSE_BRACKET
+   66 primary_expression: OPEN_BRACKET . conditional_expression CLOSE_BRACKET
 
     INC_OP        shift, and go to state 9
     DEC_OP        shift, and go to state 10
     NOT           shift, and go to state 11
     OPEN_BRACKET  shift, and go to state 12
     MINUS         shift, and go to state 14
-    ID            shift, and go to state 15
-    NUM           shift, and go to state 19
-    REAL          shift, and go to state 20
+    ID            shift, and go to state 16
+    NUM           shift, and go to state 20
+    REAL          shift, and go to state 21
 
-    conditional_expression  go to state 52
-    expression              go to state 33
-    rel_expression          go to state 34
-    normal_expression       go to state 35
-    term                    go to state 36
-    factor                  go to state 37
-    unary_expression        go to state 38
-    primary_expression      go to state 39
-    id_arr                  go to state 47
+    conditional_expression  go to state 55
+    expression              go to state 35
+    rel_expression          go to state 36
+    normal_expression       go to state 37
+    term                    go to state 38
+    factor                  go to state 39
+    unary_expression        go to state 40
+    primary_expression      go to state 41
+    func_call               go to state 42
+    id_arr                  go to state 50
 
 
 State 13
@@ -483,130 +545,147 @@ State 13
 
 State 14
 
-   48 unary_expression: MINUS . unary_expression
+   59 unary_expression: MINUS . unary_expression
 
     INC_OP        shift, and go to state 9
     DEC_OP        shift, and go to state 10
     NOT           shift, and go to state 11
     OPEN_BRACKET  shift, and go to state 12
     MINUS         shift, and go to state 14
-    ID            shift, and go to state 15
-    NUM           shift, and go to state 19
-    REAL          shift, and go to state 20
+    ID            shift, and go to state 16
+    NUM           shift, and go to state 20
+    REAL          shift, and go to state 21
 
-    unary_expression    go to state 53
-    primary_expression  go to state 39
-    id_arr              go to state 47
+    unary_expression    go to state 56
+    primary_expression  go to state 41
+    func_call           go to state 42
+    id_arr              go to state 50
 
 
 State 15
 
-   62 id_arr: ID .
-   63       | ID . elist
+   23 switch_statement: SWITCH . OPEN_BRACKET normal_expression CLOSE_BRACKET OPEN_CURLY case_list CLOSE_CURLY
 
-    OPEN_SQUARE  shift, and go to state 54
-
-    $default  reduce using rule 62 (id_arr)
-
-    elist  go to state 55
+    OPEN_BRACKET  shift, and go to state 57
 
 
 State 16
+
+   70 func_call: ID . OPEN_BRACKET elist_super CLOSE_BRACKET
+   79 id_arr: ID .
+   80       | ID . elist
+
+    OPEN_BRACKET  shift, and go to state 58
+    OPEN_SQUARE   shift, and go to state 59
+
+    $default  reduce using rule 79 (id_arr)
+
+    elist  go to state 60
+
+
+State 17
 
     7 type: INT .
 
     $default  reduce using rule 7 (type)
 
 
-State 17
+State 18
 
     8 type: FLOAT .
 
     $default  reduce using rule 8 (type)
 
 
-State 18
+State 19
 
     9 type: VOID .
 
     $default  reduce using rule 9 (type)
 
 
-State 19
-
-   52 primary_expression: NUM .
-
-    $default  reduce using rule 52 (primary_expression)
-
-
 State 20
 
-   53 primary_expression: REAL .
+   63 primary_expression: NUM .
 
-    $default  reduce using rule 53 (primary_expression)
+    $default  reduce using rule 63 (primary_expression)
 
 
 State 21
 
-   19 statement: function_declaration .
+   64 primary_expression: REAL .
 
-    $default  reduce using rule 19 (statement)
+    $default  reduce using rule 64 (primary_expression)
 
 
 State 22
+
+   20 statement: function_declaration .
+
+    $default  reduce using rule 20 (statement)
+
+
+State 23
 
    18 statement: first_curly . statement_list last_curly
 
     $default  reduce using rule 11 (statement_list)
 
-    statement_list  go to state 56
+    statement_list  go to state 61
 
 
-State 23
+State 24
 
     2 function_declaration: function_head . first_curly statement_list last_curly
 
     OPEN_CURLY  shift, and go to state 13
 
-    first_curly  go to state 57
-
-
-State 24
-
-    5 function_head: res_id . OPEN_BRACKET parameter_list CLOSE_BRACKET
-
-    OPEN_BRACKET  shift, and go to state 58
+    first_curly  go to state 62
 
 
 State 25
 
-    6 res_id: type . ID
-   61 variable_declaration: type . varlist
+    5 function_head: res_id . OPEN_BRACKET parameter_list CLOSE_BRACKET
 
-    ID  shift, and go to state 59
-
-    id_arr_declare  go to state 60
-    varlist         go to state 61
+    OPEN_BRACKET  shift, and go to state 63
 
 
 State 26
+
+    6 res_id: type . ID
+   78 variable_declaration: type . varlist
+
+    ID  shift, and go to state 64
+
+    id_arr_declare  go to state 65
+    varlist         go to state 66
+
+
+State 27
 
    10 statement_list: statement_list M statement .
 
     $default  reduce using rule 10 (statement_list)
 
 
-State 27
+State 28
 
    15 statement: selection_statement .
 
     $default  reduce using rule 15 (statement)
 
 
-State 28
+State 29
 
-   20 selection_statement: ifexp . statement ELSE N M statement
-   21                    | ifexp . statement
+   19 statement: switch_statement .
+
+    $default  reduce using rule 19 (statement)
+
+
+State 30
+
+   21 selection_statement: ifexp . statement ELSE N M statement
+   22                    | ifexp . statement
 
     FOR           shift, and go to state 5
     IF            shift, and go to state 6
@@ -618,49 +697,52 @@ State 28
     OPEN_BRACKET  shift, and go to state 12
     OPEN_CURLY    shift, and go to state 13
     MINUS         shift, and go to state 14
-    ID            shift, and go to state 15
-    INT           shift, and go to state 16
-    FLOAT         shift, and go to state 17
-    VOID          shift, and go to state 18
-    NUM           shift, and go to state 19
-    REAL          shift, and go to state 20
+    SWITCH        shift, and go to state 15
+    ID            shift, and go to state 16
+    INT           shift, and go to state 17
+    FLOAT         shift, and go to state 18
+    VOID          shift, and go to state 19
+    NUM           shift, and go to state 20
+    REAL          shift, and go to state 21
 
-    $default  reduce using rule 60 (assignment_statement)
+    $default  reduce using rule 77 (assignment_statement)
 
-    function_declaration    go to state 21
-    first_curly             go to state 22
-    function_head           go to state 23
-    res_id                  go to state 24
-    type                    go to state 25
-    statement               go to state 62
-    selection_statement     go to state 27
-    ifexp                   go to state 28
-    iteration_statement     go to state 29
-    whileexp                go to state 30
-    forexp                  go to state 31
-    conditional_expression  go to state 32
-    expression              go to state 33
-    rel_expression          go to state 34
-    normal_expression       go to state 35
-    term                    go to state 36
-    factor                  go to state 37
-    unary_expression        go to state 38
-    primary_expression      go to state 39
-    assignment_statement    go to state 40
-    variable_declaration    go to state 41
-    id_arr                  go to state 42
+    function_declaration    go to state 22
+    first_curly             go to state 23
+    function_head           go to state 24
+    res_id                  go to state 25
+    type                    go to state 26
+    statement               go to state 67
+    selection_statement     go to state 28
+    switch_statement        go to state 29
+    ifexp                   go to state 30
+    iteration_statement     go to state 31
+    whileexp                go to state 32
+    forexp                  go to state 33
+    conditional_expression  go to state 34
+    expression              go to state 35
+    rel_expression          go to state 36
+    normal_expression       go to state 37
+    term                    go to state 38
+    factor                  go to state 39
+    unary_expression        go to state 40
+    primary_expression      go to state 41
+    func_call               go to state 42
+    assignment_statement    go to state 43
+    variable_declaration    go to state 44
+    id_arr                  go to state 45
 
 
-State 29
+State 31
 
    16 statement: iteration_statement .
 
     $default  reduce using rule 16 (statement)
 
 
-State 30
+State 32
 
-   23 iteration_statement: whileexp . statement
+   33 iteration_statement: whileexp . statement
 
     FOR           shift, and go to state 5
     IF            shift, and go to state 6
@@ -672,1268 +754,1404 @@ State 30
     OPEN_BRACKET  shift, and go to state 12
     OPEN_CURLY    shift, and go to state 13
     MINUS         shift, and go to state 14
-    ID            shift, and go to state 15
-    INT           shift, and go to state 16
-    FLOAT         shift, and go to state 17
-    VOID          shift, and go to state 18
-    NUM           shift, and go to state 19
-    REAL          shift, and go to state 20
+    SWITCH        shift, and go to state 15
+    ID            shift, and go to state 16
+    INT           shift, and go to state 17
+    FLOAT         shift, and go to state 18
+    VOID          shift, and go to state 19
+    NUM           shift, and go to state 20
+    REAL          shift, and go to state 21
 
-    $default  reduce using rule 60 (assignment_statement)
+    $default  reduce using rule 77 (assignment_statement)
 
-    function_declaration    go to state 21
-    first_curly             go to state 22
-    function_head           go to state 23
-    res_id                  go to state 24
-    type                    go to state 25
-    statement               go to state 63
-    selection_statement     go to state 27
-    ifexp                   go to state 28
-    iteration_statement     go to state 29
-    whileexp                go to state 30
-    forexp                  go to state 31
-    conditional_expression  go to state 32
-    expression              go to state 33
-    rel_expression          go to state 34
-    normal_expression       go to state 35
-    term                    go to state 36
-    factor                  go to state 37
-    unary_expression        go to state 38
-    primary_expression      go to state 39
-    assignment_statement    go to state 40
-    variable_declaration    go to state 41
-    id_arr                  go to state 42
-
-
-State 31
-
-   24 iteration_statement: forexp . assignment_statement CLOSE_BRACKET statement
-
-    INC_OP        shift, and go to state 9
-    DEC_OP        shift, and go to state 10
-    NOT           shift, and go to state 11
-    OPEN_BRACKET  shift, and go to state 12
-    MINUS         shift, and go to state 14
-    ID            shift, and go to state 15
-    NUM           shift, and go to state 19
-    REAL          shift, and go to state 20
-
-    $default  reduce using rule 60 (assignment_statement)
-
-    conditional_expression  go to state 32
-    expression              go to state 33
-    rel_expression          go to state 34
-    normal_expression       go to state 35
-    term                    go to state 36
-    factor                  go to state 37
-    unary_expression        go to state 38
-    primary_expression      go to state 39
-    assignment_statement    go to state 64
-    id_arr                  go to state 42
-
-
-State 32
-
-   29 conditional_expression: conditional_expression . AND_OP expression
-   30                       | conditional_expression . OR_OP expression
-   59 assignment_statement: conditional_expression .
-
-    AND_OP  shift, and go to state 65
-    OR_OP   shift, and go to state 66
-
-    $default  reduce using rule 59 (assignment_statement)
+    function_declaration    go to state 22
+    first_curly             go to state 23
+    function_head           go to state 24
+    res_id                  go to state 25
+    type                    go to state 26
+    statement               go to state 68
+    selection_statement     go to state 28
+    switch_statement        go to state 29
+    ifexp                   go to state 30
+    iteration_statement     go to state 31
+    whileexp                go to state 32
+    forexp                  go to state 33
+    conditional_expression  go to state 34
+    expression              go to state 35
+    rel_expression          go to state 36
+    normal_expression       go to state 37
+    term                    go to state 38
+    factor                  go to state 39
+    unary_expression        go to state 40
+    primary_expression      go to state 41
+    func_call               go to state 42
+    assignment_statement    go to state 43
+    variable_declaration    go to state 44
+    id_arr                  go to state 45
 
 
 State 33
 
-   31 conditional_expression: expression .
+   34 iteration_statement: forexp . M assignment_statement M CLOSE_BRACKET statement
 
-    $default  reduce using rule 31 (conditional_expression)
+    $default  reduce using rule 38 (M)
+
+    M  go to state 69
 
 
 State 34
 
-   32 expression: rel_expression .
+   40 conditional_expression: conditional_expression . AND_OP expression
+   41                       | conditional_expression . OR_OP expression
+   76 assignment_statement: conditional_expression .
 
-    $default  reduce using rule 32 (expression)
+    AND_OP  shift, and go to state 70
+    OR_OP   shift, and go to state 71
+
+    $default  reduce using rule 76 (assignment_statement)
 
 
 State 35
 
-   33 expression: normal_expression .
-   34 rel_expression: normal_expression . GT normal_expression
-   35               | normal_expression . LT normal_expression
-   36               | normal_expression . GE_OP normal_expression
-   37               | normal_expression . LE_OP normal_expression
-   38               | normal_expression . EQ_OP normal_expression
-   39               | normal_expression . NE_OP normal_expression
-   40 normal_expression: normal_expression . PLUS term
-   41                  | normal_expression . MINUS term
+   42 conditional_expression: expression .
 
-    LT     shift, and go to state 67
-    GT     shift, and go to state 68
-    LE_OP  shift, and go to state 69
-    GE_OP  shift, and go to state 70
-    EQ_OP  shift, and go to state 71
-    NE_OP  shift, and go to state 72
-    PLUS   shift, and go to state 73
-    MINUS  shift, and go to state 74
-
-    $default  reduce using rule 33 (expression)
+    $default  reduce using rule 42 (conditional_expression)
 
 
 State 36
 
-   42 normal_expression: term .
-   43 term: term . STAR factor
-   44     | term . DIVIDE factor
+   43 expression: rel_expression .
 
-    STAR    shift, and go to state 75
-    DIVIDE  shift, and go to state 76
-
-    $default  reduce using rule 42 (normal_expression)
+    $default  reduce using rule 43 (expression)
 
 
 State 37
 
-   45 term: factor .
+   44 expression: normal_expression .
+   45 rel_expression: normal_expression . GT normal_expression
+   46               | normal_expression . LT normal_expression
+   47               | normal_expression . GE_OP normal_expression
+   48               | normal_expression . LE_OP normal_expression
+   49               | normal_expression . EQ_OP normal_expression
+   50               | normal_expression . NE_OP normal_expression
+   51 normal_expression: normal_expression . PLUS term
+   52                  | normal_expression . MINUS term
 
-    $default  reduce using rule 45 (term)
+    LT     shift, and go to state 72
+    GT     shift, and go to state 73
+    LE_OP  shift, and go to state 74
+    GE_OP  shift, and go to state 75
+    EQ_OP  shift, and go to state 76
+    NE_OP  shift, and go to state 77
+    PLUS   shift, and go to state 78
+    MINUS  shift, and go to state 79
+
+    $default  reduce using rule 44 (expression)
 
 
 State 38
 
-   46 factor: unary_expression .
+   53 normal_expression: term .
+   54 term: term . STAR factor
+   55     | term . DIVIDE factor
 
-    $default  reduce using rule 46 (factor)
+    STAR    shift, and go to state 80
+    DIVIDE  shift, and go to state 81
+
+    $default  reduce using rule 53 (normal_expression)
 
 
 State 39
 
-   47 unary_expression: primary_expression .
+   56 term: factor .
 
-    $default  reduce using rule 47 (unary_expression)
+    $default  reduce using rule 56 (term)
 
 
 State 40
 
-   17 statement: assignment_statement . SEMI
+   57 factor: unary_expression .
 
-    SEMI  shift, and go to state 77
+    $default  reduce using rule 57 (factor)
 
 
 State 41
 
-   12 statement: variable_declaration . SEMI
+   58 unary_expression: primary_expression .
 
-    SEMI  shift, and go to state 78
+    $default  reduce using rule 58 (unary_expression)
 
 
 State 42
 
-   54 primary_expression: id_arr .
-   58 assignment_statement: id_arr . ASSIGN conditional_expression
+   67 primary_expression: func_call .
 
-    ASSIGN  shift, and go to state 79
-
-    $default  reduce using rule 54 (primary_expression)
+    $default  reduce using rule 67 (primary_expression)
 
 
 State 43
 
-   26 forexp: FOR OPEN_BRACKET . assignment_statement SEMI M assignment_statement SEMI
+   17 statement: assignment_statement . SEMI
 
-    INC_OP        shift, and go to state 9
-    DEC_OP        shift, and go to state 10
-    NOT           shift, and go to state 11
-    OPEN_BRACKET  shift, and go to state 12
-    MINUS         shift, and go to state 14
-    ID            shift, and go to state 15
-    NUM           shift, and go to state 19
-    REAL          shift, and go to state 20
-
-    $default  reduce using rule 60 (assignment_statement)
-
-    conditional_expression  go to state 32
-    expression              go to state 33
-    rel_expression          go to state 34
-    normal_expression       go to state 35
-    term                    go to state 36
-    factor                  go to state 37
-    unary_expression        go to state 38
-    primary_expression      go to state 39
-    assignment_statement    go to state 80
-    id_arr                  go to state 42
+    SEMI  shift, and go to state 82
 
 
 State 44
 
-   22 ifexp: IF OPEN_BRACKET . assignment_statement CLOSE_BRACKET
+   12 statement: variable_declaration . SEMI
+
+    SEMI  shift, and go to state 83
+
+
+State 45
+
+   65 primary_expression: id_arr .
+   75 assignment_statement: id_arr . ASSIGN conditional_expression
+
+    ASSIGN  shift, and go to state 84
+
+    $default  reduce using rule 65 (primary_expression)
+
+
+State 46
+
+   36 forexp: FOR OPEN_BRACKET . assignment_statement SEMI M assignment_statement SEMI
 
     INC_OP        shift, and go to state 9
     DEC_OP        shift, and go to state 10
     NOT           shift, and go to state 11
     OPEN_BRACKET  shift, and go to state 12
     MINUS         shift, and go to state 14
-    ID            shift, and go to state 15
-    NUM           shift, and go to state 19
-    REAL          shift, and go to state 20
+    ID            shift, and go to state 16
+    NUM           shift, and go to state 20
+    REAL          shift, and go to state 21
 
-    $default  reduce using rule 60 (assignment_statement)
+    $default  reduce using rule 77 (assignment_statement)
 
-    conditional_expression  go to state 32
-    expression              go to state 33
-    rel_expression          go to state 34
-    normal_expression       go to state 35
-    term                    go to state 36
-    factor                  go to state 37
-    unary_expression        go to state 38
-    primary_expression      go to state 39
-    assignment_statement    go to state 81
-    id_arr                  go to state 42
+    conditional_expression  go to state 34
+    expression              go to state 35
+    rel_expression          go to state 36
+    normal_expression       go to state 37
+    term                    go to state 38
+    factor                  go to state 39
+    unary_expression        go to state 40
+    primary_expression      go to state 41
+    func_call               go to state 42
+    assignment_statement    go to state 85
+    id_arr                  go to state 45
 
 
-State 45
+State 47
+
+   32 ifexp: IF OPEN_BRACKET . assignment_statement CLOSE_BRACKET
+
+    INC_OP        shift, and go to state 9
+    DEC_OP        shift, and go to state 10
+    NOT           shift, and go to state 11
+    OPEN_BRACKET  shift, and go to state 12
+    MINUS         shift, and go to state 14
+    ID            shift, and go to state 16
+    NUM           shift, and go to state 20
+    REAL          shift, and go to state 21
+
+    $default  reduce using rule 77 (assignment_statement)
+
+    conditional_expression  go to state 34
+    expression              go to state 35
+    rel_expression          go to state 36
+    normal_expression       go to state 37
+    term                    go to state 38
+    factor                  go to state 39
+    unary_expression        go to state 40
+    primary_expression      go to state 41
+    func_call               go to state 42
+    assignment_statement    go to state 86
+    id_arr                  go to state 45
+
+
+State 48
 
    13 statement: RETURN SEMI .
 
     $default  reduce using rule 13 (statement)
 
 
-State 46
-
-   14 statement: RETURN conditional_expression . SEMI
-   29 conditional_expression: conditional_expression . AND_OP expression
-   30                       | conditional_expression . OR_OP expression
-
-    AND_OP  shift, and go to state 65
-    OR_OP   shift, and go to state 66
-    SEMI    shift, and go to state 82
-
-
-State 47
-
-   54 primary_expression: id_arr .
-
-    $default  reduce using rule 54 (primary_expression)
-
-
-State 48
-
-   25 whileexp: WHILE M . OPEN_BRACKET assignment_statement CLOSE_BRACKET
-
-    OPEN_BRACKET  shift, and go to state 83
-
-
 State 49
 
-   51 unary_expression: INC_OP unary_expression .
+   14 statement: RETURN conditional_expression . SEMI
+   40 conditional_expression: conditional_expression . AND_OP expression
+   41                       | conditional_expression . OR_OP expression
 
-    $default  reduce using rule 51 (unary_expression)
+    AND_OP  shift, and go to state 70
+    OR_OP   shift, and go to state 71
+    SEMI    shift, and go to state 87
 
 
 State 50
 
-   50 unary_expression: DEC_OP unary_expression .
+   65 primary_expression: id_arr .
 
-    $default  reduce using rule 50 (unary_expression)
+    $default  reduce using rule 65 (primary_expression)
 
 
 State 51
 
-   49 unary_expression: NOT unary_expression .
+   35 whileexp: WHILE M . OPEN_BRACKET assignment_statement CLOSE_BRACKET
 
-    $default  reduce using rule 49 (unary_expression)
+    OPEN_BRACKET  shift, and go to state 88
 
 
 State 52
 
-   29 conditional_expression: conditional_expression . AND_OP expression
-   30                       | conditional_expression . OR_OP expression
-   55 primary_expression: OPEN_BRACKET conditional_expression . CLOSE_BRACKET
+   62 unary_expression: INC_OP unary_expression .
 
-    AND_OP         shift, and go to state 65
-    OR_OP          shift, and go to state 66
-    CLOSE_BRACKET  shift, and go to state 84
+    $default  reduce using rule 62 (unary_expression)
 
 
 State 53
 
-   48 unary_expression: MINUS unary_expression .
+   61 unary_expression: DEC_OP unary_expression .
 
-    $default  reduce using rule 48 (unary_expression)
+    $default  reduce using rule 61 (unary_expression)
 
 
 State 54
 
-   57 elist: OPEN_SQUARE . expression CLOSE_SQUARE
+   60 unary_expression: NOT unary_expression .
+
+    $default  reduce using rule 60 (unary_expression)
+
+
+State 55
+
+   40 conditional_expression: conditional_expression . AND_OP expression
+   41                       | conditional_expression . OR_OP expression
+   66 primary_expression: OPEN_BRACKET conditional_expression . CLOSE_BRACKET
+
+    AND_OP         shift, and go to state 70
+    OR_OP          shift, and go to state 71
+    CLOSE_BRACKET  shift, and go to state 89
+
+
+State 56
+
+   59 unary_expression: MINUS unary_expression .
+
+    $default  reduce using rule 59 (unary_expression)
+
+
+State 57
+
+   23 switch_statement: SWITCH OPEN_BRACKET . normal_expression CLOSE_BRACKET OPEN_CURLY case_list CLOSE_CURLY
 
     INC_OP        shift, and go to state 9
     DEC_OP        shift, and go to state 10
     NOT           shift, and go to state 11
     OPEN_BRACKET  shift, and go to state 12
     MINUS         shift, and go to state 14
-    ID            shift, and go to state 15
-    NUM           shift, and go to state 19
-    REAL          shift, and go to state 20
+    ID            shift, and go to state 16
+    NUM           shift, and go to state 20
+    REAL          shift, and go to state 21
 
-    expression          go to state 85
-    rel_expression      go to state 34
-    normal_expression   go to state 35
-    term                go to state 36
-    factor              go to state 37
-    unary_expression    go to state 38
-    primary_expression  go to state 39
-    id_arr              go to state 47
-
-
-State 55
-
-   56 elist: elist . OPEN_SQUARE expression CLOSE_SQUARE
-   63 id_arr: ID elist .
-
-    OPEN_SQUARE  shift, and go to state 86
-
-    $default  reduce using rule 63 (id_arr)
+    normal_expression   go to state 90
+    term                go to state 38
+    factor              go to state 39
+    unary_expression    go to state 40
+    primary_expression  go to state 41
+    func_call           go to state 42
+    id_arr              go to state 50
 
 
-State 56
+State 58
+
+   70 func_call: ID OPEN_BRACKET . elist_super CLOSE_BRACKET
+
+    INC_OP        shift, and go to state 9
+    DEC_OP        shift, and go to state 10
+    NOT           shift, and go to state 11
+    OPEN_BRACKET  shift, and go to state 12
+    MINUS         shift, and go to state 14
+    ID            shift, and go to state 16
+    NUM           shift, and go to state 20
+    REAL          shift, and go to state 21
+
+    $default  reduce using rule 72 (elist_super)
+
+    expression          go to state 91
+    rel_expression      go to state 36
+    normal_expression   go to state 37
+    term                go to state 38
+    factor              go to state 39
+    unary_expression    go to state 40
+    primary_expression  go to state 41
+    func_call           go to state 42
+    elist_super         go to state 92
+    elist_func_call     go to state 93
+    id_arr              go to state 50
+
+
+State 59
+
+   69 elist: OPEN_SQUARE . expression CLOSE_SQUARE
+
+    INC_OP        shift, and go to state 9
+    DEC_OP        shift, and go to state 10
+    NOT           shift, and go to state 11
+    OPEN_BRACKET  shift, and go to state 12
+    MINUS         shift, and go to state 14
+    ID            shift, and go to state 16
+    NUM           shift, and go to state 20
+    REAL          shift, and go to state 21
+
+    expression          go to state 94
+    rel_expression      go to state 36
+    normal_expression   go to state 37
+    term                go to state 38
+    factor              go to state 39
+    unary_expression    go to state 40
+    primary_expression  go to state 41
+    func_call           go to state 42
+    id_arr              go to state 50
+
+
+State 60
+
+   68 elist: elist . OPEN_SQUARE expression CLOSE_SQUARE
+   80 id_arr: ID elist .
+
+    OPEN_SQUARE  shift, and go to state 95
+
+    $default  reduce using rule 80 (id_arr)
+
+
+State 61
 
    10 statement_list: statement_list . M statement
    18 statement: first_curly statement_list . last_curly
 
-    CLOSE_CURLY  shift, and go to state 87
+    CLOSE_CURLY  shift, and go to state 96
 
-    $default  reduce using rule 27 (M)
+    $default  reduce using rule 38 (M)
 
-    last_curly  go to state 88
+    last_curly  go to state 97
     M           go to state 4
 
 
-State 57
+State 62
 
     2 function_declaration: function_head first_curly . statement_list last_curly
 
     $default  reduce using rule 11 (statement_list)
 
-    statement_list  go to state 89
-
-
-State 58
-
-    5 function_head: res_id OPEN_BRACKET . parameter_list CLOSE_BRACKET
-
-    INT    shift, and go to state 16
-    FLOAT  shift, and go to state 17
-    VOID   shift, and go to state 18
-
-    $default  reduce using rule 69 (parameter_list)
-
-    type              go to state 90
-    parameter_list    go to state 91
-    param_decl        go to state 92
-    unit_declaration  go to state 93
-
-
-State 59
-
-    6 res_id: type ID .
-   64 id_arr_declare: ID .
-   65               | ID . new_num_list
-
-    OPEN_SQUARE  shift, and go to state 94
-
-    OPEN_BRACKET  reduce using rule 6 (res_id)
-    $default      reduce using rule 64 (id_arr_declare)
-
-    new_num_list  go to state 95
-
-
-State 60
-
-   75 varlist: id_arr_declare .
-
-    $default  reduce using rule 75 (varlist)
-
-
-State 61
-
-   61 variable_declaration: type varlist .
-   74 varlist: varlist . COMMA id_arr_declare
-
-    COMMA  shift, and go to state 96
-
-    $default  reduce using rule 61 (variable_declaration)
-
-
-State 62
-
-   20 selection_statement: ifexp statement . ELSE N M statement
-   21                    | ifexp statement .
-
-    ELSE  shift, and go to state 97
-
-    $default  reduce using rule 21 (selection_statement)
+    statement_list  go to state 98
 
 
 State 63
 
-   23 iteration_statement: whileexp statement .
+    5 function_head: res_id OPEN_BRACKET . parameter_list CLOSE_BRACKET
 
-    $default  reduce using rule 23 (iteration_statement)
+    INT    shift, and go to state 17
+    FLOAT  shift, and go to state 18
+    VOID   shift, and go to state 19
+
+    $default  reduce using rule 86 (parameter_list)
+
+    type              go to state 99
+    parameter_list    go to state 100
+    param_decl        go to state 101
+    unit_declaration  go to state 102
 
 
 State 64
 
-   24 iteration_statement: forexp assignment_statement . CLOSE_BRACKET statement
+    6 res_id: type ID .
+   81 id_arr_declare: ID .
+   82               | ID . new_num_list
 
-    CLOSE_BRACKET  shift, and go to state 98
+    OPEN_SQUARE  shift, and go to state 103
+
+    OPEN_BRACKET  reduce using rule 6 (res_id)
+    $default      reduce using rule 81 (id_arr_declare)
+
+    new_num_list  go to state 104
 
 
 State 65
 
-   29 conditional_expression: conditional_expression AND_OP . expression
+   92 varlist: id_arr_declare .
 
-    INC_OP        shift, and go to state 9
-    DEC_OP        shift, and go to state 10
-    NOT           shift, and go to state 11
-    OPEN_BRACKET  shift, and go to state 12
-    MINUS         shift, and go to state 14
-    ID            shift, and go to state 15
-    NUM           shift, and go to state 19
-    REAL          shift, and go to state 20
-
-    expression          go to state 99
-    rel_expression      go to state 34
-    normal_expression   go to state 35
-    term                go to state 36
-    factor              go to state 37
-    unary_expression    go to state 38
-    primary_expression  go to state 39
-    id_arr              go to state 47
+    $default  reduce using rule 92 (varlist)
 
 
 State 66
 
-   30 conditional_expression: conditional_expression OR_OP . expression
+   78 variable_declaration: type varlist .
+   91 varlist: varlist . COMMA id_arr_declare
 
-    INC_OP        shift, and go to state 9
-    DEC_OP        shift, and go to state 10
-    NOT           shift, and go to state 11
-    OPEN_BRACKET  shift, and go to state 12
-    MINUS         shift, and go to state 14
-    ID            shift, and go to state 15
-    NUM           shift, and go to state 19
-    REAL          shift, and go to state 20
+    COMMA  shift, and go to state 105
 
-    expression          go to state 100
-    rel_expression      go to state 34
-    normal_expression   go to state 35
-    term                go to state 36
-    factor              go to state 37
-    unary_expression    go to state 38
-    primary_expression  go to state 39
-    id_arr              go to state 47
+    $default  reduce using rule 78 (variable_declaration)
 
 
 State 67
 
-   35 rel_expression: normal_expression LT . normal_expression
+   21 selection_statement: ifexp statement . ELSE N M statement
+   22                    | ifexp statement .
 
-    INC_OP        shift, and go to state 9
-    DEC_OP        shift, and go to state 10
-    NOT           shift, and go to state 11
-    OPEN_BRACKET  shift, and go to state 12
-    MINUS         shift, and go to state 14
-    ID            shift, and go to state 15
-    NUM           shift, and go to state 19
-    REAL          shift, and go to state 20
+    ELSE  shift, and go to state 106
 
-    normal_expression   go to state 101
-    term                go to state 36
-    factor              go to state 37
-    unary_expression    go to state 38
-    primary_expression  go to state 39
-    id_arr              go to state 47
+    $default  reduce using rule 22 (selection_statement)
 
 
 State 68
 
-   34 rel_expression: normal_expression GT . normal_expression
+   33 iteration_statement: whileexp statement .
 
-    INC_OP        shift, and go to state 9
-    DEC_OP        shift, and go to state 10
-    NOT           shift, and go to state 11
-    OPEN_BRACKET  shift, and go to state 12
-    MINUS         shift, and go to state 14
-    ID            shift, and go to state 15
-    NUM           shift, and go to state 19
-    REAL          shift, and go to state 20
-
-    normal_expression   go to state 102
-    term                go to state 36
-    factor              go to state 37
-    unary_expression    go to state 38
-    primary_expression  go to state 39
-    id_arr              go to state 47
+    $default  reduce using rule 33 (iteration_statement)
 
 
 State 69
 
-   37 rel_expression: normal_expression LE_OP . normal_expression
+   34 iteration_statement: forexp M . assignment_statement M CLOSE_BRACKET statement
 
     INC_OP        shift, and go to state 9
     DEC_OP        shift, and go to state 10
     NOT           shift, and go to state 11
     OPEN_BRACKET  shift, and go to state 12
     MINUS         shift, and go to state 14
-    ID            shift, and go to state 15
-    NUM           shift, and go to state 19
-    REAL          shift, and go to state 20
+    ID            shift, and go to state 16
+    NUM           shift, and go to state 20
+    REAL          shift, and go to state 21
 
-    normal_expression   go to state 103
-    term                go to state 36
-    factor              go to state 37
-    unary_expression    go to state 38
-    primary_expression  go to state 39
-    id_arr              go to state 47
+    $default  reduce using rule 77 (assignment_statement)
+
+    conditional_expression  go to state 34
+    expression              go to state 35
+    rel_expression          go to state 36
+    normal_expression       go to state 37
+    term                    go to state 38
+    factor                  go to state 39
+    unary_expression        go to state 40
+    primary_expression      go to state 41
+    func_call               go to state 42
+    assignment_statement    go to state 107
+    id_arr                  go to state 45
 
 
 State 70
 
-   36 rel_expression: normal_expression GE_OP . normal_expression
+   40 conditional_expression: conditional_expression AND_OP . expression
 
     INC_OP        shift, and go to state 9
     DEC_OP        shift, and go to state 10
     NOT           shift, and go to state 11
     OPEN_BRACKET  shift, and go to state 12
     MINUS         shift, and go to state 14
-    ID            shift, and go to state 15
-    NUM           shift, and go to state 19
-    REAL          shift, and go to state 20
+    ID            shift, and go to state 16
+    NUM           shift, and go to state 20
+    REAL          shift, and go to state 21
 
-    normal_expression   go to state 104
-    term                go to state 36
-    factor              go to state 37
-    unary_expression    go to state 38
-    primary_expression  go to state 39
-    id_arr              go to state 47
+    expression          go to state 108
+    rel_expression      go to state 36
+    normal_expression   go to state 37
+    term                go to state 38
+    factor              go to state 39
+    unary_expression    go to state 40
+    primary_expression  go to state 41
+    func_call           go to state 42
+    id_arr              go to state 50
 
 
 State 71
 
-   38 rel_expression: normal_expression EQ_OP . normal_expression
+   41 conditional_expression: conditional_expression OR_OP . expression
 
     INC_OP        shift, and go to state 9
     DEC_OP        shift, and go to state 10
     NOT           shift, and go to state 11
     OPEN_BRACKET  shift, and go to state 12
     MINUS         shift, and go to state 14
-    ID            shift, and go to state 15
-    NUM           shift, and go to state 19
-    REAL          shift, and go to state 20
+    ID            shift, and go to state 16
+    NUM           shift, and go to state 20
+    REAL          shift, and go to state 21
 
-    normal_expression   go to state 105
-    term                go to state 36
-    factor              go to state 37
-    unary_expression    go to state 38
-    primary_expression  go to state 39
-    id_arr              go to state 47
+    expression          go to state 109
+    rel_expression      go to state 36
+    normal_expression   go to state 37
+    term                go to state 38
+    factor              go to state 39
+    unary_expression    go to state 40
+    primary_expression  go to state 41
+    func_call           go to state 42
+    id_arr              go to state 50
 
 
 State 72
 
-   39 rel_expression: normal_expression NE_OP . normal_expression
+   46 rel_expression: normal_expression LT . normal_expression
 
     INC_OP        shift, and go to state 9
     DEC_OP        shift, and go to state 10
     NOT           shift, and go to state 11
     OPEN_BRACKET  shift, and go to state 12
     MINUS         shift, and go to state 14
-    ID            shift, and go to state 15
-    NUM           shift, and go to state 19
-    REAL          shift, and go to state 20
+    ID            shift, and go to state 16
+    NUM           shift, and go to state 20
+    REAL          shift, and go to state 21
 
-    normal_expression   go to state 106
-    term                go to state 36
-    factor              go to state 37
-    unary_expression    go to state 38
-    primary_expression  go to state 39
-    id_arr              go to state 47
+    normal_expression   go to state 110
+    term                go to state 38
+    factor              go to state 39
+    unary_expression    go to state 40
+    primary_expression  go to state 41
+    func_call           go to state 42
+    id_arr              go to state 50
 
 
 State 73
 
-   40 normal_expression: normal_expression PLUS . term
+   45 rel_expression: normal_expression GT . normal_expression
 
     INC_OP        shift, and go to state 9
     DEC_OP        shift, and go to state 10
     NOT           shift, and go to state 11
     OPEN_BRACKET  shift, and go to state 12
     MINUS         shift, and go to state 14
-    ID            shift, and go to state 15
-    NUM           shift, and go to state 19
-    REAL          shift, and go to state 20
+    ID            shift, and go to state 16
+    NUM           shift, and go to state 20
+    REAL          shift, and go to state 21
 
-    term                go to state 107
-    factor              go to state 37
-    unary_expression    go to state 38
-    primary_expression  go to state 39
-    id_arr              go to state 47
+    normal_expression   go to state 111
+    term                go to state 38
+    factor              go to state 39
+    unary_expression    go to state 40
+    primary_expression  go to state 41
+    func_call           go to state 42
+    id_arr              go to state 50
 
 
 State 74
 
-   41 normal_expression: normal_expression MINUS . term
+   48 rel_expression: normal_expression LE_OP . normal_expression
 
     INC_OP        shift, and go to state 9
     DEC_OP        shift, and go to state 10
     NOT           shift, and go to state 11
     OPEN_BRACKET  shift, and go to state 12
     MINUS         shift, and go to state 14
-    ID            shift, and go to state 15
-    NUM           shift, and go to state 19
-    REAL          shift, and go to state 20
+    ID            shift, and go to state 16
+    NUM           shift, and go to state 20
+    REAL          shift, and go to state 21
 
-    term                go to state 108
-    factor              go to state 37
-    unary_expression    go to state 38
-    primary_expression  go to state 39
-    id_arr              go to state 47
+    normal_expression   go to state 112
+    term                go to state 38
+    factor              go to state 39
+    unary_expression    go to state 40
+    primary_expression  go to state 41
+    func_call           go to state 42
+    id_arr              go to state 50
 
 
 State 75
 
-   43 term: term STAR . factor
+   47 rel_expression: normal_expression GE_OP . normal_expression
 
     INC_OP        shift, and go to state 9
     DEC_OP        shift, and go to state 10
     NOT           shift, and go to state 11
     OPEN_BRACKET  shift, and go to state 12
     MINUS         shift, and go to state 14
-    ID            shift, and go to state 15
-    NUM           shift, and go to state 19
-    REAL          shift, and go to state 20
+    ID            shift, and go to state 16
+    NUM           shift, and go to state 20
+    REAL          shift, and go to state 21
 
-    factor              go to state 109
-    unary_expression    go to state 38
-    primary_expression  go to state 39
-    id_arr              go to state 47
+    normal_expression   go to state 113
+    term                go to state 38
+    factor              go to state 39
+    unary_expression    go to state 40
+    primary_expression  go to state 41
+    func_call           go to state 42
+    id_arr              go to state 50
 
 
 State 76
 
-   44 term: term DIVIDE . factor
+   49 rel_expression: normal_expression EQ_OP . normal_expression
 
     INC_OP        shift, and go to state 9
     DEC_OP        shift, and go to state 10
     NOT           shift, and go to state 11
     OPEN_BRACKET  shift, and go to state 12
     MINUS         shift, and go to state 14
-    ID            shift, and go to state 15
-    NUM           shift, and go to state 19
-    REAL          shift, and go to state 20
+    ID            shift, and go to state 16
+    NUM           shift, and go to state 20
+    REAL          shift, and go to state 21
 
-    factor              go to state 110
-    unary_expression    go to state 38
-    primary_expression  go to state 39
-    id_arr              go to state 47
+    normal_expression   go to state 114
+    term                go to state 38
+    factor              go to state 39
+    unary_expression    go to state 40
+    primary_expression  go to state 41
+    func_call           go to state 42
+    id_arr              go to state 50
 
 
 State 77
+
+   50 rel_expression: normal_expression NE_OP . normal_expression
+
+    INC_OP        shift, and go to state 9
+    DEC_OP        shift, and go to state 10
+    NOT           shift, and go to state 11
+    OPEN_BRACKET  shift, and go to state 12
+    MINUS         shift, and go to state 14
+    ID            shift, and go to state 16
+    NUM           shift, and go to state 20
+    REAL          shift, and go to state 21
+
+    normal_expression   go to state 115
+    term                go to state 38
+    factor              go to state 39
+    unary_expression    go to state 40
+    primary_expression  go to state 41
+    func_call           go to state 42
+    id_arr              go to state 50
+
+
+State 78
+
+   51 normal_expression: normal_expression PLUS . term
+
+    INC_OP        shift, and go to state 9
+    DEC_OP        shift, and go to state 10
+    NOT           shift, and go to state 11
+    OPEN_BRACKET  shift, and go to state 12
+    MINUS         shift, and go to state 14
+    ID            shift, and go to state 16
+    NUM           shift, and go to state 20
+    REAL          shift, and go to state 21
+
+    term                go to state 116
+    factor              go to state 39
+    unary_expression    go to state 40
+    primary_expression  go to state 41
+    func_call           go to state 42
+    id_arr              go to state 50
+
+
+State 79
+
+   52 normal_expression: normal_expression MINUS . term
+
+    INC_OP        shift, and go to state 9
+    DEC_OP        shift, and go to state 10
+    NOT           shift, and go to state 11
+    OPEN_BRACKET  shift, and go to state 12
+    MINUS         shift, and go to state 14
+    ID            shift, and go to state 16
+    NUM           shift, and go to state 20
+    REAL          shift, and go to state 21
+
+    term                go to state 117
+    factor              go to state 39
+    unary_expression    go to state 40
+    primary_expression  go to state 41
+    func_call           go to state 42
+    id_arr              go to state 50
+
+
+State 80
+
+   54 term: term STAR . factor
+
+    INC_OP        shift, and go to state 9
+    DEC_OP        shift, and go to state 10
+    NOT           shift, and go to state 11
+    OPEN_BRACKET  shift, and go to state 12
+    MINUS         shift, and go to state 14
+    ID            shift, and go to state 16
+    NUM           shift, and go to state 20
+    REAL          shift, and go to state 21
+
+    factor              go to state 118
+    unary_expression    go to state 40
+    primary_expression  go to state 41
+    func_call           go to state 42
+    id_arr              go to state 50
+
+
+State 81
+
+   55 term: term DIVIDE . factor
+
+    INC_OP        shift, and go to state 9
+    DEC_OP        shift, and go to state 10
+    NOT           shift, and go to state 11
+    OPEN_BRACKET  shift, and go to state 12
+    MINUS         shift, and go to state 14
+    ID            shift, and go to state 16
+    NUM           shift, and go to state 20
+    REAL          shift, and go to state 21
+
+    factor              go to state 119
+    unary_expression    go to state 40
+    primary_expression  go to state 41
+    func_call           go to state 42
+    id_arr              go to state 50
+
+
+State 82
 
    17 statement: assignment_statement SEMI .
 
     $default  reduce using rule 17 (statement)
 
 
-State 78
+State 83
 
    12 statement: variable_declaration SEMI .
 
     $default  reduce using rule 12 (statement)
 
 
-State 79
+State 84
 
-   58 assignment_statement: id_arr ASSIGN . conditional_expression
+   75 assignment_statement: id_arr ASSIGN . conditional_expression
 
     INC_OP        shift, and go to state 9
     DEC_OP        shift, and go to state 10
     NOT           shift, and go to state 11
     OPEN_BRACKET  shift, and go to state 12
     MINUS         shift, and go to state 14
-    ID            shift, and go to state 15
-    NUM           shift, and go to state 19
-    REAL          shift, and go to state 20
+    ID            shift, and go to state 16
+    NUM           shift, and go to state 20
+    REAL          shift, and go to state 21
 
-    conditional_expression  go to state 111
-    expression              go to state 33
-    rel_expression          go to state 34
-    normal_expression       go to state 35
-    term                    go to state 36
-    factor                  go to state 37
-    unary_expression        go to state 38
-    primary_expression      go to state 39
-    id_arr                  go to state 47
-
-
-State 80
-
-   26 forexp: FOR OPEN_BRACKET assignment_statement . SEMI M assignment_statement SEMI
-
-    SEMI  shift, and go to state 112
+    conditional_expression  go to state 120
+    expression              go to state 35
+    rel_expression          go to state 36
+    normal_expression       go to state 37
+    term                    go to state 38
+    factor                  go to state 39
+    unary_expression        go to state 40
+    primary_expression      go to state 41
+    func_call               go to state 42
+    id_arr                  go to state 50
 
 
-State 81
+State 85
 
-   22 ifexp: IF OPEN_BRACKET assignment_statement . CLOSE_BRACKET
+   36 forexp: FOR OPEN_BRACKET assignment_statement . SEMI M assignment_statement SEMI
 
-    CLOSE_BRACKET  shift, and go to state 113
+    SEMI  shift, and go to state 121
 
 
-State 82
+State 86
+
+   32 ifexp: IF OPEN_BRACKET assignment_statement . CLOSE_BRACKET
+
+    CLOSE_BRACKET  shift, and go to state 122
+
+
+State 87
 
    14 statement: RETURN conditional_expression SEMI .
 
     $default  reduce using rule 14 (statement)
 
 
-State 83
+State 88
 
-   25 whileexp: WHILE M OPEN_BRACKET . assignment_statement CLOSE_BRACKET
-
-    INC_OP        shift, and go to state 9
-    DEC_OP        shift, and go to state 10
-    NOT           shift, and go to state 11
-    OPEN_BRACKET  shift, and go to state 12
-    MINUS         shift, and go to state 14
-    ID            shift, and go to state 15
-    NUM           shift, and go to state 19
-    REAL          shift, and go to state 20
-
-    $default  reduce using rule 60 (assignment_statement)
-
-    conditional_expression  go to state 32
-    expression              go to state 33
-    rel_expression          go to state 34
-    normal_expression       go to state 35
-    term                    go to state 36
-    factor                  go to state 37
-    unary_expression        go to state 38
-    primary_expression      go to state 39
-    assignment_statement    go to state 114
-    id_arr                  go to state 42
-
-
-State 84
-
-   55 primary_expression: OPEN_BRACKET conditional_expression CLOSE_BRACKET .
-
-    $default  reduce using rule 55 (primary_expression)
-
-
-State 85
-
-   57 elist: OPEN_SQUARE expression . CLOSE_SQUARE
-
-    CLOSE_SQUARE  shift, and go to state 115
-
-
-State 86
-
-   56 elist: elist OPEN_SQUARE . expression CLOSE_SQUARE
+   35 whileexp: WHILE M OPEN_BRACKET . assignment_statement CLOSE_BRACKET
 
     INC_OP        shift, and go to state 9
     DEC_OP        shift, and go to state 10
     NOT           shift, and go to state 11
     OPEN_BRACKET  shift, and go to state 12
     MINUS         shift, and go to state 14
-    ID            shift, and go to state 15
-    NUM           shift, and go to state 19
-    REAL          shift, and go to state 20
+    ID            shift, and go to state 16
+    NUM           shift, and go to state 20
+    REAL          shift, and go to state 21
 
-    expression          go to state 116
-    rel_expression      go to state 34
-    normal_expression   go to state 35
-    term                go to state 36
-    factor              go to state 37
-    unary_expression    go to state 38
-    primary_expression  go to state 39
-    id_arr              go to state 47
+    $default  reduce using rule 77 (assignment_statement)
+
+    conditional_expression  go to state 34
+    expression              go to state 35
+    rel_expression          go to state 36
+    normal_expression       go to state 37
+    term                    go to state 38
+    factor                  go to state 39
+    unary_expression        go to state 40
+    primary_expression      go to state 41
+    func_call               go to state 42
+    assignment_statement    go to state 123
+    id_arr                  go to state 45
 
 
-State 87
+State 89
+
+   66 primary_expression: OPEN_BRACKET conditional_expression CLOSE_BRACKET .
+
+    $default  reduce using rule 66 (primary_expression)
+
+
+State 90
+
+   23 switch_statement: SWITCH OPEN_BRACKET normal_expression . CLOSE_BRACKET OPEN_CURLY case_list CLOSE_CURLY
+   51 normal_expression: normal_expression . PLUS term
+   52                  | normal_expression . MINUS term
+
+    CLOSE_BRACKET  shift, and go to state 124
+    PLUS           shift, and go to state 78
+    MINUS          shift, and go to state 79
+
+
+State 91
+
+   74 elist_func_call: expression .
+
+    $default  reduce using rule 74 (elist_func_call)
+
+
+State 92
+
+   70 func_call: ID OPEN_BRACKET elist_super . CLOSE_BRACKET
+
+    CLOSE_BRACKET  shift, and go to state 125
+
+
+State 93
+
+   71 elist_super: elist_func_call .
+   73 elist_func_call: elist_func_call . COMMA expression
+
+    COMMA  shift, and go to state 126
+
+    $default  reduce using rule 71 (elist_super)
+
+
+State 94
+
+   69 elist: OPEN_SQUARE expression . CLOSE_SQUARE
+
+    CLOSE_SQUARE  shift, and go to state 127
+
+
+State 95
+
+   68 elist: elist OPEN_SQUARE . expression CLOSE_SQUARE
+
+    INC_OP        shift, and go to state 9
+    DEC_OP        shift, and go to state 10
+    NOT           shift, and go to state 11
+    OPEN_BRACKET  shift, and go to state 12
+    MINUS         shift, and go to state 14
+    ID            shift, and go to state 16
+    NUM           shift, and go to state 20
+    REAL          shift, and go to state 21
+
+    expression          go to state 128
+    rel_expression      go to state 36
+    normal_expression   go to state 37
+    term                go to state 38
+    factor              go to state 39
+    unary_expression    go to state 40
+    primary_expression  go to state 41
+    func_call           go to state 42
+    id_arr              go to state 50
+
+
+State 96
 
     4 last_curly: CLOSE_CURLY .
 
     $default  reduce using rule 4 (last_curly)
 
 
-State 88
+State 97
 
    18 statement: first_curly statement_list last_curly .
 
     $default  reduce using rule 18 (statement)
 
 
-State 89
+State 98
 
     2 function_declaration: function_head first_curly statement_list . last_curly
    10 statement_list: statement_list . M statement
 
-    CLOSE_CURLY  shift, and go to state 87
+    CLOSE_CURLY  shift, and go to state 96
 
-    $default  reduce using rule 27 (M)
+    $default  reduce using rule 38 (M)
 
-    last_curly  go to state 117
+    last_curly  go to state 129
     M           go to state 4
-
-
-State 90
-
-   72 unit_declaration: type . ID
-   73                 | type . ID OPEN_SQUARE CLOSE_SQUARE
-
-    ID  shift, and go to state 118
-
-
-State 91
-
-    5 function_head: res_id OPEN_BRACKET parameter_list . CLOSE_BRACKET
-
-    CLOSE_BRACKET  shift, and go to state 119
-
-
-State 92
-
-   68 parameter_list: param_decl .
-   70 param_decl: param_decl . COMMA unit_declaration
-
-    COMMA  shift, and go to state 120
-
-    $default  reduce using rule 68 (parameter_list)
-
-
-State 93
-
-   71 param_decl: unit_declaration .
-
-    $default  reduce using rule 71 (param_decl)
-
-
-State 94
-
-   67 new_num_list: OPEN_SQUARE . NUM CLOSE_SQUARE
-
-    NUM  shift, and go to state 121
-
-
-State 95
-
-   65 id_arr_declare: ID new_num_list .
-   66 new_num_list: new_num_list . OPEN_SQUARE NUM CLOSE_SQUARE
-
-    OPEN_SQUARE  shift, and go to state 122
-
-    $default  reduce using rule 65 (id_arr_declare)
-
-
-State 96
-
-   74 varlist: varlist COMMA . id_arr_declare
-
-    ID  shift, and go to state 123
-
-    id_arr_declare  go to state 124
-
-
-State 97
-
-   20 selection_statement: ifexp statement ELSE . N M statement
-
-    $default  reduce using rule 28 (N)
-
-    N  go to state 125
-
-
-State 98
-
-   24 iteration_statement: forexp assignment_statement CLOSE_BRACKET . statement
-
-    FOR           shift, and go to state 5
-    IF            shift, and go to state 6
-    RETURN        shift, and go to state 7
-    WHILE         shift, and go to state 8
-    INC_OP        shift, and go to state 9
-    DEC_OP        shift, and go to state 10
-    NOT           shift, and go to state 11
-    OPEN_BRACKET  shift, and go to state 12
-    OPEN_CURLY    shift, and go to state 13
-    MINUS         shift, and go to state 14
-    ID            shift, and go to state 15
-    INT           shift, and go to state 16
-    FLOAT         shift, and go to state 17
-    VOID          shift, and go to state 18
-    NUM           shift, and go to state 19
-    REAL          shift, and go to state 20
-
-    $default  reduce using rule 60 (assignment_statement)
-
-    function_declaration    go to state 21
-    first_curly             go to state 22
-    function_head           go to state 23
-    res_id                  go to state 24
-    type                    go to state 25
-    statement               go to state 126
-    selection_statement     go to state 27
-    ifexp                   go to state 28
-    iteration_statement     go to state 29
-    whileexp                go to state 30
-    forexp                  go to state 31
-    conditional_expression  go to state 32
-    expression              go to state 33
-    rel_expression          go to state 34
-    normal_expression       go to state 35
-    term                    go to state 36
-    factor                  go to state 37
-    unary_expression        go to state 38
-    primary_expression      go to state 39
-    assignment_statement    go to state 40
-    variable_declaration    go to state 41
-    id_arr                  go to state 42
 
 
 State 99
 
-   29 conditional_expression: conditional_expression AND_OP expression .
+   89 unit_declaration: type . ID
+   90                 | type . ID OPEN_SQUARE CLOSE_SQUARE
 
-    $default  reduce using rule 29 (conditional_expression)
+    ID  shift, and go to state 130
 
 
 State 100
 
-   30 conditional_expression: conditional_expression OR_OP expression .
+    5 function_head: res_id OPEN_BRACKET parameter_list . CLOSE_BRACKET
 
-    $default  reduce using rule 30 (conditional_expression)
+    CLOSE_BRACKET  shift, and go to state 131
 
 
 State 101
 
-   35 rel_expression: normal_expression LT normal_expression .
-   40 normal_expression: normal_expression . PLUS term
-   41                  | normal_expression . MINUS term
+   85 parameter_list: param_decl .
+   87 param_decl: param_decl . COMMA unit_declaration
 
-    PLUS   shift, and go to state 73
-    MINUS  shift, and go to state 74
+    COMMA  shift, and go to state 132
 
-    $default  reduce using rule 35 (rel_expression)
+    $default  reduce using rule 85 (parameter_list)
 
 
 State 102
 
-   34 rel_expression: normal_expression GT normal_expression .
-   40 normal_expression: normal_expression . PLUS term
-   41                  | normal_expression . MINUS term
+   88 param_decl: unit_declaration .
 
-    PLUS   shift, and go to state 73
-    MINUS  shift, and go to state 74
-
-    $default  reduce using rule 34 (rel_expression)
+    $default  reduce using rule 88 (param_decl)
 
 
 State 103
 
-   37 rel_expression: normal_expression LE_OP normal_expression .
-   40 normal_expression: normal_expression . PLUS term
-   41                  | normal_expression . MINUS term
+   84 new_num_list: OPEN_SQUARE . NUM CLOSE_SQUARE
 
-    PLUS   shift, and go to state 73
-    MINUS  shift, and go to state 74
-
-    $default  reduce using rule 37 (rel_expression)
+    NUM  shift, and go to state 133
 
 
 State 104
 
-   36 rel_expression: normal_expression GE_OP normal_expression .
-   40 normal_expression: normal_expression . PLUS term
-   41                  | normal_expression . MINUS term
+   82 id_arr_declare: ID new_num_list .
+   83 new_num_list: new_num_list . OPEN_SQUARE NUM CLOSE_SQUARE
 
-    PLUS   shift, and go to state 73
-    MINUS  shift, and go to state 74
+    OPEN_SQUARE  shift, and go to state 134
 
-    $default  reduce using rule 36 (rel_expression)
+    $default  reduce using rule 82 (id_arr_declare)
 
 
 State 105
 
-   38 rel_expression: normal_expression EQ_OP normal_expression .
-   40 normal_expression: normal_expression . PLUS term
-   41                  | normal_expression . MINUS term
+   91 varlist: varlist COMMA . id_arr_declare
 
-    PLUS   shift, and go to state 73
-    MINUS  shift, and go to state 74
+    ID  shift, and go to state 135
 
-    $default  reduce using rule 38 (rel_expression)
+    id_arr_declare  go to state 136
 
 
 State 106
 
-   39 rel_expression: normal_expression NE_OP normal_expression .
-   40 normal_expression: normal_expression . PLUS term
-   41                  | normal_expression . MINUS term
+   21 selection_statement: ifexp statement ELSE . N M statement
 
-    PLUS   shift, and go to state 73
-    MINUS  shift, and go to state 74
+    $default  reduce using rule 39 (N)
 
-    $default  reduce using rule 39 (rel_expression)
+    N  go to state 137
 
 
 State 107
 
-   40 normal_expression: normal_expression PLUS term .
-   43 term: term . STAR factor
-   44     | term . DIVIDE factor
+   34 iteration_statement: forexp M assignment_statement . M CLOSE_BRACKET statement
 
-    STAR    shift, and go to state 75
-    DIVIDE  shift, and go to state 76
+    $default  reduce using rule 38 (M)
 
-    $default  reduce using rule 40 (normal_expression)
+    M  go to state 138
 
 
 State 108
 
-   41 normal_expression: normal_expression MINUS term .
-   43 term: term . STAR factor
-   44     | term . DIVIDE factor
+   40 conditional_expression: conditional_expression AND_OP expression .
 
-    STAR    shift, and go to state 75
-    DIVIDE  shift, and go to state 76
-
-    $default  reduce using rule 41 (normal_expression)
+    $default  reduce using rule 40 (conditional_expression)
 
 
 State 109
 
-   43 term: term STAR factor .
+   41 conditional_expression: conditional_expression OR_OP expression .
 
-    $default  reduce using rule 43 (term)
+    $default  reduce using rule 41 (conditional_expression)
 
 
 State 110
 
-   44 term: term DIVIDE factor .
+   46 rel_expression: normal_expression LT normal_expression .
+   51 normal_expression: normal_expression . PLUS term
+   52                  | normal_expression . MINUS term
 
-    $default  reduce using rule 44 (term)
+    PLUS   shift, and go to state 78
+    MINUS  shift, and go to state 79
+
+    $default  reduce using rule 46 (rel_expression)
 
 
 State 111
 
-   29 conditional_expression: conditional_expression . AND_OP expression
-   30                       | conditional_expression . OR_OP expression
-   58 assignment_statement: id_arr ASSIGN conditional_expression .
+   45 rel_expression: normal_expression GT normal_expression .
+   51 normal_expression: normal_expression . PLUS term
+   52                  | normal_expression . MINUS term
 
-    AND_OP  shift, and go to state 65
-    OR_OP   shift, and go to state 66
+    PLUS   shift, and go to state 78
+    MINUS  shift, and go to state 79
 
-    $default  reduce using rule 58 (assignment_statement)
+    $default  reduce using rule 45 (rel_expression)
 
 
 State 112
 
-   26 forexp: FOR OPEN_BRACKET assignment_statement SEMI . M assignment_statement SEMI
+   48 rel_expression: normal_expression LE_OP normal_expression .
+   51 normal_expression: normal_expression . PLUS term
+   52                  | normal_expression . MINUS term
 
-    $default  reduce using rule 27 (M)
+    PLUS   shift, and go to state 78
+    MINUS  shift, and go to state 79
 
-    M  go to state 127
+    $default  reduce using rule 48 (rel_expression)
 
 
 State 113
 
-   22 ifexp: IF OPEN_BRACKET assignment_statement CLOSE_BRACKET .
+   47 rel_expression: normal_expression GE_OP normal_expression .
+   51 normal_expression: normal_expression . PLUS term
+   52                  | normal_expression . MINUS term
 
-    $default  reduce using rule 22 (ifexp)
+    PLUS   shift, and go to state 78
+    MINUS  shift, and go to state 79
+
+    $default  reduce using rule 47 (rel_expression)
 
 
 State 114
 
-   25 whileexp: WHILE M OPEN_BRACKET assignment_statement . CLOSE_BRACKET
+   49 rel_expression: normal_expression EQ_OP normal_expression .
+   51 normal_expression: normal_expression . PLUS term
+   52                  | normal_expression . MINUS term
 
-    CLOSE_BRACKET  shift, and go to state 128
+    PLUS   shift, and go to state 78
+    MINUS  shift, and go to state 79
+
+    $default  reduce using rule 49 (rel_expression)
 
 
 State 115
 
-   57 elist: OPEN_SQUARE expression CLOSE_SQUARE .
+   50 rel_expression: normal_expression NE_OP normal_expression .
+   51 normal_expression: normal_expression . PLUS term
+   52                  | normal_expression . MINUS term
 
-    $default  reduce using rule 57 (elist)
+    PLUS   shift, and go to state 78
+    MINUS  shift, and go to state 79
+
+    $default  reduce using rule 50 (rel_expression)
 
 
 State 116
 
-   56 elist: elist OPEN_SQUARE expression . CLOSE_SQUARE
+   51 normal_expression: normal_expression PLUS term .
+   54 term: term . STAR factor
+   55     | term . DIVIDE factor
 
-    CLOSE_SQUARE  shift, and go to state 129
+    STAR    shift, and go to state 80
+    DIVIDE  shift, and go to state 81
+
+    $default  reduce using rule 51 (normal_expression)
 
 
 State 117
+
+   52 normal_expression: normal_expression MINUS term .
+   54 term: term . STAR factor
+   55     | term . DIVIDE factor
+
+    STAR    shift, and go to state 80
+    DIVIDE  shift, and go to state 81
+
+    $default  reduce using rule 52 (normal_expression)
+
+
+State 118
+
+   54 term: term STAR factor .
+
+    $default  reduce using rule 54 (term)
+
+
+State 119
+
+   55 term: term DIVIDE factor .
+
+    $default  reduce using rule 55 (term)
+
+
+State 120
+
+   40 conditional_expression: conditional_expression . AND_OP expression
+   41                       | conditional_expression . OR_OP expression
+   75 assignment_statement: id_arr ASSIGN conditional_expression .
+
+    AND_OP  shift, and go to state 70
+    OR_OP   shift, and go to state 71
+
+    $default  reduce using rule 75 (assignment_statement)
+
+
+State 121
+
+   36 forexp: FOR OPEN_BRACKET assignment_statement SEMI . M assignment_statement SEMI
+
+    $default  reduce using rule 38 (M)
+
+    M  go to state 139
+
+
+State 122
+
+   32 ifexp: IF OPEN_BRACKET assignment_statement CLOSE_BRACKET .
+
+    $default  reduce using rule 32 (ifexp)
+
+
+State 123
+
+   35 whileexp: WHILE M OPEN_BRACKET assignment_statement . CLOSE_BRACKET
+
+    CLOSE_BRACKET  shift, and go to state 140
+
+
+State 124
+
+   23 switch_statement: SWITCH OPEN_BRACKET normal_expression CLOSE_BRACKET . OPEN_CURLY case_list CLOSE_CURLY
+
+    OPEN_CURLY  shift, and go to state 141
+
+
+State 125
+
+   70 func_call: ID OPEN_BRACKET elist_super CLOSE_BRACKET .
+
+    $default  reduce using rule 70 (func_call)
+
+
+State 126
+
+   73 elist_func_call: elist_func_call COMMA . expression
+
+    INC_OP        shift, and go to state 9
+    DEC_OP        shift, and go to state 10
+    NOT           shift, and go to state 11
+    OPEN_BRACKET  shift, and go to state 12
+    MINUS         shift, and go to state 14
+    ID            shift, and go to state 16
+    NUM           shift, and go to state 20
+    REAL          shift, and go to state 21
+
+    expression          go to state 142
+    rel_expression      go to state 36
+    normal_expression   go to state 37
+    term                go to state 38
+    factor              go to state 39
+    unary_expression    go to state 40
+    primary_expression  go to state 41
+    func_call           go to state 42
+    id_arr              go to state 50
+
+
+State 127
+
+   69 elist: OPEN_SQUARE expression CLOSE_SQUARE .
+
+    $default  reduce using rule 69 (elist)
+
+
+State 128
+
+   68 elist: elist OPEN_SQUARE expression . CLOSE_SQUARE
+
+    CLOSE_SQUARE  shift, and go to state 143
+
+
+State 129
 
     2 function_declaration: function_head first_curly statement_list last_curly .
 
     $default  reduce using rule 2 (function_declaration)
 
 
-State 118
+State 130
 
-   72 unit_declaration: type ID .
-   73                 | type ID . OPEN_SQUARE CLOSE_SQUARE
+   89 unit_declaration: type ID .
+   90                 | type ID . OPEN_SQUARE CLOSE_SQUARE
 
-    OPEN_SQUARE  shift, and go to state 130
+    OPEN_SQUARE  shift, and go to state 144
 
-    $default  reduce using rule 72 (unit_declaration)
+    $default  reduce using rule 89 (unit_declaration)
 
 
-State 119
+State 131
 
     5 function_head: res_id OPEN_BRACKET parameter_list CLOSE_BRACKET .
 
     $default  reduce using rule 5 (function_head)
 
 
-State 120
+State 132
 
-   70 param_decl: param_decl COMMA . unit_declaration
+   87 param_decl: param_decl COMMA . unit_declaration
 
-    INT    shift, and go to state 16
-    FLOAT  shift, and go to state 17
-    VOID   shift, and go to state 18
+    INT    shift, and go to state 17
+    FLOAT  shift, and go to state 18
+    VOID   shift, and go to state 19
 
-    type              go to state 90
-    unit_declaration  go to state 131
-
-
-State 121
-
-   67 new_num_list: OPEN_SQUARE NUM . CLOSE_SQUARE
-
-    CLOSE_SQUARE  shift, and go to state 132
+    type              go to state 99
+    unit_declaration  go to state 145
 
 
-State 122
+State 133
 
-   66 new_num_list: new_num_list OPEN_SQUARE . NUM CLOSE_SQUARE
+   84 new_num_list: OPEN_SQUARE NUM . CLOSE_SQUARE
 
-    NUM  shift, and go to state 133
-
-
-State 123
-
-   64 id_arr_declare: ID .
-   65               | ID . new_num_list
-
-    OPEN_SQUARE  shift, and go to state 94
-
-    $default  reduce using rule 64 (id_arr_declare)
-
-    new_num_list  go to state 95
+    CLOSE_SQUARE  shift, and go to state 146
 
 
-State 124
+State 134
 
-   74 varlist: varlist COMMA id_arr_declare .
+   83 new_num_list: new_num_list OPEN_SQUARE . NUM CLOSE_SQUARE
 
-    $default  reduce using rule 74 (varlist)
-
-
-State 125
-
-   20 selection_statement: ifexp statement ELSE N . M statement
-
-    $default  reduce using rule 27 (M)
-
-    M  go to state 134
+    NUM  shift, and go to state 147
 
 
-State 126
+State 135
 
-   24 iteration_statement: forexp assignment_statement CLOSE_BRACKET statement .
+   81 id_arr_declare: ID .
+   82               | ID . new_num_list
 
-    $default  reduce using rule 24 (iteration_statement)
+    OPEN_SQUARE  shift, and go to state 103
+
+    $default  reduce using rule 81 (id_arr_declare)
+
+    new_num_list  go to state 104
 
 
-State 127
+State 136
 
-   26 forexp: FOR OPEN_BRACKET assignment_statement SEMI M . assignment_statement SEMI
+   91 varlist: varlist COMMA id_arr_declare .
+
+    $default  reduce using rule 91 (varlist)
+
+
+State 137
+
+   21 selection_statement: ifexp statement ELSE N . M statement
+
+    $default  reduce using rule 38 (M)
+
+    M  go to state 148
+
+
+State 138
+
+   34 iteration_statement: forexp M assignment_statement M . CLOSE_BRACKET statement
+
+    CLOSE_BRACKET  shift, and go to state 149
+
+
+State 139
+
+   36 forexp: FOR OPEN_BRACKET assignment_statement SEMI M . assignment_statement SEMI
 
     INC_OP        shift, and go to state 9
     DEC_OP        shift, and go to state 10
     NOT           shift, and go to state 11
     OPEN_BRACKET  shift, and go to state 12
     MINUS         shift, and go to state 14
-    ID            shift, and go to state 15
-    NUM           shift, and go to state 19
-    REAL          shift, and go to state 20
+    ID            shift, and go to state 16
+    NUM           shift, and go to state 20
+    REAL          shift, and go to state 21
 
-    $default  reduce using rule 60 (assignment_statement)
+    $default  reduce using rule 77 (assignment_statement)
 
-    conditional_expression  go to state 32
-    expression              go to state 33
-    rel_expression          go to state 34
-    normal_expression       go to state 35
-    term                    go to state 36
-    factor                  go to state 37
-    unary_expression        go to state 38
-    primary_expression      go to state 39
-    assignment_statement    go to state 135
-    id_arr                  go to state 42
-
-
-State 128
-
-   25 whileexp: WHILE M OPEN_BRACKET assignment_statement CLOSE_BRACKET .
-
-    $default  reduce using rule 25 (whileexp)
+    conditional_expression  go to state 34
+    expression              go to state 35
+    rel_expression          go to state 36
+    normal_expression       go to state 37
+    term                    go to state 38
+    factor                  go to state 39
+    unary_expression        go to state 40
+    primary_expression      go to state 41
+    func_call               go to state 42
+    assignment_statement    go to state 150
+    id_arr                  go to state 45
 
 
-State 129
+State 140
 
-   56 elist: elist OPEN_SQUARE expression CLOSE_SQUARE .
+   35 whileexp: WHILE M OPEN_BRACKET assignment_statement CLOSE_BRACKET .
 
-    $default  reduce using rule 56 (elist)
-
-
-State 130
-
-   73 unit_declaration: type ID OPEN_SQUARE . CLOSE_SQUARE
-
-    CLOSE_SQUARE  shift, and go to state 136
+    $default  reduce using rule 35 (whileexp)
 
 
-State 131
+State 141
 
-   70 param_decl: param_decl COMMA unit_declaration .
+   23 switch_statement: SWITCH OPEN_BRACKET normal_expression CLOSE_BRACKET OPEN_CURLY . case_list CLOSE_CURLY
 
-    $default  reduce using rule 70 (param_decl)
+    CASE  shift, and go to state 151
 
-
-State 132
-
-   67 new_num_list: OPEN_SQUARE NUM CLOSE_SQUARE .
-
-    $default  reduce using rule 67 (new_num_list)
+    case_list        go to state 152
+    case_list_minor  go to state 153
+    case_statement   go to state 154
+    case_name        go to state 155
 
 
-State 133
+State 142
 
-   66 new_num_list: new_num_list OPEN_SQUARE NUM . CLOSE_SQUARE
+   73 elist_func_call: elist_func_call COMMA expression .
 
-    CLOSE_SQUARE  shift, and go to state 137
+    $default  reduce using rule 73 (elist_func_call)
 
 
-State 134
+State 143
 
-   20 selection_statement: ifexp statement ELSE N M . statement
+   68 elist: elist OPEN_SQUARE expression CLOSE_SQUARE .
+
+    $default  reduce using rule 68 (elist)
+
+
+State 144
+
+   90 unit_declaration: type ID OPEN_SQUARE . CLOSE_SQUARE
+
+    CLOSE_SQUARE  shift, and go to state 156
+
+
+State 145
+
+   87 param_decl: param_decl COMMA unit_declaration .
+
+    $default  reduce using rule 87 (param_decl)
+
+
+State 146
+
+   84 new_num_list: OPEN_SQUARE NUM CLOSE_SQUARE .
+
+    $default  reduce using rule 84 (new_num_list)
+
+
+State 147
+
+   83 new_num_list: new_num_list OPEN_SQUARE NUM . CLOSE_SQUARE
+
+    CLOSE_SQUARE  shift, and go to state 157
+
+
+State 148
+
+   21 selection_statement: ifexp statement ELSE N M . statement
 
     FOR           shift, and go to state 5
     IF            shift, and go to state 6
@@ -1945,69 +2163,367 @@ State 134
     OPEN_BRACKET  shift, and go to state 12
     OPEN_CURLY    shift, and go to state 13
     MINUS         shift, and go to state 14
-    ID            shift, and go to state 15
-    INT           shift, and go to state 16
-    FLOAT         shift, and go to state 17
-    VOID          shift, and go to state 18
-    NUM           shift, and go to state 19
-    REAL          shift, and go to state 20
+    SWITCH        shift, and go to state 15
+    ID            shift, and go to state 16
+    INT           shift, and go to state 17
+    FLOAT         shift, and go to state 18
+    VOID          shift, and go to state 19
+    NUM           shift, and go to state 20
+    REAL          shift, and go to state 21
 
-    $default  reduce using rule 60 (assignment_statement)
+    $default  reduce using rule 77 (assignment_statement)
 
-    function_declaration    go to state 21
-    first_curly             go to state 22
-    function_head           go to state 23
-    res_id                  go to state 24
-    type                    go to state 25
-    statement               go to state 138
-    selection_statement     go to state 27
-    ifexp                   go to state 28
-    iteration_statement     go to state 29
-    whileexp                go to state 30
-    forexp                  go to state 31
-    conditional_expression  go to state 32
-    expression              go to state 33
-    rel_expression          go to state 34
-    normal_expression       go to state 35
-    term                    go to state 36
-    factor                  go to state 37
-    unary_expression        go to state 38
-    primary_expression      go to state 39
-    assignment_statement    go to state 40
-    variable_declaration    go to state 41
-    id_arr                  go to state 42
-
-
-State 135
-
-   26 forexp: FOR OPEN_BRACKET assignment_statement SEMI M assignment_statement . SEMI
-
-    SEMI  shift, and go to state 139
+    function_declaration    go to state 22
+    first_curly             go to state 23
+    function_head           go to state 24
+    res_id                  go to state 25
+    type                    go to state 26
+    statement               go to state 158
+    selection_statement     go to state 28
+    switch_statement        go to state 29
+    ifexp                   go to state 30
+    iteration_statement     go to state 31
+    whileexp                go to state 32
+    forexp                  go to state 33
+    conditional_expression  go to state 34
+    expression              go to state 35
+    rel_expression          go to state 36
+    normal_expression       go to state 37
+    term                    go to state 38
+    factor                  go to state 39
+    unary_expression        go to state 40
+    primary_expression      go to state 41
+    func_call               go to state 42
+    assignment_statement    go to state 43
+    variable_declaration    go to state 44
+    id_arr                  go to state 45
 
 
-State 136
+State 149
 
-   73 unit_declaration: type ID OPEN_SQUARE CLOSE_SQUARE .
+   34 iteration_statement: forexp M assignment_statement M CLOSE_BRACKET . statement
 
-    $default  reduce using rule 73 (unit_declaration)
+    FOR           shift, and go to state 5
+    IF            shift, and go to state 6
+    RETURN        shift, and go to state 7
+    WHILE         shift, and go to state 8
+    INC_OP        shift, and go to state 9
+    DEC_OP        shift, and go to state 10
+    NOT           shift, and go to state 11
+    OPEN_BRACKET  shift, and go to state 12
+    OPEN_CURLY    shift, and go to state 13
+    MINUS         shift, and go to state 14
+    SWITCH        shift, and go to state 15
+    ID            shift, and go to state 16
+    INT           shift, and go to state 17
+    FLOAT         shift, and go to state 18
+    VOID          shift, and go to state 19
+    NUM           shift, and go to state 20
+    REAL          shift, and go to state 21
+
+    $default  reduce using rule 77 (assignment_statement)
+
+    function_declaration    go to state 22
+    first_curly             go to state 23
+    function_head           go to state 24
+    res_id                  go to state 25
+    type                    go to state 26
+    statement               go to state 159
+    selection_statement     go to state 28
+    switch_statement        go to state 29
+    ifexp                   go to state 30
+    iteration_statement     go to state 31
+    whileexp                go to state 32
+    forexp                  go to state 33
+    conditional_expression  go to state 34
+    expression              go to state 35
+    rel_expression          go to state 36
+    normal_expression       go to state 37
+    term                    go to state 38
+    factor                  go to state 39
+    unary_expression        go to state 40
+    primary_expression      go to state 41
+    func_call               go to state 42
+    assignment_statement    go to state 43
+    variable_declaration    go to state 44
+    id_arr                  go to state 45
 
 
-State 137
+State 150
 
-   66 new_num_list: new_num_list OPEN_SQUARE NUM CLOSE_SQUARE .
+   36 forexp: FOR OPEN_BRACKET assignment_statement SEMI M assignment_statement . SEMI
 
-    $default  reduce using rule 66 (new_num_list)
-
-
-State 138
-
-   20 selection_statement: ifexp statement ELSE N M statement .
-
-    $default  reduce using rule 20 (selection_statement)
+    SEMI  shift, and go to state 160
 
 
-State 139
+State 151
 
-   26 forexp: FOR OPEN_BRACKET assignment_statement SEMI M assignment_statement SEMI .
+   31 case_name: CASE .
 
-    $default  reduce using rule 26 (forexp)
+    $default  reduce using rule 31 (case_name)
+
+
+State 152
+
+   23 switch_statement: SWITCH OPEN_BRACKET normal_expression CLOSE_BRACKET OPEN_CURLY case_list . CLOSE_CURLY
+
+    CLOSE_CURLY  shift, and go to state 161
+
+
+State 153
+
+   24 case_list: case_list_minor . default_statement
+   25          | case_list_minor .
+   26 case_list_minor: case_list_minor . case_statement
+
+    CASE     shift, and go to state 151
+    DEFAULT  shift, and go to state 162
+
+    $default  reduce using rule 25 (case_list)
+
+    default_statement  go to state 163
+    default_name       go to state 164
+    case_statement     go to state 165
+    case_name          go to state 155
+
+
+State 154
+
+   27 case_list_minor: case_statement .
+
+    $default  reduce using rule 27 (case_list_minor)
+
+
+State 155
+
+   30 case_statement: case_name . normal_expression COLON N_new M statement
+
+    INC_OP        shift, and go to state 9
+    DEC_OP        shift, and go to state 10
+    NOT           shift, and go to state 11
+    OPEN_BRACKET  shift, and go to state 12
+    MINUS         shift, and go to state 14
+    ID            shift, and go to state 16
+    NUM           shift, and go to state 20
+    REAL          shift, and go to state 21
+
+    normal_expression   go to state 166
+    term                go to state 38
+    factor              go to state 39
+    unary_expression    go to state 40
+    primary_expression  go to state 41
+    func_call           go to state 42
+    id_arr              go to state 50
+
+
+State 156
+
+   90 unit_declaration: type ID OPEN_SQUARE CLOSE_SQUARE .
+
+    $default  reduce using rule 90 (unit_declaration)
+
+
+State 157
+
+   83 new_num_list: new_num_list OPEN_SQUARE NUM CLOSE_SQUARE .
+
+    $default  reduce using rule 83 (new_num_list)
+
+
+State 158
+
+   21 selection_statement: ifexp statement ELSE N M statement .
+
+    $default  reduce using rule 21 (selection_statement)
+
+
+State 159
+
+   34 iteration_statement: forexp M assignment_statement M CLOSE_BRACKET statement .
+
+    $default  reduce using rule 34 (iteration_statement)
+
+
+State 160
+
+   36 forexp: FOR OPEN_BRACKET assignment_statement SEMI M assignment_statement SEMI .
+
+    $default  reduce using rule 36 (forexp)
+
+
+State 161
+
+   23 switch_statement: SWITCH OPEN_BRACKET normal_expression CLOSE_BRACKET OPEN_CURLY case_list CLOSE_CURLY .
+
+    $default  reduce using rule 23 (switch_statement)
+
+
+State 162
+
+   29 default_name: DEFAULT . COLON
+
+    COLON  shift, and go to state 167
+
+
+State 163
+
+   24 case_list: case_list_minor default_statement .
+
+    $default  reduce using rule 24 (case_list)
+
+
+State 164
+
+   28 default_statement: default_name . statement
+
+    FOR           shift, and go to state 5
+    IF            shift, and go to state 6
+    RETURN        shift, and go to state 7
+    WHILE         shift, and go to state 8
+    INC_OP        shift, and go to state 9
+    DEC_OP        shift, and go to state 10
+    NOT           shift, and go to state 11
+    OPEN_BRACKET  shift, and go to state 12
+    OPEN_CURLY    shift, and go to state 13
+    MINUS         shift, and go to state 14
+    SWITCH        shift, and go to state 15
+    ID            shift, and go to state 16
+    INT           shift, and go to state 17
+    FLOAT         shift, and go to state 18
+    VOID          shift, and go to state 19
+    NUM           shift, and go to state 20
+    REAL          shift, and go to state 21
+
+    $default  reduce using rule 77 (assignment_statement)
+
+    function_declaration    go to state 22
+    first_curly             go to state 23
+    function_head           go to state 24
+    res_id                  go to state 25
+    type                    go to state 26
+    statement               go to state 168
+    selection_statement     go to state 28
+    switch_statement        go to state 29
+    ifexp                   go to state 30
+    iteration_statement     go to state 31
+    whileexp                go to state 32
+    forexp                  go to state 33
+    conditional_expression  go to state 34
+    expression              go to state 35
+    rel_expression          go to state 36
+    normal_expression       go to state 37
+    term                    go to state 38
+    factor                  go to state 39
+    unary_expression        go to state 40
+    primary_expression      go to state 41
+    func_call               go to state 42
+    assignment_statement    go to state 43
+    variable_declaration    go to state 44
+    id_arr                  go to state 45
+
+
+State 165
+
+   26 case_list_minor: case_list_minor case_statement .
+
+    $default  reduce using rule 26 (case_list_minor)
+
+
+State 166
+
+   30 case_statement: case_name normal_expression . COLON N_new M statement
+   51 normal_expression: normal_expression . PLUS term
+   52                  | normal_expression . MINUS term
+
+    PLUS   shift, and go to state 78
+    MINUS  shift, and go to state 79
+    COLON  shift, and go to state 169
+
+
+State 167
+
+   29 default_name: DEFAULT COLON .
+
+    $default  reduce using rule 29 (default_name)
+
+
+State 168
+
+   28 default_statement: default_name statement .
+
+    $default  reduce using rule 28 (default_statement)
+
+
+State 169
+
+   30 case_statement: case_name normal_expression COLON . N_new M statement
+
+    $default  reduce using rule 37 (N_new)
+
+    N_new  go to state 170
+
+
+State 170
+
+   30 case_statement: case_name normal_expression COLON N_new . M statement
+
+    $default  reduce using rule 38 (M)
+
+    M  go to state 171
+
+
+State 171
+
+   30 case_statement: case_name normal_expression COLON N_new M . statement
+
+    FOR           shift, and go to state 5
+    IF            shift, and go to state 6
+    RETURN        shift, and go to state 7
+    WHILE         shift, and go to state 8
+    INC_OP        shift, and go to state 9
+    DEC_OP        shift, and go to state 10
+    NOT           shift, and go to state 11
+    OPEN_BRACKET  shift, and go to state 12
+    OPEN_CURLY    shift, and go to state 13
+    MINUS         shift, and go to state 14
+    SWITCH        shift, and go to state 15
+    ID            shift, and go to state 16
+    INT           shift, and go to state 17
+    FLOAT         shift, and go to state 18
+    VOID          shift, and go to state 19
+    NUM           shift, and go to state 20
+    REAL          shift, and go to state 21
+
+    $default  reduce using rule 77 (assignment_statement)
+
+    function_declaration    go to state 22
+    first_curly             go to state 23
+    function_head           go to state 24
+    res_id                  go to state 25
+    type                    go to state 26
+    statement               go to state 172
+    selection_statement     go to state 28
+    switch_statement        go to state 29
+    ifexp                   go to state 30
+    iteration_statement     go to state 31
+    whileexp                go to state 32
+    forexp                  go to state 33
+    conditional_expression  go to state 34
+    expression              go to state 35
+    rel_expression          go to state 36
+    normal_expression       go to state 37
+    term                    go to state 38
+    factor                  go to state 39
+    unary_expression        go to state 40
+    primary_expression      go to state 41
+    func_call               go to state 42
+    assignment_statement    go to state 43
+    variable_declaration    go to state 44
+    id_arr                  go to state 45
+
+
+State 172
+
+   30 case_statement: case_name normal_expression COLON N_new M statement .
+
+    $default  reduce using rule 30 (case_statement)

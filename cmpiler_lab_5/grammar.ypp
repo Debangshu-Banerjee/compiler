@@ -13,9 +13,12 @@ void yyerror(string s){
 }
 int global_temp = 0;
 code_output intermediate_output;
+loop_tag_genarator loop_tag;
+conditional_tag_genator condition_tag;
 sym_tab symbol_table;
 int level = 0;
 int active_function_index = 0;  // -1 for any type error
+int call_function_index = -1;
 
 %}
 
@@ -40,15 +43,20 @@ int active_function_index = 0;  // -1 for any type error
   result_ * result_s;
   new_num_list_ * new_num_list_s;
   unit_declaration_ * unit_declaration_s;
+	elist_func_call_ * elist_func_call_s;
+	case_name_ * case_name_s;
+	case_list_ * case_list_s;
 }
 %token ELSE FOR IF RETURN WHILE PTR_OP INC_OP DEC_OP AND_OP OR_OP LT GT LE_OP GE_OP EQ_OP NE_OP DO BREAK LIBRARY CONTINUE ERROR
 %token NOT AMP TILDE STAR ASSIGN OPEN_BRACKET CLOSE_BRACKET OPEN_CURLY CLOSE_CURLY OPEN_SQUARE CLOSE_SQUARE
 %token SEMI COMMA DOT PLUS MINUS DIVIDE MODULUS PIPE XOR QUES COLON
+%token SWITCH CASE DEFAULT
 %token <name> ID
 %token <type> BOOL CHAR INT FLOAT VOID
 %token <integer_value> NUM
 %token <real_value> REAL
-
+%nonassoc "IFS"
+%nonassoc DEFAULT CASE
 %nonassoc "IFX"
 %nonassoc ELSE
 
@@ -64,21 +72,24 @@ int active_function_index = 0;  // -1 for any type error
 %right INC_OP DEC_OP
 
 %type<N_s> N
-%type<M_s> M
+%type<M_s> M N_new
 %type<ifexp_s> ifexp
 %type<loopexp_s> whileexp forexp
 %type<varlist_s> varlist         // no constructor
 %type<id_arr_s> id_arr
 %type<type_s> type
 %type<elist_s> elist   // no constructor
-%type<conditional_expression_s> conditional_expression expression rel_expression normal_expression term factor unary_expression primary_expression
+%type<conditional_expression_s> conditional_expression expression rel_expression normal_expression term factor unary_expression primary_expression func_call
 %type<parameter_list_s> parameter_list param_decl
 %type<assignment_statement_s> assignment_statement
-%type<statement_list_s> statement_list statement selection_statement iteration_statement // no constructor
+%type<statement_list_s> statement_list statement selection_statement iteration_statement switch_statement // no constructor
 %type<result_s> res_id
 %type<new_num_list_s> new_num_list
 %type<id_arr_declare_s> id_arr_declare
 %type<unit_declaration_s> unit_declaration
+%type<elist_func_call_s> elist_func_call elist_super
+%type<case_name_s> default_name case_name
+%type<case_list_s> case_list case_list_minor case_statement default_statement
 
 %%
 
@@ -127,25 +138,158 @@ statement: variable_declaration SEMI
           |iteration_statement
           |assignment_statement SEMI
           |first_curly statement_list last_curly
-          | function_declaration;
+					| switch_statement
+          | function_declaration
+
+{
+
+}
+;
 
 selection_statement: ifexp  statement   ELSE N M statement
                     |ifexp  statement %prec "IFX";
 
+switch_statement : SWITCH OPEN_BRACKET normal_expression CLOSE_BRACKET OPEN_CURLY case_list CLOSE_CURLY
+{
+	$$ = new statement_list_(1);
+	$$->next.insert($$->next.end(),$6->false_list.begin(),$6->false_list.end());
+	$$->next.insert($$->next.end(),$6->break_list.begin(),$6->break_list.end());
+	$$->next.insert($$->next.end(),$6->next.begin(),$6->next.end());
+	$$->break_list.clear();
+	$$->continue_list.clear();
+
+ 	intermediate_output.patch_switch_con($3->temporary_name,$6->false_list);
+}
+;
+case_list : case_list_minor default_statement
+{
+	string patch_address_1 = condition_tag.get_conditional_tag();
+	string patch_address_2 = condition_tag.get_conditional_tag();
+	intermediate_output.patch_tag(patch_address_2,$1->next,$2->second_address); // same 1st address
+	intermediate_output.patch_tag(patch_address_1,$1->false_list,$2->first_address);
+
+	$$ = new case_list_($2->first_address,$2->second_address);
+	$$->false_list.insert($$->false_list.end(),$1->false_list.begin(),$1->false_list.end());
+	$$->false_list.insert($$->false_list.end(),$2->false_list.begin(),$2->false_list.end());
+	$$->next.insert($$->next.end(),$2->next.begin(),$2->next.end());
+	$$->break_list.insert($$->break_list.end(),$1->break_list.begin(),$1->break_list.end());
+	$$->break_list.insert($$->break_list.end(),$2->break_list.begin(),$2->break_list.end());
+}
+						| case_list_minor  %prec "IFS"
+{
+	$$ = new case_list_($1->first_address,$1->second_address);
+	$$->false_list.insert($$->false_list.end(),$1->false_list.begin(),$1->false_list.end());
+	$$->break_list.insert($$->break_list.end(),$1->break_list.begin(),$1->break_list.end());
+	$$->next.insert($$->next.end(),$1->next.begin(),$1->next.end());
+	// special case to handle last false list
+	if(!($$->false_list.empty())){
+		$$->next.push_back($$->false_list.back());
+	}
+}
+
+;
+case_list_minor : case_list_minor case_statement
+{
+	string patch_address_1 = condition_tag.get_conditional_tag();
+	string patch_address_2 = condition_tag.get_conditional_tag();
+  intermediate_output.patch_tag(patch_address_2,$1->next,$2->second_address);
+	intermediate_output.patch_tag(patch_address_1,$1->false_list,$2->first_address);
+
+
+	$$ = new case_list_($2->first_address,$2->second_address);
+	$$->false_list.insert($$->false_list.end(),$1->false_list.begin(),$1->false_list.end());
+	$$->false_list.insert($$->false_list.end(),$2->false_list.begin(),$2->false_list.end());
+	$$->next.insert($$->next.end(),$2->next.begin(),$2->next.end());
+	$$->break_list.insert($$->break_list.end(),$1->break_list.begin(),$1->break_list.end());
+	$$->break_list.insert($$->break_list.end(),$2->break_list.begin(),$2->break_list.end());
+}
+
+									| case_statement
+{
+	$$ = new case_list_ ($1->first_address,$1->second_address);
+	$$->false_list.insert($$->false_list.end(),$1->false_list.begin(),$1->false_list.end());
+	$$->next.insert($$->next.end(),$1->next.begin(),$1->next.end());
+	$$->break_list.insert($$->break_list.end(),$1->break_list.begin(),$1->break_list.end());
+}
+									;
+
+default_statement : default_name statement
+{
+	$$ = new case_list_($1->first_address,$1->first_address);
+	$$->false_list.clear();
+	// check for continue statement
+	if(!($2->continue_list.empty())){
+			yyerror("can not use continue statement in swith-case\nAborting");
+			//exit(1);
+	}
+	int normal_jump = intermediate_output.get_next();
+	intermediate_output.gen_special("goto","---","---","---");
+	$$->next.insert($$->next.end(),$2->next.begin(),$2->next.end());
+	$$->next.push_back(normal_jump);
+	$$->break_list.insert($$->break_list.end(),$2->break_list.begin(),$2->break_list.end());
+	$$->false_list.clear();
+}
+;
+default_name : DEFAULT COLON
+{
+	$$ = new case_name_(intermediate_output.get_next());
+	intermediate_output.gen("");
+}
+;
+
+case_statement : case_name  normal_expression COLON  N_new M statement
+{
+	$$ = new case_list_($1->first_address,$5->position);
+	$$->false_list.push_back($4->position);
+	intermediate_output.back_patch_special("!=",$2->temporary_name,"---","---",$4->position);
+	// check for continue statement
+	if(!($6->continue_list.empty())){
+			yyerror("can not use continue statement in swith-case\nAborting");
+			//exit(1);
+	}
+	int normal_jump = intermediate_output.get_next();
+	intermediate_output.gen_special("goto","---","---","---");
+	$$->next.insert($$->next.end(),$6->next.begin(),$6->next.end());
+	$$->next.push_back(normal_jump);
+	$$->break_list.insert($$->break_list.end(),$6->break_list.begin(),$6->break_list.end());
+}
+;
+case_name : CASE
+{
+	$$ = new case_name_(intermediate_output.get_next());
+	intermediate_output.gen("");
+}
+;
 /* switch case statement left */
 
 ifexp: IF OPEN_BRACKET assignment_statement CLOSE_BRACKET;
 
 iteration_statement: whileexp statement
-                    |forexp assignment_statement CLOSE_BRACKET statement;
+                    |forexp M assignment_statement M CLOSE_BRACKET statement;
 
 whileexp: WHILE M OPEN_BRACKET assignment_statement CLOSE_BRACKET;
 
 forexp: FOR OPEN_BRACKET assignment_statement SEMI M assignment_statement SEMI;
 
-M: /*empty*/;
+N_new : /*empty */
+{
+	$$ = new M_(intermediate_output.get_next());
+	intermediate_output.gen("");
+}
 
-N: /*empty*/ ;
+M: /*empty*/
+{
+ $$ = new M_(intermediate_output.get_next());
+ intermediate_output.gen("");
+}
+;
+
+N: /*empty*/
+{
+$$ = new N_ (intermediate_output.get_next());
+intermediate_output.gen("");
+}
+;
 
 conditional_expression: conditional_expression AND_OP expression
 {
@@ -154,9 +298,7 @@ conditional_expression: conditional_expression AND_OP expression
  	$$ = new conditional_expression_(temp_type);
  	std::ostringstream out;
  	if(temp_type != ERROR_TYPE){
-	 	out << " && " << $1->temporary_name <<"     "<<$3->temporary_name << $$->temporary_name;
-	 	string s = out.str();
-	 	intermediate_output.gen(s);
+		intermediate_output.gen_special("&&",$1->temporary_name,$3->temporary_name,$$->temporary_name);
  	}
 	else{
 		if($1->type != ERROR_TYPE && $3->type != ERROR_TYPE){
@@ -170,9 +312,7 @@ conditional_expression: conditional_expression AND_OP expression
  	$$ = new conditional_expression_(temp_type);
  	std::ostringstream out;
  	if(temp_type != ERROR_TYPE){
-	 	out << " || " << $1->temporary_name <<"     "<<$3->temporary_name << $$->temporary_name;
-	 	string s = out.str();
-	 	intermediate_output.gen(s);
+	 	intermediate_output.gen_special("&&",$1->temporary_name,$3->temporary_name,$$->temporary_name);
  	}
 	else{
 		if($1->type != ERROR_TYPE && $3->type != ERROR_TYPE){
@@ -204,9 +344,8 @@ rel_expression: normal_expression GT normal_expression
 	$$ = new conditional_expression_(temp_type);
 	std::ostringstream out;
 	if(temp_type != ERROR_TYPE){
-		out << " > " << $1->temporary_name <<"     "<<$3->temporary_name << $$->temporary_name;
-		string s = out.str();
-		intermediate_output.gen(s);
+	// #change
+		intermediate_output.gen_special(">",$1->temporary_name,$3->temporary_name,$$->temporary_name);
 	}
 	else{
 		if($1->type != ERROR_TYPE &&  $3->type != ERROR_TYPE){
@@ -228,9 +367,8 @@ rel_expression: normal_expression GT normal_expression
 	$$ = new conditional_expression_(temp_type);
 	std::ostringstream out;
 	if(temp_type != ERROR_TYPE){
-		out << " < " << $1->temporary_name <<"     "<<$3->temporary_name << $$->temporary_name;
-		string s = out.str();
-		intermediate_output.gen(s);
+	// #change
+		intermediate_output.gen_special("<",$1->temporary_name,$3->temporary_name,$$->temporary_name);
 	}
 	else{
 		if($1->type != ERROR_TYPE &&  $3->type != ERROR_TYPE){
@@ -251,9 +389,8 @@ rel_expression: normal_expression GT normal_expression
 	$$ = new conditional_expression_(temp_type);
 	std::ostringstream out;
 	if(temp_type != ERROR_TYPE){
-		out << " >= " << $1->temporary_name <<"     "<<$3->temporary_name << $$->temporary_name;
-		string s = out.str();
-		intermediate_output.gen(s);
+	// #change
+		intermediate_output.gen_special(">=",$1->temporary_name,$3->temporary_name,$$->temporary_name);
 	}
 	else{
 		if($1->type != ERROR_TYPE &&  $3->type != ERROR_TYPE){
@@ -274,9 +411,9 @@ rel_expression: normal_expression GT normal_expression
 	$$ = new conditional_expression_(temp_type);
 	std::ostringstream out;
 	if(temp_type != ERROR_TYPE){
-		out << " <= " << $1->temporary_name <<"     "<<$3->temporary_name << $$->temporary_name;
-		string s = out.str();
-		intermediate_output.gen(s);
+	// #change
+		intermediate_output.gen_special("<=",$1->temporary_name,$3->temporary_name,$$->temporary_name);
+
 	}
 	else{
 		if($1->type != ERROR_TYPE &&  $3->type != ERROR_TYPE){
@@ -296,9 +433,9 @@ rel_expression: normal_expression GT normal_expression
 	$$ = new conditional_expression_(temp_type);
 	std::ostringstream out;
 	if(temp_type != ERROR_TYPE){
-		out << " == " << $1->temporary_name <<"     "<<$3->temporary_name << $$->temporary_name;
-		string s = out.str();
-		intermediate_output.gen(s);
+	// #change
+		intermediate_output.gen_special("==",$1->temporary_name,$3->temporary_name,$$->temporary_name);
+
 	}
 	else{
 		if($1->type != ERROR_TYPE &&  $3->type != ERROR_TYPE){
@@ -318,9 +455,8 @@ rel_expression: normal_expression GT normal_expression
 	$$ = new conditional_expression_(temp_type);
 	std::ostringstream out;
 	if(temp_type != ERROR_TYPE){
-		out << " != " << $1->temporary_name <<"     "<<$3->temporary_name << $$->temporary_name;
-		string s = out.str();
-		intermediate_output.gen(s);
+	// #change
+		intermediate_output.gen_special("!=",$1->temporary_name,$3->temporary_name,$$->temporary_name);
 	}
 	else{
 		if($1->type != ERROR_TYPE &&  $3->type != ERROR_TYPE){
@@ -341,9 +477,8 @@ normal_expression: normal_expression PLUS term
 	$$ = new conditional_expression_(temp_type);
 	std::ostringstream out;
 	if(temp_type != ERROR_TYPE){
-		out << " + " << $1->temporary_name <<"     "<<$3->temporary_name << $$->temporary_name;
-		string s = out.str();
-		intermediate_output.gen(s);
+		intermediate_output.gen_special("+",$1->temporary_name,$3->temporary_name,$$->temporary_name);
+
 	}
 	else{
 		if($1->type == BOOL_TYPE &&  $3->type == BOOL_TYPE){
@@ -357,9 +492,7 @@ normal_expression: normal_expression PLUS term
 	$$ = new conditional_expression_(temp_type);
 	std::ostringstream out;
 	if(temp_type != ERROR_TYPE){
-		out << " - " << $1->temporary_name <<"     "<<$3->temporary_name << $$->temporary_name;
-		string s = out.str();
-		intermediate_output.gen(s);
+		intermediate_output.gen_special("-",$1->temporary_name,$3->temporary_name,$$->temporary_name);
 	}
 	else{
 		if($1->type == BOOL_TYPE &&  $3->type == BOOL_TYPE){
@@ -381,9 +514,7 @@ term: term STAR factor
 	$$ = new conditional_expression_(temp_type);
 	std::ostringstream out;
 	if(temp_type != ERROR_TYPE){
-		out << " * " << $1->temporary_name <<"     "<<$3->temporary_name << $$->temporary_name;
-		string s = out.str();
-		intermediate_output.gen(s);
+		intermediate_output.gen_special("*",$1->temporary_name,$3->temporary_name,$$->temporary_name);
 	}
 	else{
 		if($1->type == BOOL_TYPE &&  $3->type == BOOL_TYPE){
@@ -397,9 +528,7 @@ term: term STAR factor
 	$$ = new conditional_expression_(temp_type);
 	std::ostringstream out;
 	if(temp_type != ERROR_TYPE){
-		out << " / " << $1->temporary_name <<"     "<<$3->temporary_name << $$->temporary_name;
-		string s = out.str();
-		intermediate_output.gen(s);
+		intermediate_output.gen_special("/",$1->temporary_name,$3->temporary_name,$$->temporary_name);
 	}
 	else{
 		if($1->type == BOOL_TYPE &&  $3->type == BOOL_TYPE){
@@ -433,9 +562,7 @@ unary_expression: primary_expression
 		$$ = new conditional_expression_($2->type);
 		std::ostringstream out;
 		if($2->type != ERROR_TYPE ){
-			out << " UMINUS " << $2->temporary_name << " --- " << $$->temporary_name;
-			string s = out.str();
-			intermediate_output.gen(s);
+			intermediate_output.gen_special("UMINUS",$2->temporary_name,"---",$$->temporary_name);
 		}
 	}
 	else{
@@ -454,10 +581,9 @@ unary_expression: primary_expression
 				$$ = new conditional_expression_($2->type);
 		}
 	if($2->type != ERROR_TYPE && $2->type != FLOAT_TYPE ){
-				out << " NOT " << $2->temporary_name << " --- " << $$->temporary_name;
-				string s = out.str();
-				intermediate_output.gen(s);
-		}
+			intermediate_output.gen_special("NOT",$2->temporary_name,"---",$$->temporary_name);
+
+	}
 }
                 |DEC_OP unary_expression
 {
@@ -465,9 +591,7 @@ unary_expression: primary_expression
 		$$ = new conditional_expression_($2->type);
 		std::ostringstream out;
 		if($2->type != ERROR_TYPE){
-			out << " - " << $2->temporary_name << " 1 " << $$->temporary_name;
-			string s = out.str();
-			intermediate_output.gen(s);
+			intermediate_output.gen_special("-",$2->temporary_name,"1",$$->temporary_name);
 		}
 	}
 	else{
@@ -482,16 +606,13 @@ unary_expression: primary_expression
 		$$ = new conditional_expression_($2->type);
 		std::ostringstream out;
 		if($2->type != ERROR_TYPE){
-			out << " + " << $2->temporary_name << " 1 " << $$->temporary_name;
-			string s = out.str();
-			intermediate_output.gen(s);
+			intermediate_output.gen_special("+",$2->temporary_name,"1",$$->temporary_name);
 		}
 	}
 	else{
 		yyerror("Trying to increment a boolean data type");
 		$$ = new conditional_expression_(ERROR_TYPE);
 	}
-
 }
 
 								;
@@ -499,19 +620,14 @@ unary_expression: primary_expression
 primary_expression: NUM
 {
 	$$ = new conditional_expression_(INT_TYPE);
-	std::ostringstream out;
-	out << " = " << $1 << " --- " << $$->temporary_name;
-	string s = out.str();
-	intermediate_output.gen(s);
+	intermediate_output.gen_special("=",to_string($1),"---",$$->temporary_name);
 }
+
 
                     |REAL
 {
 	$$ = new conditional_expression_(FLOAT_TYPE);
-	std::ostringstream out;
-	out << " = " << $1 << " --- " << $$->temporary_name;
-	string s = out.str();
-	intermediate_output.gen(s);
+	intermediate_output.gen_special("=",to_string($1),"---",$$->temporary_name);
 }
 
                     | id_arr
@@ -542,10 +658,13 @@ else{
 {
   $$ = new conditional_expression_($2->type,$2->temporary_name);
 }
-										;
+									| func_call
+{
+$$ = new conditional_expression_ ($1->type,$1->temporary_name);
+}
+									;
 
-										//******************************
-                   /* --------------- function call has to be added -----------*/
+
 
 elist: elist OPEN_SQUARE expression CLOSE_SQUARE
 {
@@ -580,6 +699,56 @@ elist: elist OPEN_SQUARE expression CLOSE_SQUARE
 }
 
 			;
+func_call : ID OPEN_BRACKET elist_super CLOSE_BRACKET
+{
+ string s($1);
+ call_function_index = symbol_table.search_func(s);
+ if(call_function_index != -1){
+ 		int temp_type = symbol_table.check_param_compatible(call_function_index,$3->type_list); // this function prints error msgs
+		if(temp_type != ERROR_TYPE){
+			string result_func = symbol_table.genarate_function_call(call_function_index,$3);
+			$$ = new conditional_expression_(temp_type,result_func);
+		}
+		else{
+			$$ = new conditional_expression_(ERROR_TYPE,"ERR");
+		}
+ }
+ else{
+ 		yyerror("function "+s+ "is not declared");
+		$$ = new conditional_expression_(ERROR_TYPE,"ERR");
+ }
+}
+;
+
+elist_super : elist_func_call
+{
+	$$ = new elist_func_call_();
+	$$->type_list = $1->type_list;
+	$$->name_list = $1->name_list;
+}
+ 						| /* empty */
+{
+	$$ = new elist_func_call_();
+	$$->type_list.clear();
+	$$->name_list.clear();
+}
+						;
+
+elist_func_call :	elist_func_call COMMA expression
+{
+	$$ = new elist_func_call_();
+	$$->type_list.insert($$->type_list.end(),$1->type_list.begin(),$1->type_list.end());
+	$$->name_list.insert($$->name_list.end(),$1->name_list.begin(),$1->name_list.end());
+	$$->type_list.push_back($3->type);
+	$$->name_list.push_back($3->temporary_name);
+}
+									| expression
+{
+	$$ = new elist_func_call_();
+	$$->type_list.push_back($1->type);
+	$$->name_list.push_back($1->temporary_name);
+}
+									;
 
 assignment_statement: id_arr ASSIGN conditional_expression
 { /* don't put error msg here */
@@ -647,7 +816,7 @@ id_arr: ID
 			if(var-> type != SIMPLE){
 				var = NULL;
 				std::ostringstream out1;
-				out1<<"varible with name "<<s<< "is declared as array";
+				out1<<"varible with name "<<s<< "is declared not as array";
 				string s_1 = out1.str();
 				yyerror(s_1);
 			}

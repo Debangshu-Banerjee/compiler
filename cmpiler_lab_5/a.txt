@@ -1,0 +1,44 @@
+void code_output :: back_patch_special(string op,string op1,string op2,string result,int index){
+		vector<string>v(4,"");
+		string s = this->intermediate_code[index];
+		int d = s.length();
+		int i = 0;
+		int count = 0;
+		string temp = "";
+		while(i<d){
+			if(s[i] == " "){
+				if(i>0){
+					if(s[i] == " " && s[i-1]!= " "){
+						if(count<=3){
+							v[count] = temp;
+						}
+						count++;
+
+						temp = "";
+					}
+				}
+			}
+			else{
+				temp+=s[i];
+			}
+			i++;
+			if(i == d && count<=3){
+				v[count] = temp;
+			}
+		}
+		if(op!="_prev"){
+			v[0] = op;
+		}
+		if(op1!="_prev"){
+			v[1] = op1;
+		}
+		if(op2!="_prev"){
+			v[2] = op2;
+		}
+		if(result!="_prev"){
+			v[3] = result;
+		}
+		string final = v[0] + " " + v[1] + " " + v[2] << " " + v[3];
+		this->intermediate_code[index] = final;
+
+}
