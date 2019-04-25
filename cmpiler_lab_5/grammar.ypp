@@ -108,6 +108,7 @@ function_declaration: function_head first_curly statement_list last_curly
 	intermediate_output.patch_tag_no_put(tag,$3->break_list,intermediate_output.get_next()-1);
 	intermediate_output.patch_tag_no_put(tag,$3->next,intermediate_output.get_next()-1);
 	intermediate_output.gen_special("func","end","---","---");
+	active_function_index = 0;
 }
 ;
 
@@ -249,11 +250,10 @@ $$->break_list.clear();
           | function_declaration
 
 {
-	/*********** needs attention
-	/*if(active_function_index != 0){
+	if(active_function_index != 0){
 			yyerror("can not define function within a function\nAborting");
 			exit(1);
-	}*/
+	}
 	$$ = new statement_list_(2);
 	$$->next.clear();
 	$$->break_list.clear();
@@ -833,6 +833,8 @@ unary_expression: primary_expression
 		std::ostringstream out;
 		if($2->type != ERROR_TYPE){
 			intermediate_output.gen_special("-",$2->temporary_name,"1",$$->temporary_name);
+			intermediate_output.gen_special("=",$$->temporary_name,"---",$2->temporary_name);
+			$$->temporary_name = $2->temporary_name;
 		}
 	}
 	else{
@@ -848,6 +850,8 @@ unary_expression: primary_expression
 		std::ostringstream out;
 		if($2->type != ERROR_TYPE){
 			intermediate_output.gen_special("+",$2->temporary_name,"1",$$->temporary_name);
+			intermediate_output.gen_special("=",$$->temporary_name,"---",$2->temporary_name);
+			$$->temporary_name = $2->temporary_name;
 		}
 	}
 	else{
@@ -994,7 +998,6 @@ elist_func_call :	elist_func_call COMMA expression
 assignment_statement: id_arr ASSIGN conditional_expression
 { /* don't put error msg here */
 	if($1->var != NULL){
-			cout<< "**********hi in assigning things "<<endl;
 			int temp_type = get_compatible_type_non_bool($1->var->eletype,$3->type);
 			if(temp_type == ERROR_TYPE){
 				if($1->var->type != ERROR_TYPE && $3->type != ERROR_TYPE){
@@ -1199,14 +1202,12 @@ if(active_function_index != -1){
                 ;
 
 new_num_list : new_num_list  OPEN_SQUARE NUM CLOSE_SQUARE {
-			cout<<"Trying to reduce new num list\n";
       $$  = new new_num_list_();
       $$->num_list.insert($$->num_list.end(),$1->num_list.begin(),$1->num_list.end());
       $$->num_list.push_back($3);
 }
                | OPEN_SQUARE NUM CLOSE_SQUARE
 {
-		cout<<"Trying to reduce new num list\n";
     $$  = new new_num_list_();
     $$->num_list.push_back($2);
 }
@@ -1297,6 +1298,6 @@ varlist: varlist COMMA id_arr_declare{
 int main(){
 
 	yyparse();
-  symbol_table.display();
+  //symbol_table.display();
 	intermediate_output.print();
 }

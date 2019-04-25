@@ -1,8 +1,9 @@
 
-*1) Increment and decrement assignment is not done.
+*1) Increment and decrement assignment is not done. --> harder than seems
 *2) Relational operator evaluation has to be done. ---> with short circuit evaluation
 **3) The comparison for false list has to be reversed.
 *4) handling void and pointers
 ***5) handling parameter in search global list
-6) code testing
+6) use of break and continue in if else
+7) code testing
 ===> to be added

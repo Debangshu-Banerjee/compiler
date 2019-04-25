@@ -170,16 +170,15 @@ bool sym_tab :: patch_variable(int active_function_index,vector<int> var_index,i
 bool sym_tab :: clear_var_list(int active_function_index,int level){
 	if( active_function_index < 0 || active_function_index >= global_sym_tab.size()) return false;
 	vector<int>indexes_to_delete;
-	for(int i=0;i<global_sym_tab[active_function_index]->local_variable_list.size();i++){
+	int i=0;
+	while(i < global_sym_tab[active_function_index]->local_variable_list.size()){
 		if(global_sym_tab[active_function_index]->local_variable_list[i]->level_of_declaration == level){
-			indexes_to_delete.push_back(i);
+			global_sym_tab[active_function_index]->local_variable_list.erase(global_sym_tab[active_function_index]->local_variable_list.begin() +i);
+			continue;
 		}
+		i++;
 	}
-	//cout<< endl<<endl;
-	for(int i=0;i<indexes_to_delete.size();i++){
-			global_sym_tab[active_function_index]->local_variable_list.erase(global_sym_tab[active_function_index]->local_variable_list.begin() + indexes_to_delete[i]);
-	}
-
+	//cout<< endl<<endl
 	return true;
 }
 bool sym_tab :: patch_function_parameter_no(int active_function_index,int no_of_parameter){
@@ -245,8 +244,11 @@ int code_output :: get_next(){
 	return this->global_index;
 }
 void code_output :: print(){
+	int count = 0;
 	for(int i=0;i<this->intermediate_code.size();i++){
-		cout<<(i+1)<<this->intermediate_code[i]<<endl;
+		if(this->intermediate_code[i] == "" ) continue;
+		cout<<(count+1)<<"   "<<this->intermediate_code[i]<<endl;
+		count++;
 	}
 	cout<<endl<<"-----------------end------------------"<<endl;
 }
