@@ -152,6 +152,7 @@ public:
 	variable * search_variable_global(int active_function_index,string name, int level_of_declaration);
 	int add_variable(int active_function_index,string name,int type,vector<int> dimlist,int level_of_declaration);
 	bool search_parameter(int active_function_index,string name);
+	int search_parameter_index(int active_function_index,string name);
 	int add_parameter(int active_function_index,string name,int type,int eletype);
 	bool patch_variable(int active_function_index,vector<int> var_index,int eletype);
 	bool patch_function_parameter_no(int active_function_index,int no_of_parameter);
@@ -183,10 +184,12 @@ public:
 	vector<int> break_list;
 	vector<int> continue_list;
 	int can_appear_in_global; // 0 variables both global and local 1 for local only 2 global only
- 	bool error;													// 0 --> variables 1 --> if/while/for 2 --> functions
+ 	bool error;
+	bool seen_loop;													// 0 --> variables 1 --> if/while/for 2 --> functions
 	 statement_list_(int can_appear_in_global){
 		 this->can_appear_in_global = can_appear_in_global;
 		 this->error = false;
+		 this->seen_loop = false;
 	 }
 };
 
@@ -258,6 +261,7 @@ class case_list_{
 public:
 	vector<int> next;
 	vector<int> break_list;
+	vector<int> continue_list;
 	int first_address;
 	int second_address;
 	vector<int> false_list;

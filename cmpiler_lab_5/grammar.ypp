@@ -105,7 +105,11 @@ function_declaration: function_head first_curly statement_list last_curly
 		yyerror("unpatched continue statement left in the function\nAborting");
 		exit(1);
 	}
-	intermediate_output.patch_tag_no_put(tag,$3->break_list,intermediate_output.get_next()-1);
+	if(!($3->break_list.empty())){
+		yyerror("unpatched break statement left in the function\nAborting");
+		exit(1);
+	}
+	//intermediate_output.patch_tag_no_put(tag,$3->break_list,intermediate_output.get_next()-1);
 	intermediate_output.patch_tag_no_put(tag,$3->next,intermediate_output.get_next()-1);
 	intermediate_output.gen_special("func","end","---","---");
 	active_function_index = 0;
@@ -217,11 +221,15 @@ $$->break_list.clear();
 	$$ = new statement_list_(1);
 	$$->error = false;
 	$$->next.insert($$->next.end(),$1->next.begin(),$1->next.end());
-	$$->break_list.clear();
-	$$->continue_list.clear();}
+	$$->break_list.insert($$->break_list.end(),$1->break_list.begin(),$1->break_list.end());
+	$$->continue_list.insert($$->continue_list.end(),$1->continue_list.begin(),$1->continue_list.end());
+	}
           |iteration_statement
 {
-
+	$$ = new statement_list_(1);
+	$$->next.insert($$->next.end(),$1->next.begin(),$1->next.end());
+	$$->break_list.clear();
+	$$->continue_list.clear();
 }
           |assignment_statement SEMI
 {
@@ -243,8 +251,8 @@ $$->break_list.clear();
 	$$ = new statement_list_(1);
 	$$->error = false;
 	$$->next.insert($$->next.end(),$1->next.begin(),$1->next.end());
-	$$->break_list.clear();
-	$$->continue_list.clear();
+	$$->break_list.insert($$->break_list.end(),$1->break_list.begin(),$1->break_list.end());
+	$$->continue_list.insert($$->continue_list.end(),$1->continue_list.begin(),$1->continue_list.end());
 }
 
           | function_declaration
@@ -268,18 +276,13 @@ selection_statement: ifexp  statement   ELSE N M statement
 			yyerror("can not define selection statement globally\nAborting");
 			exit(1);
 	}
-	if((!$2->break_list.empty()) || (!$6->break_list.empty())){
-		yyerror("can not define break statement with in if block\nAborting");
-		exit(1);
-	}
-	if(!($2->continue_list.empty()) || !($6->continue_list.empty()) ){
-		yyerror("can not define break statement with in if block\nAborting");
-		exit(1);
-	}
+
 	string tag = condition_tag.get_conditional_tag();
 	intermediate_output.patch_tag(tag,$1->false_list,$5->position);
-	$$->break_list.clear();
-	$$->continue_list.clear();
+	$$->break_list.insert($$->break_list.end(),$2->break_list.begin(),$2->break_list.end());
+	$$->continue_list.insert($$->continue_list.end(),$2->continue_list.begin(),$2->continue_list.end());
+	$$->break_list.insert($$->break_list.end(),$6->break_list.begin(),$6->break_list.end());
+	$$->continue_list.insert($$->continue_list.end(),$6->continue_list.begin(),$6->continue_list.end());
 	$$->next.insert($$->next.end(),$2->next.begin(),$2->next.end());
 	$$->next.insert($$->next.end(),$6->next.begin(),$6->next.end());
 	$$->next.insert($$->next.end(),$4->next.begin(),$4->next.end());
@@ -291,16 +294,8 @@ selection_statement: ifexp  statement   ELSE N M statement
 				yyerror("can not define selection statement globally\nAborting");
 				exit(1);
 		}
-		if((!$2->break_list.empty())){
-			yyerror("can not define break statement with in if block\nAborting");
-			exit(1);
-		}
-		if(!($2->continue_list.empty())){
-			yyerror("can not define break statement with in if block\nAborting");
-			exit(1);
-		}
-		$$->break_list.clear();
-		$$->continue_list.clear();
+		$$->break_list.insert($$->break_list.end(),$2->break_list.begin(),$2->break_list.end());
+		$$->continue_list.insert($$->continue_list.end(),$2->continue_list.begin(),$2->continue_list.end());
 		$$->next.insert($$->next.end(),$1->false_list.begin(),$1->false_list.end());
 		$$->next.insert($$->next.end(),$2->next.begin(),$2->next.end());
 }
@@ -312,7 +307,7 @@ switch_statement : SWITCH OPEN_BRACKET normal_expression CLOSE_BRACKET OPEN_CURL
 	$$->next.insert($$->next.end(),$6->break_list.begin(),$6->break_list.end());
 	$$->next.insert($$->next.end(),$6->next.begin(),$6->next.end());
 	$$->break_list.clear();
-	$$->continue_list.clear();
+	$$->continue_list.insert($$->continue_list.end(),$6->continue_list.begin(),$6->continue_list.end());
 	if(active_function_index <= 0){
 			yyerror("can not define  selection statement globally\nAborting");
 			exit(1);
@@ -323,8 +318,9 @@ switch_statement : SWITCH OPEN_BRACKET normal_expression CLOSE_BRACKET OPEN_CURL
 case_list : case_list_minor default_statement
 {
 	string patch_address_1 = condition_tag.get_conditional_tag();
-	string patch_address_2 = condition_tag.get_conditional_tag();
-	intermediate_output.patch_tag(patch_address_2,$1->next,$2->second_address); // same 1st address
+
+	//cout<<patch_address_1 << "   "<<patch_address_2 <<endl;
+	intermediate_output.patch_tag(patch_address_1,$1->next,$2->second_address); // same 1st address
 	vector<int> temp_index;
 	if(!($1->false_list.empty())) temp_index.push_back($1->false_list.back());
 	intermediate_output.patch_tag(patch_address_1,temp_index,$2->first_address);
@@ -335,12 +331,15 @@ case_list : case_list_minor default_statement
 	$$->next.insert($$->next.end(),$2->next.begin(),$2->next.end());
 	$$->break_list.insert($$->break_list.end(),$1->break_list.begin(),$1->break_list.end());
 	$$->break_list.insert($$->break_list.end(),$2->break_list.begin(),$2->break_list.end());
+	$$->continue_list.insert($$->continue_list.end(),$1->continue_list.begin(),$1->continue_list.end());
+	$$->continue_list.insert($$->continue_list.end(),$2->continue_list.begin(),$2->continue_list.end());
 }
 						| case_list_minor  %prec "IFS"
 {
 	$$ = new case_list_($1->first_address,$1->second_address);
 	$$->false_list.insert($$->false_list.end(),$1->false_list.begin(),$1->false_list.end());
 	$$->break_list.insert($$->break_list.end(),$1->break_list.begin(),$1->break_list.end());
+	$$->continue_list.insert($$->continue_list.end(),$1->continue_list.begin(),$1->continue_list.end());
 	$$->next.insert($$->next.end(),$1->next.begin(),$1->next.end());
 	// special case to handle last false list
 	if(!($$->false_list.empty())){
@@ -357,7 +356,7 @@ case_list_minor : case_list_minor case_statement
 	vector<int> temp_index;
 	if(!($1->false_list.empty())) temp_index.push_back($1->false_list.back());
 	intermediate_output.patch_tag(patch_address_1,temp_index,$2->first_address);
-	intermediate_output.print();
+
 
 	$$ = new case_list_($2->first_address,$2->second_address);
 	$$->false_list.insert($$->false_list.end(),$1->false_list.begin(),$1->false_list.end());
@@ -365,6 +364,8 @@ case_list_minor : case_list_minor case_statement
 	$$->next.insert($$->next.end(),$2->next.begin(),$2->next.end());
 	$$->break_list.insert($$->break_list.end(),$1->break_list.begin(),$1->break_list.end());
 	$$->break_list.insert($$->break_list.end(),$2->break_list.begin(),$2->break_list.end());
+	$$->continue_list.insert($$->continue_list.end(),$1->continue_list.begin(),$1->continue_list.end());
+	$$->continue_list.insert($$->continue_list.end(),$2->continue_list.begin(),$2->continue_list.end());
 }
 
 									| case_statement
@@ -373,6 +374,7 @@ case_list_minor : case_list_minor case_statement
 	$$->false_list.insert($$->false_list.end(),$1->false_list.begin(),$1->false_list.end());
 	$$->next.insert($$->next.end(),$1->next.begin(),$1->next.end());
 	$$->break_list.insert($$->break_list.end(),$1->break_list.begin(),$1->break_list.end());
+	$$->continue_list.insert($$->continue_list.end(),$1->continue_list.begin(),$1->continue_list.end());
 }
 									;
 
@@ -380,17 +382,13 @@ default_statement : default_name statement
 {
 	$$ = new case_list_($1->first_address,$1->first_address);
 	$$->false_list.clear();
-	// check for continue statement
-	if(!($2->continue_list.empty())){
-			yyerror("can not use continue statement in swith-case\nAborting");
-			//exit(1);
-	}
 	int normal_jump = intermediate_output.get_next();
 	intermediate_output.gen_special("goto","---","---","---");
 	$$->next.insert($$->next.end(),$2->next.begin(),$2->next.end());
 	$$->next.push_back(normal_jump);
 	$$->break_list.insert($$->break_list.end(),$2->break_list.begin(),$2->break_list.end());
 	$$->false_list.clear();
+	$$->continue_list.insert($$->continue_list.end(),$2->continue_list.begin(),$2->continue_list.end());
 }
 ;
 default_name : DEFAULT COLON
@@ -405,16 +403,13 @@ case_statement : case_name  normal_expression COLON  N_new M statement
 	$$ = new case_list_($1->first_address,$5->position);
 	$$->false_list.push_back($4->position);
 	intermediate_output.back_patch_special("!=",$2->temporary_name,"---","---",$4->position);
-	// check for continue statement
-	if(!($6->continue_list.empty())){
-			yyerror("can not use continue statement in swith-case\nAborting");
-			//exit(1);
-	}
+
 	int normal_jump = intermediate_output.get_next();
 	intermediate_output.gen_special("goto","---","---","---");
 	$$->next.insert($$->next.end(),$6->next.begin(),$6->next.end());
 	$$->next.push_back(normal_jump);
 	$$->break_list.insert($$->break_list.end(),$6->break_list.begin(),$6->break_list.end());
+	$$->continue_list.insert($$->continue_list.end(),$6->continue_list.begin(),$6->continue_list.end());
 }
 ;
 case_name : CASE
@@ -429,7 +424,7 @@ ifexp: IF OPEN_BRACKET assignment_statement CLOSE_BRACKET
 {
 	if($3->type!= ERROR_TYPE){
 		$$ = new ifexp_(intermediate_output.get_next());
-		intermediate_output.gen_special("!=",$3->temporary_var_name,"0","---");
+		intermediate_output.gen_special("==",$3->temporary_var_name,"0","---");
 	}
 	else{
 		$$ = new ifexp_(-1);
@@ -455,6 +450,10 @@ iteration_statement: whileexp statement
 }
                     |forexp M assignment_statement M M CLOSE_BRACKET statement
 {
+	if($3->type == ERROR_TYPE){
+		yyerror("unknown expression is used with while\nAborting");
+		exit(1);
+	}
 	$$ = new statement_list_(1);
 	string tag = loop_tag.get_loop_tag();
 	intermediate_output.patch_tag(tag,$7->next,$2->position);
@@ -484,7 +483,7 @@ whileexp: WHILE M OPEN_BRACKET assignment_statement CLOSE_BRACKET
 	}
 	if($4->type != ERROR_TYPE){
 		$$ = new loopexp_(intermediate_output.get_next(),$2->position);
-		intermediate_output.gen_special("!=",$4->temporary_var_name,"0","---");
+		intermediate_output.gen_special("==",$4->temporary_var_name,"0","---");
 	}
 	else{
 		yyerror("unknown expression is used with while\nAborting");
@@ -501,7 +500,7 @@ forexp: FOR OPEN_BRACKET assignment_statement SEMI M assignment_statement SEMI
 	}
 	if($3->type != ERROR_TYPE && $6->type != ERROR_TYPE){
 		$$ = new loopexp_ (intermediate_output.get_next(),$5->position);
-		intermediate_output.gen_special("!=",$6->temporary_var_name,"0","---");
+		intermediate_output.gen_special("==",$6->temporary_var_name,"0","---");
 		intermediate_output.gen_special("goto","---","---","---");
 	}
 	else{

@@ -111,8 +111,17 @@ variable * sym_tab ::search_variable_global(int active_function_index,string nam
 		variable * index = this->search_variable_current(active_function_index,name,level_of_declaration);
 		if(index != NULL ) return index;
 		else{
-			return this->search_variable_current(0,name,level_of_declaration); // search global variables
+			int parameter_index = search_parameter_index(active_function_index,name);
+			if(parameter_index == -1){
+				return this->search_variable_current(0,name,level_of_declaration); // search global variables
+			}
+			vector<int> dimlist;
+			dimlist.clear();
+			index = new variable("_param",global_sym_tab[active_function_index]->param_list[parameter_index]->type, global_sym_tab[active_function_index]->param_list[parameter_index]->eletype,dimlist,1);
+			index->offset = parameter_index;
+			return index;
 		}
+
 }
 
 int sym_tab :: add_variable(int active_function_index,string name,int type,vector<int> dimlist,int level_of_declaration){
@@ -132,7 +141,15 @@ bool sym_tab :: search_parameter(int active_function_index,string name){
 	}
 	return false;
 }
-
+int sym_tab :: search_parameter_index(int active_function_index,string name){
+	if( active_function_index < 0 || active_function_index >= global_sym_tab.size()) return -1;
+	for(int i=0;i< global_sym_tab[active_function_index]->param_list.size();i++){
+		if(global_sym_tab[active_function_index]->param_list[i]->name == name){
+			return i;
+		}
+	}
+	return -1;
+}
 int sym_tab :: add_parameter(int active_function_index,string name,int type,int eletype){
 
 		if( active_function_index < 0 || active_function_index >= global_sym_tab.size()) return -1;
