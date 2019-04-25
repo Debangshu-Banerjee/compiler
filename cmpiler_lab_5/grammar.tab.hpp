@@ -108,7 +108,7 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 25 "grammar.ypp" /* yacc.c:1909  */
+#line 26 "grammar.ypp" /* yacc.c:1909  */
 
   char *name;          // name of a variable or function
   int integer_value;   // value of an integer

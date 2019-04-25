@@ -45,7 +45,19 @@ public:
 		return t;
 	}
 };
-
+class func_end_tag_genarator{
+public:
+	int tag_no;
+	func_end_tag_genarator(){
+			tag_no =0;
+	}
+	string get_func_end_tag(){
+		string t = "func_end";
+		t = t + to_string(this->tag_no)+ ":";
+		tag_no++;
+		return t;
+	}
+};
 class conditional_tag_genator{
 public:
 	int tag_no;
@@ -145,6 +157,7 @@ public:
 	bool patch_function_parameter_no(int active_function_index,int no_of_parameter);
 	int check_param_compatible(int call_function_index,vector<int> type_list);
 	string genarate_function_call(int call_function_index,elist_func_call_ * temp);
+	bool clear_var_list(int active_function_index,int level);
 	void display();
 };
 

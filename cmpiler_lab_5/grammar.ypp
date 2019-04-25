@@ -15,6 +15,7 @@ int global_temp = 0;
 code_output intermediate_output;
 loop_tag_genarator loop_tag;
 conditional_tag_genator condition_tag;
+func_end_tag_genarator func_end_tag;
 sym_tab symbol_table;
 int level = 0;
 int active_function_index = 0;  // -1 for any type error
@@ -96,17 +97,34 @@ int call_function_index = -1;
 program: statement_list;
 
 
-function_declaration: function_head first_curly statement_list last_curly;
+function_declaration: function_head first_curly statement_list last_curly
+{
+	string tag = func_end_tag.get_func_end_tag();
+	intermediate_output.gen(tag);
+	if(!($3->continue_list.empty())){
+		yyerror("unpatched continue statement left in the function\nAborting");
+		exit(1);
+	}
+	intermediate_output.patch_tag_no_put(tag,$3->break_list,intermediate_output.get_next()-1);
+	intermediate_output.patch_tag_no_put(tag,$3->next,intermediate_output.get_next()-1);
+	intermediate_output.gen_special("func","end","---","---");
+}
+;
 
 first_curly: OPEN_CURLY { level++;}
             ;
 
-last_curly: CLOSE_CURLY{level--;};
+last_curly: CLOSE_CURLY
+{
+symbol_table.clear_var_list(active_function_index,level);
+level--;
+}
+;
 
-function_head: res_id OPEN_BRACKET parameter_list CLOSE_BRACKET;
+function_head: res_id OPEN_BRACKET parameter_list CLOSE_BRACKET
+;
 
 res_id: type ID {
-	cout<< "find a function \n";
     string s($2);
     if(symbol_table.search_func(s) != -1){
       $$ = new result_(ERROR_TYPE);
@@ -119,6 +137,7 @@ res_id: type ID {
         level = 1;
         string new_s = "func_" + s + ":";
         intermediate_output.gen(new_s);
+				intermediate_output.gen_special("func","begin",s,"---");
     }
 }
         ;
@@ -129,9 +148,36 @@ type: INT    {$$ = new type_(INT_TYPE);}
       ;
 
 statement_list: statement_list M statement
-                | /* empty */ ;
+{
+	$$ = new statement_list_($1->can_appear_in_global);
+	if(!($1->next.empty())){
+		string tag = condition_tag.get_conditional_tag();
+		intermediate_output.patch_tag(tag,$1->next,$2->position);
+	}
+	$$->next.insert($$->next.end(),$3->next.begin(),$3->next.end());
+	$$->break_list.insert($$->break_list.end(),$1->break_list.begin(),$1->break_list.end());
+	$$->break_list.insert($$->break_list.end(),$3->break_list.begin(),$3->break_list.end());
+	$$->continue_list.insert($$->continue_list.end(),$1->continue_list.begin(),$1->continue_list.end());
+	$$->continue_list.insert($$->continue_list.end(),$3->continue_list.begin(),$3->continue_list.end());
+
+}
+                | /* empty */
+{
+	$$ = new statement_list_(0);
+	$$->next.clear();
+	$$->break_list.clear();
+	$$->continue_list.clear();
+}
+								;
 
 statement: variable_declaration SEMI
+{
+	$$ = new statement_list_(0);
+	$$->next.clear();
+	$$->break_list.clear();
+	$$->continue_list.clear();
+}
+
 				  | BREAK SEMI
 {
 $$ = new statement_list_(1);
@@ -151,11 +197,11 @@ $$->break_list.clear();
 }
           |RETURN SEMI
 {
-$$ = new statement_list_(1);
-$$->next.clear();
-$$->break_list.clear();
-$$->continue_list.clear();
-intermediate_output.gen_special("return","---","---","---");
+	$$ = new statement_list_(1);
+	$$->next.clear();
+	$$->break_list.clear();
+	$$->continue_list.clear();
+	intermediate_output.gen_special("return","---","---","---");
 }
           |RETURN conditional_expression SEMI
 {

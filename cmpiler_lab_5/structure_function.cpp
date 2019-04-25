@@ -167,7 +167,21 @@ bool sym_tab :: patch_variable(int active_function_index,vector<int> var_index,i
 	}
 	return true;
 }
+bool sym_tab :: clear_var_list(int active_function_index,int level){
+	if( active_function_index < 0 || active_function_index >= global_sym_tab.size()) return false;
+	vector<int>indexes_to_delete;
+	for(int i=0;i<global_sym_tab[active_function_index]->local_variable_list.size();i++){
+		if(global_sym_tab[active_function_index]->local_variable_list[i]->level_of_declaration == level){
+			indexes_to_delete.push_back(i);
+		}
+	}
+	//cout<< endl<<endl;
+	for(int i=0;i<indexes_to_delete.size();i++){
+			global_sym_tab[active_function_index]->local_variable_list.erase(global_sym_tab[active_function_index]->local_variable_list.begin() + indexes_to_delete[i]);
+	}
 
+	return true;
+}
 bool sym_tab :: patch_function_parameter_no(int active_function_index,int no_of_parameter){
 	if( active_function_index < 0 || active_function_index >= global_sym_tab.size()) return false;
 	this->global_sym_tab[active_function_index]->no_of_parameter = no_of_parameter;
