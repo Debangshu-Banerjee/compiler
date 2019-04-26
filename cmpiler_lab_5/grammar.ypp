@@ -534,7 +534,22 @@ intermediate_output.gen_special("goto","---","---","---");
 
 conditional_expression: conditional_expression AND_OP expression
 {
-
+if($1->type == VOID_TYPE){
+	yyerror("Trying to use and operator with a void data type");
+	$1->type = ERROR_TYPE;
+}
+if($1->type == FLOAT_ADDRESS_TYPE || $1->type == INT_ADDRESS_TYPE){
+	yyerror("Trying to use and operator with a pointer");
+	$1->type = ERROR_TYPE;
+}
+if($3->type == VOID_TYPE){
+	yyerror("Trying to use and operator with a void data type");
+	$3->type = ERROR_TYPE;
+}
+if($3->type == FLOAT_ADDRESS_TYPE || $3->type == INT_ADDRESS_TYPE){
+	yyerror("Trying to use and operator with a pointer");
+	$3->type = ERROR_TYPE;
+}
  	int temp_type = get_compatible_type_bool_only($1->type,$3->type);
  	$$ = new conditional_expression_(temp_type);
  	std::ostringstream out;
@@ -549,6 +564,22 @@ conditional_expression: conditional_expression AND_OP expression
 }
                         |conditional_expression OR_OP expression
 {
+if($1->type == VOID_TYPE){
+	yyerror("Trying to use or operator with a void data type");
+	$1->type = ERROR_TYPE;
+}
+if($1->type == FLOAT_ADDRESS_TYPE || $1->type == INT_ADDRESS_TYPE){
+	yyerror("Trying to use or operator with a pointer");
+	$1->type = ERROR_TYPE;
+}
+if($3->type == VOID_TYPE){
+	yyerror("Trying to use or operator with a void data type");
+	$3->type = ERROR_TYPE;
+}
+if($3->type == FLOAT_ADDRESS_TYPE || $3->type == INT_ADDRESS_TYPE){
+	yyerror("Trying to use or operator with a pointer");
+	$3->type = ERROR_TYPE;
+}
  	int temp_type = get_compatible_type_bool_only($1->type,$3->type);
  	$$ = new conditional_expression_(temp_type);
  	std::ostringstream out;
@@ -581,12 +612,27 @@ expression: rel_expression
 
 rel_expression: normal_expression GT normal_expression
 {
+if($1->type == VOID_TYPE){
+	yyerror("Trying to compare a void data type");
+	$1->type = ERROR_TYPE;
+}
+if($1->type == FLOAT_ADDRESS_TYPE || $1->type == INT_ADDRESS_TYPE){
+	yyerror("Trying to compare a pointer");
+	$1->type = ERROR_TYPE;
+}
+if($3->type == VOID_TYPE){
+	yyerror("Trying to compare a void data type");
+	$3->type = ERROR_TYPE;
+}
+if($3->type == FLOAT_ADDRESS_TYPE || $3->type == INT_ADDRESS_TYPE){
+	yyerror("Trying to compare a pointer");
+	$3->type = ERROR_TYPE;
+}
 	int temp_type = get_compatible_type_rel_op($1->type,$3->type);
 	$$ = new conditional_expression_(temp_type);
 	std::ostringstream out;
 	if(temp_type != ERROR_TYPE){
-	// #change
-		intermediate_output.gen_special(">",$1->temporary_name,$3->temporary_name,$$->temporary_name);
+		intermediate_output.gen_relational_op(">",$1->temporary_name,$3->temporary_name,$$->temporary_name);
 	}
 	else{
 		if($1->type != ERROR_TYPE &&  $3->type != ERROR_TYPE){
@@ -604,12 +650,27 @@ rel_expression: normal_expression GT normal_expression
                 |normal_expression LT normal_expression
 
 {
+if($1->type == VOID_TYPE){
+	yyerror("Trying to compare a void data type");
+	$1->type = ERROR_TYPE;
+}
+if($1->type == FLOAT_ADDRESS_TYPE || $1->type == INT_ADDRESS_TYPE){
+	yyerror("Trying to compare a pointer");
+	$1->type = ERROR_TYPE;
+}
+if($3->type == VOID_TYPE){
+	yyerror("Trying to compare a void data type");
+	$3->type = ERROR_TYPE;
+}
+if($3->type == FLOAT_ADDRESS_TYPE || $3->type == INT_ADDRESS_TYPE){
+	yyerror("Trying to compare a pointer");
+	$3->type = ERROR_TYPE;
+}
 	int temp_type = get_compatible_type_rel_op($1->type,$3->type);
 	$$ = new conditional_expression_(temp_type);
 	std::ostringstream out;
 	if(temp_type != ERROR_TYPE){
-	// #change
-		intermediate_output.gen_special("<",$1->temporary_name,$3->temporary_name,$$->temporary_name);
+	intermediate_output.gen_relational_op("<",$1->temporary_name,$3->temporary_name,$$->temporary_name);
 	}
 	else{
 		if($1->type != ERROR_TYPE &&  $3->type != ERROR_TYPE){
@@ -626,12 +687,27 @@ rel_expression: normal_expression GT normal_expression
 
                 |normal_expression GE_OP normal_expression
 {
+if($1->type == VOID_TYPE){
+	yyerror("Trying to compare a void data type");
+	$1->type = ERROR_TYPE;
+}
+if($1->type == FLOAT_ADDRESS_TYPE || $1->type == INT_ADDRESS_TYPE){
+	yyerror("Trying to compare a pointer");
+	$1->type = ERROR_TYPE;
+}
+if($3->type == VOID_TYPE){
+	yyerror("Trying to compare a void data type");
+	$3->type = ERROR_TYPE;
+}
+if($3->type == FLOAT_ADDRESS_TYPE || $3->type == INT_ADDRESS_TYPE){
+	yyerror("Trying to compare a pointer");
+	$3->type = ERROR_TYPE;
+}
 	int temp_type = get_compatible_type_rel_op($1->type,$3->type);
 	$$ = new conditional_expression_(temp_type);
 	std::ostringstream out;
 	if(temp_type != ERROR_TYPE){
-	// #change
-		intermediate_output.gen_special(">=",$1->temporary_name,$3->temporary_name,$$->temporary_name);
+		intermediate_output.gen_relational_op(">=",$1->temporary_name,$3->temporary_name,$$->temporary_name);
 	}
 	else{
 		if($1->type != ERROR_TYPE &&  $3->type != ERROR_TYPE){
@@ -648,13 +724,27 @@ rel_expression: normal_expression GT normal_expression
 
                 |normal_expression LE_OP normal_expression
 {
+if($1->type == VOID_TYPE){
+	yyerror("Trying to compare a void data type");
+	$1->type = ERROR_TYPE;
+}
+if($1->type == FLOAT_ADDRESS_TYPE || $1->type == INT_ADDRESS_TYPE){
+	yyerror("Trying to compare a pointer");
+	$1->type = ERROR_TYPE;
+}
+if($3->type == VOID_TYPE){
+	yyerror("Trying to compare a void data type");
+	$3->type = ERROR_TYPE;
+}
+if($3->type == FLOAT_ADDRESS_TYPE || $3->type == INT_ADDRESS_TYPE){
+	yyerror("Trying to compare a pointer");
+	$3->type = ERROR_TYPE;
+}
 	int temp_type = get_compatible_type_rel_op($1->type,$3->type);
 	$$ = new conditional_expression_(temp_type);
 	std::ostringstream out;
 	if(temp_type != ERROR_TYPE){
-	// #change
-		intermediate_output.gen_special("<=",$1->temporary_name,$3->temporary_name,$$->temporary_name);
-
+		intermediate_output.gen_relational_op("<=",$1->temporary_name,$3->temporary_name,$$->temporary_name);
 	}
 	else{
 		if($1->type != ERROR_TYPE &&  $3->type != ERROR_TYPE){
@@ -670,13 +760,27 @@ rel_expression: normal_expression GT normal_expression
 }
                 |normal_expression EQ_OP normal_expression
 {
+if($1->type == VOID_TYPE){
+	yyerror("Trying to compare a void data type");
+	$1->type = ERROR_TYPE;
+}
+if($1->type == FLOAT_ADDRESS_TYPE || $1->type == INT_ADDRESS_TYPE){
+	yyerror("Trying to compare a pointer");
+	$1->type = ERROR_TYPE;
+}
+if($3->type == VOID_TYPE){
+	yyerror("Trying to compare a void data type");
+	$3->type = ERROR_TYPE;
+}
+if($3->type == FLOAT_ADDRESS_TYPE || $3->type == INT_ADDRESS_TYPE){
+	yyerror("Trying to compare a pointer");
+	$3->type = ERROR_TYPE;
+}
 	int temp_type = get_compatible_type_rel_op($1->type,$3->type);
 	$$ = new conditional_expression_(temp_type);
 	std::ostringstream out;
 	if(temp_type != ERROR_TYPE){
-	// #change
-		intermediate_output.gen_special("==",$1->temporary_name,$3->temporary_name,$$->temporary_name);
-
+	intermediate_output.gen_relational_op("==",$1->temporary_name,$3->temporary_name,$$->temporary_name);
 	}
 	else{
 		if($1->type != ERROR_TYPE &&  $3->type != ERROR_TYPE){
@@ -692,12 +796,27 @@ rel_expression: normal_expression GT normal_expression
 }
                 |normal_expression NE_OP normal_expression
 {
+if($1->type == VOID_TYPE){
+	yyerror("Trying to compare a void data type");
+	$1->type = ERROR_TYPE;
+}
+if($1->type == FLOAT_ADDRESS_TYPE || $1->type == INT_ADDRESS_TYPE){
+	yyerror("Trying to compare a pointer");
+	$1->type = ERROR_TYPE;
+}
+if($3->type == VOID_TYPE){
+	yyerror("Trying to compare a void data type");
+	$3->type = ERROR_TYPE;
+}
+if($3->type == FLOAT_ADDRESS_TYPE || $3->type == INT_ADDRESS_TYPE){
+	yyerror("Trying to compare a pointer");
+	$3->type = ERROR_TYPE;
+}
 	int temp_type = get_compatible_type_rel_op($1->type,$3->type);
 	$$ = new conditional_expression_(temp_type);
 	std::ostringstream out;
 	if(temp_type != ERROR_TYPE){
-	// #change
-		intermediate_output.gen_special("!=",$1->temporary_name,$3->temporary_name,$$->temporary_name);
+		intermediate_output.gen_relational_op("!=",$1->temporary_name,$3->temporary_name,$$->temporary_name);
 	}
 	else{
 		if($1->type != ERROR_TYPE &&  $3->type != ERROR_TYPE){
@@ -714,6 +833,23 @@ rel_expression: normal_expression GT normal_expression
 
 normal_expression: normal_expression PLUS term
 {
+	if($1->type == VOID_TYPE){
+		yyerror("Trying to add a void data type");
+		$1->type = ERROR_TYPE;
+	}
+	if($1->type == FLOAT_ADDRESS_TYPE || $1->type == INT_ADDRESS_TYPE){
+		yyerror("Trying to add a pointer");
+		$1->type = ERROR_TYPE;
+	}
+	if($3->type == VOID_TYPE){
+		yyerror("Trying to add a void data type");
+		$3->type = ERROR_TYPE;
+	}
+	if($3->type == FLOAT_ADDRESS_TYPE || $3->type == INT_ADDRESS_TYPE){
+		yyerror("Trying to add a pointer");
+		$3->type = ERROR_TYPE;
+	}
+
 	int temp_type = get_compatible_type_non_bool($1->type,$3->type);
 	$$ = new conditional_expression_(temp_type);
 	std::ostringstream out;
@@ -729,6 +865,22 @@ normal_expression: normal_expression PLUS term
 }
                   |normal_expression MINUS term
 {
+	if($1->type == VOID_TYPE){
+		yyerror("Trying to subtract a void data type");
+		$1->type = ERROR_TYPE;
+	}
+	if($1->type == FLOAT_ADDRESS_TYPE || $1->type == INT_ADDRESS_TYPE){
+		yyerror("Trying to subtract a pointer");
+		$1->type = ERROR_TYPE;
+	}
+	if($3->type == VOID_TYPE){
+		yyerror("Trying to subtract a void data type");
+		$3->type = ERROR_TYPE;
+	}
+	if($3->type == FLOAT_ADDRESS_TYPE || $3->type == INT_ADDRESS_TYPE){
+		yyerror("Trying to subtract a pointer");
+		$3->type = ERROR_TYPE;
+	}
 	int temp_type = get_compatible_type_non_bool($1->type,$3->type);
 	$$ = new conditional_expression_(temp_type);
 	std::ostringstream out;
@@ -751,6 +903,22 @@ normal_expression: normal_expression PLUS term
 
 term: term STAR factor
 {
+	if($1->type == VOID_TYPE){
+		yyerror("Trying to multiply a void data type");
+		$1->type = ERROR_TYPE;
+	}
+	if($1->type == FLOAT_ADDRESS_TYPE || $1->type == INT_ADDRESS_TYPE){
+		yyerror("Trying to multiply a pointer");
+		$1->type = ERROR_TYPE;
+	}
+	if($3->type == VOID_TYPE){
+		yyerror("Trying to multiply a void data type");
+		$3->type = ERROR_TYPE;
+	}
+	if($3->type == FLOAT_ADDRESS_TYPE || $3->type == INT_ADDRESS_TYPE){
+		yyerror("Trying to multiply a pointer");
+		$3->type = ERROR_TYPE;
+	}
 	int temp_type = get_compatible_type_non_bool($1->type,$3->type);
 	$$ = new conditional_expression_(temp_type);
 	std::ostringstream out;
@@ -765,6 +933,22 @@ term: term STAR factor
 }
       |term DIVIDE factor
 {
+	if($1->type == VOID_TYPE){
+		yyerror("Trying to divide a void data type");
+		$1->type = ERROR_TYPE;
+	}
+	if($1->type == FLOAT_ADDRESS_TYPE || $1->type == INT_ADDRESS_TYPE){
+		yyerror("Trying to divide a pointer");
+		$1->type = ERROR_TYPE;
+	}
+	if($3->type == VOID_TYPE){
+		yyerror("Trying to divide a void data type");
+		$3->type = ERROR_TYPE;
+	}
+	if($3->type == FLOAT_ADDRESS_TYPE || $3->type == INT_ADDRESS_TYPE){
+		yyerror("Trying to divide a pointer");
+		$3->type = ERROR_TYPE;
+	}
 	int temp_type = get_compatible_type_non_bool($1->type,$3->type);
 	$$ = new conditional_expression_(temp_type);
 	std::ostringstream out;
@@ -799,6 +983,14 @@ unary_expression: primary_expression
 }
                 |MINUS unary_expression %prec UMINUS
 {
+	if($2->type == VOID_TYPE){
+		yyerror("Trying to negate a void data type");
+		$2->type = ERROR_TYPE;
+	}
+	if($2->type == FLOAT_ADDRESS_TYPE || $2->type == INT_ADDRESS_TYPE){
+	 	yyerror("Trying to negate a pointer");
+	 	$2->type = ERROR_TYPE;
+ 	}
 	if($2->type != BOOL_TYPE){
 		$$ = new conditional_expression_($2->type);
 		std::ostringstream out;
@@ -814,20 +1006,37 @@ unary_expression: primary_expression
                 |NOT unary_expression
 {
 	std::ostringstream out;
-	if($2->type == FLOAT_TYPE ){
+	if($2->type == VOID_TYPE){
+		yyerror("can not use not operator on void data type");
+		$2->type = ERROR_TYPE;
+	}
+	if($2->type == FLOAT_ADDRESS_TYPE || $2->type == INT_ADDRESS_TYPE){
+		yyerror("can not use not operator on pointers");
+		$2->type = ERROR_TYPE;
+	}
+
+	if($2->type == FLOAT_TYPE  || $2->type == INT_TYPE ){
 		$$ = new conditional_expression_(ERROR_TYPE);
-		yyerror("can not use not operator on a float data type");
+		yyerror("can not use not operator on a float or int data type");
 	}
 	else{
 				$$ = new conditional_expression_($2->type);
 		}
-	if($2->type != ERROR_TYPE && $2->type != FLOAT_TYPE ){
+	if($2->type != ERROR_TYPE && $2->type != FLOAT_TYPE && $2->type != INT_TYPE ){
 			intermediate_output.gen_special("NOT",$2->temporary_name,"---",$$->temporary_name);
 
 	}
 }
                 |DEC_OP unary_expression
 {
+	if($2->type == VOID_TYPE){
+		yyerror("Trying to decrement a void data type");
+		$2->type = ERROR_TYPE;
+	}
+	if($2->type == FLOAT_ADDRESS_TYPE || $2->type == INT_ADDRESS_TYPE){
+		yyerror("decrementing pointers not allowed");
+		$2->type = ERROR_TYPE;
+	}
 	if($2->type != BOOL_TYPE){
 		$$ = new conditional_expression_($2->type);
 		std::ostringstream out;
@@ -845,6 +1054,15 @@ unary_expression: primary_expression
 }
                 |INC_OP unary_expression
 {
+	if($2->type == VOID_TYPE){
+		yyerror("Trying to increment a void data type");
+		$2->type = ERROR_TYPE;
+	}
+	if($2->type == FLOAT_ADDRESS_TYPE || $2->type == INT_ADDRESS_TYPE){
+		yyerror("incrementing pointers not allowed");
+		$2->type = ERROR_TYPE;
+	}
+
 	if($2->type != BOOL_TYPE){
 		$$ = new conditional_expression_($2->type);
 		std::ostringstream out;
@@ -959,7 +1177,7 @@ func_call : ID OPEN_BRACKET elist_super CLOSE_BRACKET
 		}
  }
  else{
- 		yyerror("function "+s+ "is not declared");
+ 		yyerror("function "+s+ " is not declared");
 		$$ = new conditional_expression_(ERROR_TYPE,"ERR");
  }
 }
@@ -998,6 +1216,14 @@ elist_func_call :	elist_func_call COMMA expression
 assignment_statement: id_arr ASSIGN conditional_expression
 { /* don't put error msg here */
 	if($1->var != NULL){
+			if($1->var->eletype == FLOAT_ADDRESS_TYPE || $1->var->eletype == INT_ADDRESS_TYPE){
+				yyerror("we don't support assigning pointers");
+				$1->var->eletype = ERROR_TYPE;
+			}
+			if($1->var->eletype == VOID_TYPE){
+				yyerror("Trying to assign a void type");
+				$1->var->eletype = ERROR_TYPE;
+			}
 			int temp_type = get_compatible_type_non_bool($1->var->eletype,$3->type);
 			if(temp_type == ERROR_TYPE){
 				if($1->var->type != ERROR_TYPE && $3->type != ERROR_TYPE){
@@ -1032,7 +1258,7 @@ assignment_statement: id_arr ASSIGN conditional_expression
 					  | /* empty */
 {
 // needs attention
-	$$ = new assignment_statement_(ERROR_TYPE,"ERR");
+	$$ = new assignment_statement_(VOID_TYPE,"ERR");
 }
 
 					  ;
@@ -1061,9 +1287,11 @@ id_arr: ID
 			if(var-> type != SIMPLE){
 				if(var->eletype == FLOAT_TYPE){
 					var->eletype = FLOAT_ADDRESS_TYPE;
+					var->type = SIMPLE;
 				}
 				if(var->eletype == INT_TYPE){
 					var->eletype = INT_ADDRESS_TYPE;
+					var->type = SIMPLE;
 				}
 				if(var->eletype != INT_TYPE && var->eletype != FLOAT_TYPE){
 					var = NULL;

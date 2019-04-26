@@ -1,10 +1,10 @@
 
 *1) Increment and decrement assignment is not done. --> harder than seems
-***** 2) Relational operator evaluation has to be done. ---> with short circuit evaluation
+***** 2) Relational operator evaluation has to be done. // done ---> with short circuit evaluation
 **3) The comparison for false list has to be reversed. //done
-*4) handling void and pointers
+*4) handling void and pointers // done
 ***5) handling parameter in search global list // done
 6) use of break and continue in if else // done
 7) code testing
-8) change assignment statement ERROR_TYPE to VOID_TYPE
+8) change assignment statement ERROR_TYPE to VOID_TYPE // done
 ===> to be added

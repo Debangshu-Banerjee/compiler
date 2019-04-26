@@ -47,6 +47,19 @@ public:
 		return t;
 	}
 };
+class rel_tag_genarator{
+public:
+	int tag_no;
+	rel_tag_genarator(){
+			tag_no =0;
+	}
+	string get_rel_tag(){
+		string t = "REL";
+		t = t + to_string(this->tag_no)+ ":";
+		tag_no++;
+		return t;
+	}
+};
 class func_end_tag_genarator{
 public:
 	int tag_no;
@@ -139,6 +152,7 @@ public:
   void patch_tag_no_put(string tag,vector<int> indexes,int index);
 	void patch_switch_con(string tag,vector<int> indexes);
 	void gen_at_pos(string tag,int index);
+	void gen_relational_op(string op,string operand1,string operand2,string result);
 };
 
 class sym_tab{

@@ -3,6 +3,8 @@
 
 using namespace std;
 
+rel_tag_genarator rel_tag;
+
 gloabal_offset_structure global_offset;
 extern void yyerror(string s);
 extern code_output intermediate_output;
@@ -359,4 +361,11 @@ void code_output :: gen_at_pos(string tag,int index){
 		return;
 	}
 	this->intermediate_code[index] = tag;
+}
+void code_output ::  gen_relational_op(string op,string operand1,string operand2,string result){
+	this->gen_special("=","1","---",result);
+	string s2 = rel_tag.get_rel_tag();
+	this->gen_special(op,operand1,operand2,s2);
+	this->gen_special("=","0","---",result);
+	this->gen(s2);
 }
