@@ -258,6 +258,39 @@ public:
 			}
 	}
 };
+class unary_expression_{
+public:
+	int type;
+	string temporary_name;
+	variable * var;
+	unary_expression_(int type){
+
+			this->type = type;
+			if(type != ERROR_TYPE){
+					string t = to_string(global_temp);
+					global_temp++;
+					this->temporary_name = "T" + t;
+					this->var = NULL;
+			}
+			else{
+				this->temporary_name = "ERR";
+				this->var = NULL;
+			}
+	}
+
+	unary_expression_(int type,string temporary_name){
+
+			this->type = type;
+			if(type != ERROR_TYPE){
+					this->temporary_name = temporary_name;
+					this->var = NULL;
+			}
+			else{
+				this->temporary_name = "ERR";
+				this->var = NULL;
+			}
+	}
+};
 
 class elist_{
 public:

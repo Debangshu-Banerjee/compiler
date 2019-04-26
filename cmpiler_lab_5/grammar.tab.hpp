@@ -133,8 +133,9 @@ union YYSTYPE
 	elist_func_call_ * elist_func_call_s;
 	case_name_ * case_name_s;
 	case_list_ * case_list_s;
+	unary_expression_ * unary_expression_s;
 
-#line 138 "grammar.tab.hpp" /* yacc.c:1909  */
+#line 139 "grammar.tab.hpp" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;

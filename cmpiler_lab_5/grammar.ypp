@@ -47,6 +47,7 @@ int call_function_index = -1;
 	elist_func_call_ * elist_func_call_s;
 	case_name_ * case_name_s;
 	case_list_ * case_list_s;
+	unary_expression_ * unary_expression_s;
 }
 %token ELSE FOR IF RETURN WHILE PTR_OP INC_OP DEC_OP AND_OP OR_OP LT GT LE_OP GE_OP EQ_OP NE_OP DO BREAK LIBRARY CONTINUE ERROR
 %token NOT AMP TILDE STAR ASSIGN OPEN_BRACKET CLOSE_BRACKET OPEN_CURLY CLOSE_CURLY OPEN_SQUARE CLOSE_SQUARE
@@ -80,7 +81,7 @@ int call_function_index = -1;
 %type<id_arr_s> id_arr
 %type<type_s> type
 %type<elist_s> elist   // no constructor
-%type<conditional_expression_s> conditional_expression expression rel_expression normal_expression term factor unary_expression primary_expression func_call
+%type<conditional_expression_s> conditional_expression expression rel_expression normal_expression term factor  func_call
 %type<parameter_list_s> parameter_list param_decl
 %type<assignment_statement_s> assignment_statement
 %type<statement_list_s> statement_list statement selection_statement iteration_statement switch_statement // no constructor
@@ -91,7 +92,7 @@ int call_function_index = -1;
 %type<elist_func_call_s> elist_func_call elist_super
 %type<case_name_s> default_name case_name
 %type<case_list_s> case_list case_list_minor case_statement default_statement
-
+%type<unary_expression_s> unary_expression primary_expression
 %%
 
 program: statement_list;
@@ -978,8 +979,8 @@ factor: unary_expression
 
 unary_expression: primary_expression
 {
-	$$ = new conditional_expression_($1->type,$1->temporary_name);
-
+	$$ = new unary_expression_($1->type,$1->temporary_name);
+	$$->var = $1->var;
 }
                 |MINUS unary_expression %prec UMINUS
 {
@@ -992,7 +993,8 @@ unary_expression: primary_expression
 	 	$2->type = ERROR_TYPE;
  	}
 	if($2->type != BOOL_TYPE){
-		$$ = new conditional_expression_($2->type);
+		$$ = new unary_expression_($2->type);
+		$$->var = $2->var;
 		std::ostringstream out;
 		if($2->type != ERROR_TYPE ){
 			intermediate_output.gen_special("UMINUS",$2->temporary_name,"---",$$->temporary_name);
@@ -1000,7 +1002,8 @@ unary_expression: primary_expression
 	}
 	else{
 		yyerror("Trying to negate a boolean data type");
-		$$ = new conditional_expression_(ERROR_TYPE);
+		$$ = new unary_expression_(ERROR_TYPE);
+		$$->var = NULL;
 	}
 }
                 |NOT unary_expression
@@ -1016,11 +1019,13 @@ unary_expression: primary_expression
 	}
 
 	if($2->type == FLOAT_TYPE  || $2->type == INT_TYPE ){
-		$$ = new conditional_expression_(ERROR_TYPE);
+		$$ = new unary_expression_(ERROR_TYPE);
 		yyerror("can not use not operator on a float or int data type");
+		$$->var = NULL;
 	}
 	else{
-				$$ = new conditional_expression_($2->type);
+				$$ = new unary_expression_($2->type);
+				$$->var = $2->var;
 		}
 	if($2->type != ERROR_TYPE && $2->type != FLOAT_TYPE && $2->type != INT_TYPE ){
 			intermediate_output.gen_special("NOT",$2->temporary_name,"---",$$->temporary_name);
@@ -1038,17 +1043,22 @@ unary_expression: primary_expression
 		$2->type = ERROR_TYPE;
 	}
 	if($2->type != BOOL_TYPE){
-		$$ = new conditional_expression_($2->type);
+		$$ = new unary_expression_($2->type);
+		$$->var = $2->var;
 		std::ostringstream out;
 		if($2->type != ERROR_TYPE){
 			intermediate_output.gen_special("-",$2->temporary_name,"1",$$->temporary_name);
 			intermediate_output.gen_special("=",$$->temporary_name,"---",$2->temporary_name);
 			$$->temporary_name = $2->temporary_name;
+			if($2->var != NULL){
+				intermediate_output.gen_special("=",$2->temporary_name,"---",$2->var->name+"_"+to_string($2->var->offset));
+			}
 		}
 	}
 	else{
 		yyerror("Trying to decrement a boolean data type");
-		$$ = new conditional_expression_(ERROR_TYPE);
+		$$ = new unary_expression_(ERROR_TYPE);
+		$$->var = NULL;
 	}
 
 }
@@ -1064,17 +1074,22 @@ unary_expression: primary_expression
 	}
 
 	if($2->type != BOOL_TYPE){
-		$$ = new conditional_expression_($2->type);
+		$$ = new unary_expression_($2->type);
+		$$->var = $2->var;
 		std::ostringstream out;
 		if($2->type != ERROR_TYPE){
 			intermediate_output.gen_special("+",$2->temporary_name,"1",$$->temporary_name);
 			intermediate_output.gen_special("=",$$->temporary_name,"---",$2->temporary_name);
 			$$->temporary_name = $2->temporary_name;
+			if($2->var != NULL ){
+				intermediate_output.gen_special("=",$2->temporary_name,"---",$2->var->name+"_"+to_string($2->var->offset));
+			}
 		}
 	}
 	else{
 		yyerror("Trying to increment a boolean data type");
-		$$ = new conditional_expression_(ERROR_TYPE);
+		$$ = new unary_expression_(ERROR_TYPE);
+		$$->var = NULL;
 	}
 }
 
@@ -1082,15 +1097,17 @@ unary_expression: primary_expression
 
 primary_expression: NUM
 {
-	$$ = new conditional_expression_(INT_TYPE);
+	$$ = new unary_expression_(INT_TYPE);
 	intermediate_output.gen_special("=",to_string($1),"---",$$->temporary_name);
+	$$->var = NULL;
 }
 
 
                     |REAL
 {
-	$$ = new conditional_expression_(FLOAT_TYPE);
+	$$ = new unary_expression_(FLOAT_TYPE);
 	intermediate_output.gen_special("=",to_string($1),"---",$$->temporary_name);
+	$$->var = NULL;
 }
 
                     | id_arr
@@ -1098,19 +1115,22 @@ primary_expression: NUM
 /* don't put error msg here*/
 if($1->var == NULL){
 		//yyerror("The used variable is not declared");
-		$$ = new conditional_expression_(ERROR_TYPE);
+		$$ = new unary_expression_(ERROR_TYPE);
+		$$->var = NULL;
 }
 else{
-		$$ = new conditional_expression_($1->var->eletype);
+		$$ = new unary_expression_($1->var->eletype);
 		std::ostringstream out;
 		if($1->var->type == SIMPLE){
 			out << "= " << $1->var->name <<"_"<< $1->var->offset << " --- " << $$->temporary_name;
+			$$->var = $1->var;
 		}
 		else{
 			string temp_address = "T" + to_string(global_temp);
 			global_temp ++;
 			intermediate_output.gen_special("addr",$1->var->name+"_"+to_string($1->var->offset),"---",temp_address);
 			out << "= " <<temp_address<< "["<<$1->offset_temp<<"] " << $$->temporary_name;
+			$$->var = $1->var;
 		}
 		string s = out.str();
 		intermediate_output.gen(s);
@@ -1119,11 +1139,13 @@ else{
 }
                     |OPEN_BRACKET conditional_expression CLOSE_BRACKET
 {
-  $$ = new conditional_expression_($2->type,$2->temporary_name);
+  $$ = new unary_expression_($2->type,$2->temporary_name);
+	$$->var = NULL;
 }
 									| func_call
 {
-$$ = new conditional_expression_ ($1->type,$1->temporary_name);
+	$$ = new unary_expression_ ($1->type,$1->temporary_name);
+	$$->var = NULL;
 }
 									;
 
