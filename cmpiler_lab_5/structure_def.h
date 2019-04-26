@@ -241,7 +241,12 @@ public:
 			if(type != ERROR_TYPE){
 					string t = to_string(global_temp);
 					global_temp++;
-					this->temporary_name = "T" + t;
+					if(type == INT_TYPE){
+						this->temporary_name = "T" + t;
+					}
+					else{
+						this->temporary_name = "F" + t;
+					}
 			}
 			else{
 				this->temporary_name = "ERR";
@@ -269,7 +274,12 @@ public:
 			if(type != ERROR_TYPE){
 					string t = to_string(global_temp);
 					global_temp++;
-					this->temporary_name = "T" + t;
+					if(type == INT_TYPE){
+						this->temporary_name = "T" + t;
+					}
+					else{
+						this->temporary_name = "F" + t;
+					}
 					this->var = NULL;
 			}
 			else{

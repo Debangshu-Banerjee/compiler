@@ -1,3 +1,6 @@
+int foo(int a,int b){
+	return 6;
+}
 int main(int ami){
 
 	float e;
@@ -21,4 +24,5 @@ int main(int ami){
 	}
 
 int a;
+a = foo(a,i*9);
 }

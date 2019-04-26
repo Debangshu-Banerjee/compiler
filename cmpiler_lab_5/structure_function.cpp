@@ -241,7 +241,14 @@ string sym_tab :: genarate_function_call(int call_function_index,elist_func_call
 	if(this->global_sym_tab[call_function_index]->result_type != VOID_TYPE){
 		string t = to_string(global_temp);
 		global_temp++;
-		string temporary_name = "T";
+
+		string temporary_name;
+		if(this->global_sym_tab[call_function_index]->result_type == INT_TYPE){
+			temporary_name = "T";
+		}
+		else{
+			temporary_name = "F";
+		}
 		temporary_name = temporary_name + t;
 		intermediate_output.gen_special("refparam",temporary_name,"---","---");
 		intermediate_output.gen_special("call",this->global_sym_tab[call_function_index]->function_name,to_string(temp->type_list.size()+1),"---");

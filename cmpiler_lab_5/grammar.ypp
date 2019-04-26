@@ -8,9 +8,7 @@ using namespace std;
 
 extern int yylex();
 extern int yylineno;
-void yyerror(string s){
-	 cerr<< s <<"at line no "<< yylineno<< endl;
-}
+
 int global_temp = 0;
 code_output intermediate_output;
 loop_tag_genarator loop_tag;
@@ -20,7 +18,12 @@ sym_tab symbol_table;
 int level = 0;
 int active_function_index = 0;  // -1 for any type error
 int call_function_index = -1;
-
+bool main_flag = false;
+bool total_error = false;
+void yyerror(string s){
+	total_error = true;
+	 cerr<< s <<" at line no "<< yylineno<< endl;
+}
 %}
 
 %union{
@@ -132,6 +135,9 @@ function_head: res_id OPEN_BRACKET parameter_list CLOSE_BRACKET
 
 res_id: type ID {
     string s($2);
+		if(s == "main"){
+		 main_flag = true;
+		}
     if(symbol_table.search_func(s) != -1){
       $$ = new result_(ERROR_TYPE);
       yyerror("this function is declared previously.Aborting at ");
@@ -1557,6 +1563,11 @@ varlist: varlist COMMA id_arr_declare
 int main(){
 
 	yyparse();
-  //symbol_table.display();
-	intermediate_output.print();
+	if(main_flag == false){
+		cout<< "ERROR :: no main function found\n";
+		exit(1);
+	}
+	if(total_error == false){
+		intermediate_output.print();
+	}	
 }
