@@ -4,6 +4,7 @@ int foo(int a,int b){
 int main(int ami){
 
 	float e;
+	e = .25;
 	int i;
 	for(e;e<10;++e){
 		int a;

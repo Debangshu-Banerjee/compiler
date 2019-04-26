@@ -241,11 +241,11 @@ public:
 			if(type != ERROR_TYPE){
 					string t = to_string(global_temp);
 					global_temp++;
-					if(type == INT_TYPE){
-						this->temporary_name = "T" + t;
+					if(type == FLOAT_TYPE){
+						this->temporary_name = "F" + t;
 					}
 					else{
-						this->temporary_name = "F" + t;
+						this->temporary_name = "T" + t;
 					}
 			}
 			else{
@@ -274,11 +274,11 @@ public:
 			if(type != ERROR_TYPE){
 					string t = to_string(global_temp);
 					global_temp++;
-					if(type == INT_TYPE){
-						this->temporary_name = "T" + t;
+					if(type == FLOAT_TYPE){
+						this->temporary_name = "F" + t;
 					}
 					else{
-						this->temporary_name = "F" + t;
+						this->temporary_name = "T" + t;
 					}
 					this->var = NULL;
 			}
