@@ -5,6 +5,8 @@
 #define BOOL_TYPE -3
 #define VOID_TYPE -5
 #define ERROR_TYPE -4
+#define FLOAT_ADDRESS_TYPE -5
+#define INT_ADDRESS_TYPE -6
 #define SIMPLE -1
 #define ARRAY -2
 #define PARAM -1

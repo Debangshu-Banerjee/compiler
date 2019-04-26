@@ -133,7 +133,8 @@ res_id: type ID {
     string s($2);
     if(symbol_table.search_func(s) != -1){
       $$ = new result_(ERROR_TYPE);
-      yyerror("this function is declared previously\n");
+      yyerror("this function is declared previously.Aborting at ");
+			exit(0);
       active_function_index = -1;
     }
     else{
@@ -1030,6 +1031,7 @@ assignment_statement: id_arr ASSIGN conditional_expression
 }
 					  | /* empty */
 {
+// needs attention
 	$$ = new assignment_statement_(ERROR_TYPE,"ERR");
 }
 
@@ -1057,11 +1059,15 @@ id_arr: ID
 		}
 		else{
 			if(var-> type != SIMPLE){
-				var = NULL;
-				std::ostringstream out1;
-				out1<<"varible with name "<<s<< "is declared not as array";
-				string s_1 = out1.str();
-				yyerror(s_1);
+				if(var->eletype == FLOAT_TYPE){
+					var->eletype = FLOAT_ADDRESS_TYPE;
+				}
+				if(var->eletype == INT_TYPE){
+					var->eletype = INT_ADDRESS_TYPE;
+				}
+				if(var->eletype != INT_TYPE && var->eletype != FLOAT_TYPE){
+					var = NULL;
+				}
 			}
 		}
 		$$ = new id_arr_(var,"NONE");
@@ -1128,7 +1134,8 @@ id_arr: ID
 			;
 
 /* storing -1 in place of index be careful */
-id_arr_declare : ID {
+id_arr_declare : ID
+ {
   if(active_function_index != -1){
       string s($1);
       variable * v_temp = symbol_table.search_variable_current(active_function_index,s,level);
@@ -1200,7 +1207,8 @@ if(active_function_index != -1){
 
                 ;
 
-new_num_list : new_num_list  OPEN_SQUARE NUM CLOSE_SQUARE {
+new_num_list : new_num_list  OPEN_SQUARE NUM CLOSE_SQUARE
+{
       $$  = new new_num_list_();
       $$->num_list.insert($$->num_list.end(),$1->num_list.begin(),$1->num_list.end());
       $$->num_list.push_back($3);
@@ -1225,14 +1233,14 @@ parameter_list: param_decl
 param_decl: param_decl COMMA unit_declaration
 
 {
-if(active_function_index != -1){
-	 if($3->type != ERROR_TYPE){
-	 $$ = new parameter_list_($1->no_of_parameter + 1);;
-	 }
-	 else{
+	if(active_function_index != -1){
+	 	if($3->type != ERROR_TYPE){
+	 		$$ = new parameter_list_($1->no_of_parameter + 1);;
+	 	}
+	 	else{
 	  	$$ = new parameter_list_($1->no_of_parameter);
-	 }
-}
+	 	}
+	}
 }
 
 
@@ -1279,15 +1287,17 @@ if(active_function_index != -1){
 }
                ;
 
-varlist: varlist COMMA id_arr_declare{
+varlist: varlist COMMA id_arr_declare
+{
 	  $$ = new varlist_();
 		$$->list_of_indexes.insert($$->list_of_indexes.end(),$1->list_of_indexes.begin(),$1->list_of_indexes.end());
 		$$->list_of_indexes.push_back($3->index_in_sym_tab);
 }
-        |id_arr_declare{
-          $$ = new varlist_();
-		  $$->list_of_indexes.push_back($1->index_in_sym_tab);
-        }
+        |id_arr_declare
+{
+    $$ = new varlist_();
+		$$->list_of_indexes.push_back($1->index_in_sym_tab);
+}
 
         ;
 
