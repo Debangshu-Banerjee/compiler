@@ -22,3 +22,40 @@ F17: .space 4
 F18: .space 4
 T19: .space 4
 T20: .space 4
+.text
+la $t0, T1
+la $t1, 4
+la $t2, T2
+l.s $f3, 0($t0)
+l.s $f4, 0($t1)
+cvt.s.w $f3, $f3
+cvt.s.w $f4, $f4
+mul.s $f5, $f3, $f4
+s.s $f5, 0($t2)
+la $t0, T8
+la $t1, 4
+la $t2, T9
+l.s $f3, 0($t0)
+l.s $f4, 0($t1)
+cvt.s.w $f3, $f3
+cvt.s.w $f4, $f4
+mul.s $f5, $f3, $f4
+s.s $f5, 0($t2)
+la $t0, T12
+la $t1, 4
+la $t2, T13
+l.s $f3, 0($t0)
+l.s $f4, 0($t1)
+cvt.s.w $f3, $f3
+cvt.s.w $f4, $f4
+mul.s $f5, $f3, $f4
+s.s $f5, 0($t2)
+la $t0, T15
+la $t1, F17
+la $t2, F18
+l.s $f3, 0($t0)
+l.s $f4, 0($t1)
+cvt.s.w $f3, $f3
+cvt.s.w $f4, $f4
+mul.s $f5, $f3, $f4
+s.s $f5, 0($t2)
