@@ -64,22 +64,22 @@ void generate_each_instruction(vector<string> linevec)
   {
     if(linevec[2][0]=='T'&&linevec[3][0]=='T'&&linevec[4][0]=='T')
     {
-      int first=gen_int_count();mipsfile<<"la $t"<<first<<" "<<linevec[2]<<endl;
-      int secnd=gen_int_count();mipsfile<<"la $t"<<secnd<<" "<<linevec[3]<<endl;
-      int thrd=gen_int_count();mipsfile<<"la $t"<<thrd<<" "<<linevec[4]<<endl;
-      int frth=gen_int_count();mipsfile<<"lw $t"<<frth<<" "<<"0($t"<<first<<")"<<endl;
-      int fifth=gen_int_count();mipsfile<<"lw $t"<<fifth<<" "<<"0($t"<<secnd<<")"<<endl;
-      int sixth=gen_int_count();mipsfile<<"add "<<"$t"<<sixth<<" "<<"$t"<<frth<<" "<<"$t"<<fifth<<endl;
+      int first=0;mipsfile<<"la $t"<<first<<" "<<linevec[2]<<endl;
+      int secnd=1;mipsfile<<"la $t"<<secnd<<" "<<linevec[3]<<endl;
+      int thrd=2;mipsfile<<"la $t"<<thrd<<" "<<linevec[4]<<endl;
+      int frth=3;mipsfile<<"lw $t"<<frth<<" "<<"0($t"<<first<<")"<<endl;
+      int fifth=4;mipsfile<<"lw $t"<<fifth<<" "<<"0($t"<<secnd<<")"<<endl;
+      int sixth=5;mipsfile<<"add "<<"$t"<<sixth<<" "<<"$t"<<frth<<" "<<"$t"<<fifth<<endl;
       mipsfile<<"sw $t"<<sixth<<" 0($t"<<thrd<<")"<<endl;
     }
     else if(linevec[2][0]=='F'&&linevec[3][0]=='F'&&linevec[4][0]=='F')
     {
-      int first=gen_int_count();mipsfile<<"la $t"<<first<<" "<<linevec[2]<<endl;
-      int secnd=gen_int_count();mipsfile<<"la $t"<<secnd<<" "<<linevec[3]<<endl;
-      int thrd=gen_int_count();mipsfile<<"la $t"<<thrd<<" "<<linevec[4]<<endl;
-      int frth=gen_float_count();mipsfile<<"lw $f"<<frth<<" "<<"0($t"<<first<<")"<<endl;
-      int fifth=gen_float_count();mipsfile<<"lw $f"<<fifth<<" "<<"0($t"<<secnd<<")"<<endl;
-      int sixth=gen_float_count();mipsfile<<"add "<<"$f"<<sixth<<" "<<"$f"<<frth<<" "<<"$f"<<fifth<<endl;
+      int first=0;mipsfile<<"la $t"<<first<<" "<<linevec[2]<<endl;
+      int secnd=1;mipsfile<<"la $t"<<secnd<<" "<<linevec[3]<<endl;
+      int thrd=2;mipsfile<<"la $t"<<thrd<<" "<<linevec[4]<<endl;
+      int frth=3;mipsfile<<"lw $f"<<frth<<" "<<"0($t"<<first<<")"<<endl;
+      int fifth=4;mipsfile<<"lw $f"<<fifth<<" "<<"0($t"<<secnd<<")"<<endl;
+      int sixth=5;mipsfile<<"add "<<"$f"<<sixth<<" "<<"$f"<<frth<<" "<<"$f"<<fifth<<endl;
       mipsfile<<"sw $f"<<sixth<<" 0($t"<<thrd<<")"<<endl;
     }
 
@@ -88,22 +88,22 @@ void generate_each_instruction(vector<string> linevec)
   {
     if(linevec[2][0]=='T'&&linevec[3][0]=='T'&&linevec[4][0]=='T')
     {
-      int first=gen_int_count();mipsfile<<"la $t"<<first<<" "<<linevec[2]<<endl;
-      int secnd=gen_int_count();mipsfile<<"la $t"<<secnd<<" "<<linevec[3]<<endl;
-      int thrd=gen_int_count();mipsfile<<"la $t"<<thrd<<" "<<linevec[4]<<endl;
-      int frth=gen_int_count();mipsfile<<"lw $t"<<frth<<" "<<"0($t"<<first<<")"<<endl;
-      int fifth=gen_int_count();mipsfile<<"lw $t"<<fifth<<" "<<"0($t"<<secnd<<")"<<endl;
-      int sixth=gen_int_count();mipsfile<<"sub "<<"$t"<<sixth<<" "<<"$t"<<frth<<" "<<"$t"<<fifth<<endl;
+      int first=0;mipsfile<<"la $t"<<first<<" "<<linevec[2]<<endl;
+      int secnd=1;mipsfile<<"la $t"<<secnd<<" "<<linevec[3]<<endl;
+      int thrd=2;mipsfile<<"la $t"<<thrd<<" "<<linevec[4]<<endl;
+      int frth=3;mipsfile<<"lw $t"<<frth<<" "<<"0($t"<<first<<")"<<endl;
+      int fifth=4;mipsfile<<"lw $t"<<fifth<<" "<<"0($t"<<secnd<<")"<<endl;
+      int sixth=5;mipsfile<<"sub "<<"$t"<<sixth<<" "<<"$t"<<frth<<" "<<"$t"<<fifth<<endl;
       mipsfile<<"sw $t"<<sixth<<" 0($t"<<thrd<<")"<<endl;
     }
     else if(linevec[2][0]=='F'&&linevec[3][0]=='F'&&linevec[4][0]=='F')
     {
-      int first=gen_int_count();mipsfile<<"la $t"<<first<<" "<<linevec[2]<<endl;
-      int secnd=gen_int_count();mipsfile<<"la $t"<<secnd<<" "<<linevec[3]<<endl;
-      int thrd=gen_int_count();mipsfile<<"la $t"<<thrd<<" "<<linevec[4]<<endl;
-      int frth=gen_float_count();mipsfile<<"lw $f"<<frth<<" "<<"0($t"<<first<<")"<<endl;
-      int fifth=gen_float_count();mipsfile<<"lw $f"<<fifth<<" "<<"0($t"<<secnd<<")"<<endl;
-      int sixth=gen_float_count();mipsfile<<"sub "<<"$f"<<sixth<<" "<<"$f"<<frth<<" "<<"$f"<<fifth<<endl;
+      int first=0;mipsfile<<"la $t"<<first<<" "<<linevec[2]<<endl;
+      int secnd=1;mipsfile<<"la $t"<<secnd<<" "<<linevec[3]<<endl;
+      int thrd=2;mipsfile<<"la $t"<<thrd<<" "<<linevec[4]<<endl;
+      int frth=3;mipsfile<<"lw $f"<<frth<<" "<<"0($t"<<first<<")"<<endl;
+      int fifth=4;mipsfile<<"lw $f"<<fifth<<" "<<"0($t"<<secnd<<")"<<endl;
+      int sixth=5;mipsfile<<"sub "<<"$f"<<sixth<<" "<<"$f"<<frth<<" "<<"$f"<<fifth<<endl;
       mipsfile<<"sw $f"<<sixth<<" 0($t"<<thrd<<")"<<endl;
     }
   }
@@ -111,22 +111,22 @@ void generate_each_instruction(vector<string> linevec)
   {
     if(linevec[2][0]=='T'&&linevec[3][0]=='T'&&linevec[4][0]=='T')
     {
-      int first=gen_int_count();mipsfile<<"la $t"<<first<<" "<<linevec[2]<<endl;
-      int secnd=gen_int_count();mipsfile<<"la $t"<<secnd<<" "<<linevec[3]<<endl;
-      int thrd=gen_int_count();mipsfile<<"la $t"<<thrd<<" "<<linevec[4]<<endl;
-      int frth=gen_int_count();mipsfile<<"lw $t"<<frth<<" "<<"0($t"<<first<<")"<<endl;
-      int fifth=gen_int_count();mipsfile<<"lw $t"<<fifth<<" "<<"0($t"<<secnd<<")"<<endl;
-      int sixth=gen_int_count();mipsfile<<"mult "<<"$t"<<sixth<<" "<<"$t"<<frth<<" "<<"$t"<<fifth<<endl;
+      int first=0;mipsfile<<"la $t"<<first<<" "<<linevec[2]<<endl;
+      int secnd=1;mipsfile<<"la $t"<<secnd<<" "<<linevec[3]<<endl;
+      int thrd=2;mipsfile<<"la $t"<<thrd<<" "<<linevec[4]<<endl;
+      int frth=3;mipsfile<<"lw $t"<<frth<<" "<<"0($t"<<first<<")"<<endl;
+      int fifth=4;mipsfile<<"lw $t"<<fifth<<" "<<"0($t"<<secnd<<")"<<endl;
+      int sixth=5;mipsfile<<"mult "<<"$t"<<sixth<<" "<<"$t"<<frth<<" "<<"$t"<<fifth<<endl;
       mipsfile<<"sw $t"<<sixth<<" 0($t"<<thrd<<")"<<endl;
     }
     else if(linevec[2][0]=='F'&&linevec[3][0]=='F'&&linevec[4][0]=='F')
     {
-      int first=gen_int_count();mipsfile<<"la $t"<<first<<" "<<linevec[2]<<endl;
-      int secnd=gen_int_count();mipsfile<<"la $t"<<secnd<<" "<<linevec[3]<<endl;
-      int thrd=gen_int_count();mipsfile<<"la $t"<<thrd<<" "<<linevec[4]<<endl;
-      int frth=gen_float_count();mipsfile<<"lw $f"<<frth<<" "<<"0($t"<<first<<")"<<endl;
-      int fifth=gen_float_count();mipsfile<<"lw $f"<<fifth<<" "<<"0($t"<<secnd<<")"<<endl;
-      int sixth=gen_float_count();mipsfile<<"mult "<<"$f"<<sixth<<" "<<"$f"<<frth<<" "<<"$f"<<fifth<<endl;
+      int first=0;mipsfile<<"la $t"<<first<<" "<<linevec[2]<<endl;
+      int secnd=1;mipsfile<<"la $t"<<secnd<<" "<<linevec[3]<<endl;
+      int thrd=2;mipsfile<<"la $t"<<thrd<<" "<<linevec[4]<<endl;
+      int frth=3;mipsfile<<"lw $f"<<frth<<" "<<"0($t"<<first<<")"<<endl;
+      int fifth=4;mipsfile<<"lw $f"<<fifth<<" "<<"0($t"<<secnd<<")"<<endl;
+      int sixth=5;mipsfile<<"mult "<<"$f"<<sixth<<" "<<"$f"<<frth<<" "<<"$f"<<fifth<<endl;
       mipsfile<<"sw $f"<<sixth<<" 0($t"<<thrd<<")"<<endl;
     }
   }
@@ -134,22 +134,22 @@ void generate_each_instruction(vector<string> linevec)
   {
     if(linevec[2][0]=='T'&&linevec[3][0]=='T'&&linevec[4][0]=='T')
     {
-      int first=gen_int_count();mipsfile<<"la $t"<<first<<" "<<linevec[2]<<endl;
-      int secnd=gen_int_count();mipsfile<<"la $t"<<secnd<<" "<<linevec[3]<<endl;
-      int thrd=gen_int_count();mipsfile<<"la $t"<<thrd<<" "<<linevec[4]<<endl;
-      int frth=gen_int_count();mipsfile<<"lw $t"<<frth<<" "<<"0($t"<<first<<")"<<endl;
-      int fifth=gen_int_count();mipsfile<<"lw $t"<<fifth<<" "<<"0($t"<<secnd<<")"<<endl;
-      int sixth=gen_int_count();mipsfile<<"div "<<"$t"<<sixth<<" "<<"$t"<<frth<<" "<<"$t"<<fifth<<endl;
+      int first=0;mipsfile<<"la $t"<<first<<" "<<linevec[2]<<endl;
+      int secnd=1;mipsfile<<"la $t"<<secnd<<" "<<linevec[3]<<endl;
+      int thrd=2;mipsfile<<"la $t"<<thrd<<" "<<linevec[4]<<endl;
+      int frth=3;mipsfile<<"lw $t"<<frth<<" "<<"0($t"<<first<<")"<<endl;
+      int fifth=4;mipsfile<<"lw $t"<<fifth<<" "<<"0($t"<<secnd<<")"<<endl;
+      int sixth=5;mipsfile<<"div "<<"$t"<<sixth<<" "<<"$t"<<frth<<" "<<"$t"<<fifth<<endl;
       mipsfile<<"sw $t"<<sixth<<" 0($t"<<thrd<<")"<<endl;
     }
     else if(linevec[2][0]=='F'&&linevec[3][0]=='F'&&linevec[4][0]=='F')
     {
-      int first=gen_int_count();mipsfile<<"la $t"<<first<<" "<<linevec[2]<<endl;
-      int secnd=gen_int_count();mipsfile<<"la $t"<<secnd<<" "<<linevec[3]<<endl;
-      int thrd=gen_int_count();mipsfile<<"la $t"<<thrd<<" "<<linevec[4]<<endl;
-      int frth=gen_float_count();mipsfile<<"lw $f"<<frth<<" "<<"0($t"<<first<<")"<<endl;
-      int fifth=gen_float_count();mipsfile<<"lw $f"<<fifth<<" "<<"0($t"<<secnd<<")"<<endl;
-      int sixth=gen_float_count();mipsfile<<"div "<<"$f"<<sixth<<" "<<"$f"<<frth<<" "<<"$f"<<fifth<<endl;
+      int first=0;mipsfile<<"la $t"<<first<<" "<<linevec[2]<<endl;
+      int secnd=1;mipsfile<<"la $t"<<secnd<<" "<<linevec[3]<<endl;
+      int thrd=2;mipsfile<<"la $t"<<thrd<<" "<<linevec[4]<<endl;
+      int frth=3;mipsfile<<"lw $f"<<frth<<" "<<"0($t"<<first<<")"<<endl;
+      int fifth=4;mipsfile<<"lw $f"<<fifth<<" "<<"0($t"<<secnd<<")"<<endl;
+      int sixth=5;mipsfile<<"div "<<"$f"<<sixth<<" "<<"$f"<<frth<<" "<<"$f"<<fifth<<endl;
       mipsfile<<"sw $f"<<sixth<<" 0($t"<<thrd<<")"<<endl;
     }
   }
