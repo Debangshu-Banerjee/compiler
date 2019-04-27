@@ -34,6 +34,20 @@ public:
 		this->curr_offset = this->curr_offset + addition;
 	}
 };
+class user_define_data{
+public:
+	vector<string> user_variable;
+	user_define_data(){
+		this->user_variable.clear();
+	}
+	void print(){
+		cout<< endl<<endl<<"# user defined variable"<<endl;
+		for(int i=0;i<this->user_variable.size();i++){
+			cout<<"# "<<this->user_variable[i]<<endl;
+		}
+	}
+};
+
 class loop_tag_genarator{
 public:
 	int tag_no;

@@ -20,6 +20,7 @@ int active_function_index = 0;  // -1 for any type error
 int call_function_index = -1;
 bool main_flag = false;
 bool total_error = false;
+user_define_data total_user_variable;
 void yyerror(string s){
 	total_error = true;
 	 cerr<< s <<" at line no "<< yylineno<< endl;
@@ -1607,5 +1608,6 @@ int main(){
 	}
 	if(total_error == false){
 		intermediate_output.print();
+		total_user_variable.print();
 	}
 }

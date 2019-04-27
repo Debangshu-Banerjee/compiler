@@ -8,7 +8,7 @@ rel_tag_genarator rel_tag;
 gloabal_offset_structure global_offset;
 extern void yyerror(string s);
 extern code_output intermediate_output;
-
+extern user_define_data total_user_variable;
 int get_compatible_type_non_bool(int type1 ,int type2){
 	if(type1 == ERROR_TYPE || type2 == ERROR_TYPE){
 		return ERROR_TYPE;
@@ -172,6 +172,7 @@ bool sym_tab :: patch_variable(int active_function_index,vector<int> var_index,i
 		variable * temp = global_sym_tab[active_function_index]->local_variable_list[var_index[i]];
 		int curr_offset = global_offset.get_curr_offset();
 		temp->offset = curr_offset;
+		total_user_variable.user_variable.push_back(temp->name +"_"+to_string(temp->offset));
 		int addition = 0;
 		if(temp->type == SIMPLE){
 			if(temp->eletype == FLOAT_TYPE) addition = FLOAT_TYPE_SIZE;
