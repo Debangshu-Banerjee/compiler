@@ -49,6 +49,42 @@ void genarate_micro_op_float_int(string op,string opr1,string opr2,string result
   int sixth=5;mipsfile<<op<<" $f"<<sixth<<", "<<"$f"<<frth<<", "<<"$f"<<fifth<<endl;
   mipsfile<<"s.s $f"<<sixth<<", 0($t"<<thrd<<")"<<endl;
 }
+void handle_num_assignment(vector<string> linevec){
+
+}
+void handle_id_first_assignment(vector<string> linevec){
+
+}
+void handle_id_second_assignment(vector<string> linevec){
+
+}
+void handle_temp_to_temp_assignment(vector<string> linevec){
+
+}
+
+void handle_assignment(vector<string> linevec){
+  if(linevec.size()<=4) return;
+  if(linevec[1].empty() || linevec[2].empty() || linevec[3].empty() || linevec[4].empty()){
+      return;
+  }
+  if(isdidit(linevec[2][0])){
+    handle_num_assignment((linevec);
+  }
+  else{
+    if(linevec[2][0]!='_'){
+      handle_id_first_assignment(linevec);
+    }
+    else{
+      if(linevec[4][0]!='_'){
+        handle_id_second_assignment(linevec);
+      }
+      else{
+        handle_temp_to_temp_assignment(linevec);
+      }
+    }
+  }
+}
+
 vector<std::string> split(string line){
   // string tok;
   // stringstream ss(line);
@@ -164,6 +200,9 @@ void generate_each_instruction(vector<string> linevec)
     else{
       genarate_micro_op_float_int("div.s",linevec[2],linevec[3],linevec[4]);
     }
+  }
+  if(linevec[1] == "="){
+      handle_assignment(linevec);
   }
 }
 

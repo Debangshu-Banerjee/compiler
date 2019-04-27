@@ -272,11 +272,11 @@ public:
 					string t = to_string(global_temp);
 					global_temp++;
 					if(type == FLOAT_TYPE){
-						this->temporary_name = "F" + t;
+						this->temporary_name = "_F" + t;
 						total_temp_data.temp_variable.push_back(this->temporary_name);
 					}
 					else{
-						this->temporary_name = "T" + t;
+						this->temporary_name = "_T" + t;
 						total_temp_data.temp_variable.push_back(this->temporary_name);
 					}
 			}
@@ -307,11 +307,11 @@ public:
 					string t = to_string(global_temp);
 					global_temp++;
 					if(type == FLOAT_TYPE){
-						this->temporary_name = "F" + t;
+						this->temporary_name = "_F" + t;
 						total_temp_data.temp_variable.push_back(this->temporary_name);
 					}
 					else{
-						this->temporary_name = "T" + t;
+						this->temporary_name = "_T" + t;
 						total_temp_data.temp_variable.push_back(this->temporary_name);
 					}
 					this->var = NULL;

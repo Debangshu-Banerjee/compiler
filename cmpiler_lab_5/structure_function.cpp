@@ -121,7 +121,7 @@ variable * sym_tab ::search_variable_global(int active_function_index,string nam
 				return this->search_variable_current(0,name,level_of_declaration); // search global variables
 			}
 			vector<int> dimlist;
-			dimlist.clear();
+			dimlist.push_back(1);
 			index = new variable("_param",global_sym_tab[active_function_index]->param_list[parameter_index]->type, global_sym_tab[active_function_index]->param_list[parameter_index]->eletype,dimlist,1);
 			index->offset = parameter_index;
 			return index;
@@ -211,6 +211,7 @@ bool sym_tab :: patch_function_parameter_no(int active_function_index,int no_of_
 /* this function also prints error msgs*/
 int sym_tab :: check_param_compatible(int call_function_index,vector<int> type_list){
 	if(call_function_index < 0 || call_function_index >= this->global_sym_tab.size()) return ERROR_TYPE;
+
 	if(this->global_sym_tab[call_function_index]->param_list.size() != type_list.size()){
 			yyerror("No of arguments passed does not match defination of "+this->global_sym_tab[call_function_index]->function_name);
 			return ERROR_TYPE;
@@ -218,10 +219,27 @@ int sym_tab :: check_param_compatible(int call_function_index,vector<int> type_l
 	else{
 		bool flag = true;
 		for(int i=0;i<type_list.size();i++){
-			if(type_list[i] != this->global_sym_tab[call_function_index]->param_list[i]->eletype){
-				yyerror( to_string(i+1)+" argument passed does not match defination of "+this->global_sym_tab[call_function_index]->function_name);
-				flag = false;
+
+			if(type_list[i]!=FLOAT_ADDRESS_TYPE && type_list[i]!=INT_ADDRESS_TYPE){
+				if(type_list[i] != this->global_sym_tab[call_function_index]->param_list[i]->eletype){
+					yyerror( to_string(i+1)+to_string(type_list[i]) +" argument passed does not match defination of "+this->global_sym_tab[call_function_index]->function_name);
+					flag = false;
+				}
 			}
+			else{
+				if(type_list[i] == FLOAT_ADDRESS_TYPE){
+				if(!(type_list[i]==FLOAT_ADDRESS_TYPE && this->global_sym_tab[call_function_index]->param_list[i]->eletype == FLOAT_TYPE && this->global_sym_tab[call_function_index]->param_list[i]->type == ARRAY)){
+					yyerror( to_string(i+1)+" argument passed does not match defination of "+this->global_sym_tab[call_function_index]->function_name);
+					flag = false;
+				}
+			}
+			else{
+				if(!(type_list[i]==INT_ADDRESS_TYPE && this->global_sym_tab[call_function_index]->param_list[i]->eletype == INT_TYPE && this->global_sym_tab[call_function_index]->param_list[i]->type == ARRAY)){
+					yyerror( to_string(i+1)+" argument passed does not match defination of "+this->global_sym_tab[call_function_index]->function_name);
+					flag = false;
+				}
+			}
+		}
 		}
 		if(flag == false){
 			return ERROR_TYPE;
@@ -248,10 +266,10 @@ string sym_tab :: genarate_function_call(int call_function_index,elist_func_call
 
 		string temporary_name;
 		if(this->global_sym_tab[call_function_index]->result_type == INT_TYPE){
-			temporary_name = "T";
+			temporary_name = "_T";
 		}
 		else{
-			temporary_name = "F";
+			temporary_name = "_F";
 		}
 		temporary_name = temporary_name + t;
 		total_temp_data.temp_variable.push_back(temporary_name);

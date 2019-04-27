@@ -1,13 +1,17 @@
 .data
-a_0: .space 28
-b_28: .space 4
+e_0: .space 4
+i_4: .space 4
+a_8: .space 4
+b_12: .space 4
+c_16: .space 360
+a_376: .space 4
 T0: .space 4
-T1: .space 4
+F1: .space 4
 T2: .space 4
 T3: .space 4
 T4: .space 4
 T5: .space 4
-F6: .space 4
+T6: .space 4
 T7: .space 4
 T8: .space 4
 T9: .space 4
@@ -18,44 +22,40 @@ T13: .space 4
 T14: .space 4
 T15: .space 4
 T16: .space 4
-F17: .space 4
-F18: .space 4
+T17: .space 4
+T18: .space 4
 T19: .space 4
 T20: .space 4
+T21: .space 4
+T22: .space 4
+T23: .space 4
+T24: .space 4
+T25: .space 4
+T26: .space 4
+T27: .space 4
+T28: .space 4
+T29: .space 4
 .text
-la $t0, T1
-la $t1, 4
-la $t2, T2
-l.s $f3, 0($t0)
-l.s $f4, 0($t1)
-cvt.s.w $f3, $f3
-cvt.s.w $f4, $f4
-mul.s $f5, $f3, $f4
-s.s $f5, 0($t2)
-la $t0, T8
-la $t1, 4
-la $t2, T9
-l.s $f3, 0($t0)
-l.s $f4, 0($t1)
-cvt.s.w $f3, $f3
-cvt.s.w $f4, $f4
-mul.s $f5, $f3, $f4
-s.s $f5, 0($t2)
-la $t0, T12
-la $t1, 4
-la $t2, T13
-l.s $f3, 0($t0)
-l.s $f4, 0($t1)
-cvt.s.w $f3, $f3
-cvt.s.w $f4, $f4
-mul.s $f5, $f3, $f4
-s.s $f5, 0($t2)
-la $t0, T15
-la $t1, F17
-la $t2, F18
-l.s $f3, 0($t0)
-l.s $f4, 0($t1)
-cvt.s.w $f3, $f3
-cvt.s.w $f4, $f4
-mul.s $f5, $f3, $f4
-s.s $f5, 0($t2)
+  .globl main
+main:
+la $t0, T7
+la $t1, T9
+la $t2, T8
+lw $t3, 0($t0)
+lw $t4, 0($t1)
+add $t5, $t3, $t4
+sw $t5, 0($t2)
+la $t0, T19
+la $t1, T21
+la $t2, T20
+lw $t3, 0($t0)
+lw $t4, 0($t1)
+add $t5, $t3, $t4
+sw $t5, 0($t2)
+la $t0, T26
+la $t1, T27
+la $t2, T28
+lw $t3, 0($t0)
+lw $t4, 0($t1)
+mul $t5, $t3, $t4
+sw $t5, 0($t2)
