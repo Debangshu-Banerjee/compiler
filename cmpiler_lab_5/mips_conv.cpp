@@ -201,9 +201,12 @@ void generate_each_instruction(vector<string> linevec)
       genarate_micro_op_float_int("div.s",linevec[2],linevec[3],linevec[4]);
     }
   }
+<<<<<<< HEAD
   if(linevec[1] == "="){
       handle_assignment(linevec);
   }
+=======
+>>>>>>> 5470044553865d71be451fade001c32ee41af220
 }
 
 void generate()
