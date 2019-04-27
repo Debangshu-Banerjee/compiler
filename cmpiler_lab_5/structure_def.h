@@ -17,6 +17,22 @@
 #include<bits/stdc++.h>
 using namespace std;
 extern int global_temp;
+class temporary_data{
+public:
+	vector<string> temp_variable;
+	temporary_data(){
+		this->temp_variable.clear();
+	}
+	void print(){
+		cout<< endl<<endl<<"## temp defined variable"<<endl;
+		for(int i=0;i<this->temp_variable.size();i++){
+			cout<<"# "<<this->temp_variable[i]<<endl;
+		}
+		cout<<endl;
+	}
+};
+
+extern temporary_data total_temp_data;
 int get_compatible_type_non_bool(int type1 ,int type2);
 int get_compatible_type_bool_only(int type1 ,int type2);
 int get_compatible_type_rel_op(int type1 ,int type2);
@@ -41,7 +57,7 @@ public:
 		this->user_variable.clear();
 	}
 	void print(){
-		cout<< endl<<endl<<"# user defined variable"<<endl;
+		cout<< endl<<endl<<"## user defined variable"<<endl;
 		for(int i=0;i<this->user_variable.size();i++){
 			cout<<"# "<<this->user_variable[i]<<endl;
 		}
@@ -257,9 +273,11 @@ public:
 					global_temp++;
 					if(type == FLOAT_TYPE){
 						this->temporary_name = "F" + t;
+						total_temp_data.temp_variable.push_back(this->temporary_name);
 					}
 					else{
 						this->temporary_name = "T" + t;
+						total_temp_data.temp_variable.push_back(this->temporary_name);
 					}
 			}
 			else{
@@ -290,9 +308,11 @@ public:
 					global_temp++;
 					if(type == FLOAT_TYPE){
 						this->temporary_name = "F" + t;
+						total_temp_data.temp_variable.push_back(this->temporary_name);
 					}
 					else{
 						this->temporary_name = "T" + t;
+						total_temp_data.temp_variable.push_back(this->temporary_name);
 					}
 					this->var = NULL;
 			}

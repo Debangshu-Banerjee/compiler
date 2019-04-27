@@ -254,6 +254,7 @@ string sym_tab :: genarate_function_call(int call_function_index,elist_func_call
 			temporary_name = "F";
 		}
 		temporary_name = temporary_name + t;
+		total_temp_data.temp_variable.push_back(temporary_name);
 		intermediate_output.gen_special("refparam",temporary_name,"---","---");
 		intermediate_output.gen_special("call",this->global_sym_tab[call_function_index]->function_name,to_string(temp->type_list.size()+1),"---");
 		return temporary_name;
@@ -277,7 +278,7 @@ void code_output :: print(){
 	int count = 0;
 	for(int i=0;i<this->intermediate_code.size();i++){
 		if(this->intermediate_code[i] == "" ) continue;
-		cout<<(count+1)<<"   "<<this->intermediate_code[i]<<endl;
+		cout<<(count+1)<<" "<<this->intermediate_code[i]<<endl;
 		count++;
 	}
 	cout<<endl<<"-----------------end------------------"<<endl;
