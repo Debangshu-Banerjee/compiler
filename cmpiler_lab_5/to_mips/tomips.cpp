@@ -4,11 +4,14 @@
 using namespace std;
 
 
-int main()
+int main(int argc, char** argv)
 {
 
   ASMGenerator asmGenerator;
-  asmGenerator.setTACFileName("test.tac");
-  asmGenerator.setASMFileName("test.s");
+  asmGenerator.setTACFileName(argv[1]);
+  std::ofstream ofs;
+  ofs.open("output.s", std::ofstream::out | std::ofstream::trunc);
+  ofs.close();
+  asmGenerator.setASMFileName("output.s");
   asmGenerator.build();
 }
