@@ -196,10 +196,11 @@ void generate_each_instruction(vector<string> linevec)
 
 void generate()
 {
+  int index=tokenise_data_segment();
   generate_data_segment();
   fstream file;
   int line;
-  for(line = 0; line < lines.size(); line++){
+  for(line = index; line < lines.size(); line++){
     vector<string> linevec = split(lines[line]);  //split
     //cout<<linevec.size()<<endl;
     generate_each_instruction(linevec);
