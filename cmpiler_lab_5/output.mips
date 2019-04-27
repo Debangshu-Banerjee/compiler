@@ -1,0 +1,24 @@
+.data
+a_0: .space 28
+b_28: .space 4
+T0: .space 4
+T1: .space 4
+T2: .space 4
+T3: .space 4
+T4: .space 4
+T5: .space 4
+F6: .space 4
+T7: .space 4
+T8: .space 4
+T9: .space 4
+T10: .space 4
+T11: .space 4
+T12: .space 4
+T13: .space 4
+T14: .space 4
+T15: .space 4
+T16: .space 4
+F17: .space 4
+F18: .space 4
+T19: .space 4
+T20: .space 4

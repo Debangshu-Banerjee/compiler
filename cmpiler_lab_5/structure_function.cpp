@@ -172,7 +172,6 @@ bool sym_tab :: patch_variable(int active_function_index,vector<int> var_index,i
 		variable * temp = global_sym_tab[active_function_index]->local_variable_list[var_index[i]];
 		int curr_offset = global_offset.get_curr_offset();
 		temp->offset = curr_offset;
-		total_user_variable.user_variable.push_back(temp->name +"_"+to_string(temp->offset));
 		int addition = 0;
 		if(temp->type == SIMPLE){
 			if(temp->eletype == FLOAT_TYPE) addition = FLOAT_TYPE_SIZE;
@@ -187,6 +186,7 @@ bool sym_tab :: patch_variable(int active_function_index,vector<int> var_index,i
 			if(temp->eletype == INT_TYPE) addition = INT_TYPE_SIZE * size;
 		}
 		global_offset.update_curr_offset(addition);
+		total_user_variable.user_variable.push_back(temp->name +"_"+to_string(temp->offset)+" "+to_string(addition));
 	}
 	return true;
 }

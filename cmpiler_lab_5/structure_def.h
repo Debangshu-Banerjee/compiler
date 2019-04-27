@@ -12,7 +12,7 @@
 #define PARAM -1
 #define VAR -2
 #define INT_TYPE_SIZE 4
-#define FLOAT_TYPE_SIZE 8
+#define FLOAT_TYPE_SIZE 4
 
 #include<bits/stdc++.h>
 using namespace std;
@@ -26,7 +26,7 @@ public:
 	void print(){
 		cout<< endl<<endl<<"## temp defined variable"<<endl;
 		for(int i=0;i<this->temp_variable.size();i++){
-			cout<<"# "<<this->temp_variable[i]<<endl;
+			cout<<"# "<<this->temp_variable[i]<<" "<<"4"<<endl;
 		}
 		cout<<endl;
 	}

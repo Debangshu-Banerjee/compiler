@@ -1,8 +1,8 @@
 
 int main(){
-	int a;
-	a = 99;
+	int a[7];
+	a[0] = 99;
 	float b;
 	b=9.0;
-	a= a*b;
+	a[0]= a[0]*b;
 }
