@@ -6,6 +6,8 @@ using namespace std;
 
 vector<string> lines;  //3AC code lines
 
+ofstream mipsfile;
+
 vector<std::string> split(string line){
   string tok;
   stringstream ss(line);
@@ -29,20 +31,66 @@ void readfile(string filename){
   fin.close();
 }
 
+void generate_data_segment(){
+
+
+}
+
+void generate_each_instruction(vector<string> linevec)
+{
+
+  //mipsfile << text << endl;
+  if(linevec[1]=="+")
+  {
+
+  }
+  if(linevec[1]=="-")
+  {
+
+  }
+  if(linevec[1]=="*")
+  {
+
+  }
+  if(linevec[1]=="/")
+  {
+
+  }
+  if(linevec[1]=="=")
+  {
+
+  }
+  if(linevec[1]=="==")
+  {
+
+  }
+  if(linevec[1]==">")
+  {
+
+  }
+  if(linevec[1]==">=")
+  {
+
+  }
+
+}
+
 void generate()
 {
+  generate_data_segment();
   fstream file;
-  //file.open ("output.mips", ios::out | ios::in );
-  //file << text << endl;
   int line;
   for(line = 0; line < lines.size(); line++){
-    vector<std::string> linevec = split(lines[line]);  //split
+    vector<string> linevec = split(lines[line]);  //split
+    generate_each_instruction(linevec);
   }
 }
 
 int main(int argc, char** argv)
 {
-  readfile(argv[1]);
+  readfile(argv[1]);  //input 3AC file
+  mipsfile.open ("output.mips", ios::out | ios::trunc);
   generate();
+  mipsfile.close();
   return 0;
 }
