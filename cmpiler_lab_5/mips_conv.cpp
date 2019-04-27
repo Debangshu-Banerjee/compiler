@@ -95,10 +95,10 @@ void generate_each_instruction(vector<string> linevec)
       int first=0;mipsfile<<"la $t"<<first<<" "<<linevec[2]<<endl;
       int secnd=1;mipsfile<<"la $t"<<secnd<<" "<<linevec[3]<<endl;
       int thrd=2;mipsfile<<"la $t"<<thrd<<" "<<linevec[4]<<endl;
-      int frth=3;mipsfile<<"lw $f"<<frth<<" "<<"0($t"<<first<<")"<<endl;
-      int fifth=4;mipsfile<<"lw $f"<<fifth<<" "<<"0($t"<<secnd<<")"<<endl;
-      int sixth=5;mipsfile<<"add "<<"$f"<<sixth<<" "<<"$f"<<frth<<" "<<"$f"<<fifth<<endl;
-      mipsfile<<"sw $f"<<sixth<<" 0($t"<<thrd<<")"<<endl;
+      int frth=3;mipsfile<<"l.s $f"<<frth<<" "<<"0($t"<<first<<")"<<endl;
+      int fifth=4;mipsfile<<"l.s $f"<<fifth<<" "<<"0($t"<<secnd<<")"<<endl;
+      int sixth=5;mipsfile<<"add.s "<<"$f"<<sixth<<" "<<"$f"<<frth<<" "<<"$f"<<fifth<<endl;
+      mipsfile<<"s.s $f"<<sixth<<" 0($t"<<thrd<<")"<<endl;
     }
 
   }
@@ -119,10 +119,10 @@ void generate_each_instruction(vector<string> linevec)
       int first=0;mipsfile<<"la $t"<<first<<" "<<linevec[2]<<endl;
       int secnd=1;mipsfile<<"la $t"<<secnd<<" "<<linevec[3]<<endl;
       int thrd=2;mipsfile<<"la $t"<<thrd<<" "<<linevec[4]<<endl;
-      int frth=3;mipsfile<<"lw $f"<<frth<<" "<<"0($t"<<first<<")"<<endl;
-      int fifth=4;mipsfile<<"lw $f"<<fifth<<" "<<"0($t"<<secnd<<")"<<endl;
-      int sixth=5;mipsfile<<"sub "<<"$f"<<sixth<<" "<<"$f"<<frth<<" "<<"$f"<<fifth<<endl;
-      mipsfile<<"sw $f"<<sixth<<" 0($t"<<thrd<<")"<<endl;
+      int frth=3;mipsfile<<"l.s $f"<<frth<<" "<<"0($t"<<first<<")"<<endl;
+      int fifth=4;mipsfile<<"l.s $f"<<fifth<<" "<<"0($t"<<secnd<<")"<<endl;
+      int sixth=5;mipsfile<<"sub.s "<<"$f"<<sixth<<" "<<"$f"<<frth<<" "<<"$f"<<fifth<<endl;
+      mipsfile<<"s.s $f"<<sixth<<" 0($t"<<thrd<<")"<<endl;
     }
   }
   if(linevec[1]=="*")
@@ -134,7 +134,7 @@ void generate_each_instruction(vector<string> linevec)
       int thrd=2;mipsfile<<"la $t"<<thrd<<" "<<linevec[4]<<endl;
       int frth=3;mipsfile<<"lw $t"<<frth<<" "<<"0($t"<<first<<")"<<endl;
       int fifth=4;mipsfile<<"lw $t"<<fifth<<" "<<"0($t"<<secnd<<")"<<endl;
-      int sixth=5;mipsfile<<"mult "<<"$t"<<sixth<<" "<<"$t"<<frth<<" "<<"$t"<<fifth<<endl;
+      int sixth=5;mipsfile<<"mul "<<"$t"<<sixth<<" "<<"$t"<<frth<<" "<<"$t"<<fifth<<endl;
       mipsfile<<"sw $t"<<sixth<<" 0($t"<<thrd<<")"<<endl;
     }
     else if(linevec[2][0]=='F'&&linevec[3][0]=='F'&&linevec[4][0]=='F')
@@ -142,10 +142,10 @@ void generate_each_instruction(vector<string> linevec)
       int first=0;mipsfile<<"la $t"<<first<<" "<<linevec[2]<<endl;
       int secnd=1;mipsfile<<"la $t"<<secnd<<" "<<linevec[3]<<endl;
       int thrd=2;mipsfile<<"la $t"<<thrd<<" "<<linevec[4]<<endl;
-      int frth=3;mipsfile<<"lw $f"<<frth<<" "<<"0($t"<<first<<")"<<endl;
-      int fifth=4;mipsfile<<"lw $f"<<fifth<<" "<<"0($t"<<secnd<<")"<<endl;
-      int sixth=5;mipsfile<<"mult "<<"$f"<<sixth<<" "<<"$f"<<frth<<" "<<"$f"<<fifth<<endl;
-      mipsfile<<"sw $f"<<sixth<<" 0($t"<<thrd<<")"<<endl;
+      int frth=3;mipsfile<<"l.s $f"<<frth<<" "<<"0($t"<<first<<")"<<endl;
+      int fifth=4;mipsfile<<"l.s $f"<<fifth<<" "<<"0($t"<<secnd<<")"<<endl;
+      int sixth=5;mipsfile<<"mul.s "<<"$f"<<sixth<<" "<<"$f"<<frth<<" "<<"$f"<<fifth<<endl;
+      mipsfile<<"s.s $f"<<sixth<<" 0($t"<<thrd<<")"<<endl;
     }
   }
   if(linevec[1]=="/")
@@ -165,10 +165,10 @@ void generate_each_instruction(vector<string> linevec)
       int first=0;mipsfile<<"la $t"<<first<<" "<<linevec[2]<<endl;
       int secnd=1;mipsfile<<"la $t"<<secnd<<" "<<linevec[3]<<endl;
       int thrd=2;mipsfile<<"la $t"<<thrd<<" "<<linevec[4]<<endl;
-      int frth=3;mipsfile<<"lw $f"<<frth<<" "<<"0($t"<<first<<")"<<endl;
-      int fifth=4;mipsfile<<"lw $f"<<fifth<<" "<<"0($t"<<secnd<<")"<<endl;
-      int sixth=5;mipsfile<<"div "<<"$f"<<sixth<<" "<<"$f"<<frth<<" "<<"$f"<<fifth<<endl;
-      mipsfile<<"sw $f"<<sixth<<" 0($t"<<thrd<<")"<<endl;
+      int frth=3;mipsfile<<"l.s $f"<<frth<<" "<<"0($t"<<first<<")"<<endl;
+      int fifth=4;mipsfile<<"l.s $f"<<fifth<<" "<<"0($t"<<secnd<<")"<<endl;
+      int sixth=5;mipsfile<<"div.s "<<"$f"<<sixth<<" "<<"$f"<<frth<<" "<<"$f"<<fifth<<endl;
+      mipsfile<<"s.s $f"<<sixth<<" 0($t"<<thrd<<")"<<endl;
     }
   }
   if(linevec[1]=="=")
