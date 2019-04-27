@@ -1,0 +1,129 @@
+digraph g {
+
+129 [label="translation_unit"];
+
+127 [label="function_definition"];
+
+129 -> 127;
+
+130 [label="specifier"];
+
+127 -> 130;
+
+0 [label="int"];
+
+130 -> 0;
+
+4 [label="function"];
+
+127 -> 4;
+
+3 [label="main"];
+
+4 -> 3;
+
+126 [label="{}"];
+
+127 -> 126;
+
+32 [label="declaration_list"];
+
+126 -> 32;
+
+31 [label="declaration"];
+
+32 -> 31;
+
+131 [label="specifier"];
+
+31 -> 131;
+
+6 [label="int"];
+
+131 -> 6;
+
+30 [label="init_declarator_list"];
+
+31 -> 30;
+
+132 [label="="];
+
+30 -> 132;
+
+9 [label="ctr"];
+
+132 -> 9;
+
+11 [label="10"];
+
+132 -> 11;
+
+125 [label="statement_list"];
+
+126 -> 125;
+
+124 [label="statement"];
+
+125 -> 124;
+
+123 [label="do"];
+
+124 -> 123;
+
+95 [label="statement"];
+
+123 -> 95;
+
+94 [label="{}"];
+
+95 -> 94;
+
+72 [label="statement_list"];
+
+94 -> 72;
+
+71 [label="statement"];
+
+72 -> 71;
+
+54 [label="function"];
+
+71 -> 54;
+
+33 [label="print_int"];
+
+54 -> 33;
+
+53 [label="argument_expression_list"];
+
+54 -> 53;
+
+36 [label="ctr"];
+
+53 -> 36;
+
+93 [label="statement"];
+
+72 -> 93;
+
+133 [label="--"];
+
+93 -> 133;
+
+73 [label="ctr"];
+
+133 -> 73;
+
+113 [label=">="];
+
+123 -> 113;
+
+96 [label="ctr"];
+
+113 -> 96;
+
+105 [label="0"];
+
+113 -> 105;
+
+}
