@@ -16,6 +16,9 @@ int get_compatible_type_non_bool(int type1 ,int type2){
 	if(type1 == BOOL_TYPE || type2 == BOOL_TYPE){
 		return ERROR_TYPE;
 	}
+	if(type1 == VOID_TYPE || type2 == VOID_TYPE){
+		return ERROR_TYPE;
+	}
 	if(type1 == INT_TYPE && type2 == INT_TYPE){
 		return INT_TYPE;
 	}

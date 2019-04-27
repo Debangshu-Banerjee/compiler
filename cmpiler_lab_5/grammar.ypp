@@ -1048,7 +1048,7 @@ unary_expression: primary_expression
 		yyerror("decrementing pointers not allowed");
 		$2->type = ERROR_TYPE;
 	}
-	if($2->type != BOOL_TYPE){
+	if($2->type != BOOL_TYPE && $2->type != FLOAT_TYPE){
 		$$ = new unary_expression_($2->type);
 		$$->var = $2->var;
 		std::ostringstream out;
@@ -1062,7 +1062,7 @@ unary_expression: primary_expression
 		}
 	}
 	else{
-		yyerror("Trying to decrement a boolean data type");
+		yyerror("Trying to decrement a boolean or float data type");
 		$$ = new unary_expression_(ERROR_TYPE);
 		$$->var = NULL;
 	}
@@ -1079,7 +1079,7 @@ unary_expression: primary_expression
 		$2->type = ERROR_TYPE;
 	}
 
-	if($2->type != BOOL_TYPE){
+	if($2->type != BOOL_TYPE && $2->type != FLOAT_TYPE){
 		$$ = new unary_expression_($2->type);
 		$$->var = $2->var;
 		std::ostringstream out;
@@ -1093,7 +1093,7 @@ unary_expression: primary_expression
 		}
 	}
 	else{
-		yyerror("Trying to increment a boolean data type");
+		yyerror("Trying to increment a boolean or float data type");
 		$$ = new unary_expression_(ERROR_TYPE);
 		$$->var = NULL;
 	}
@@ -1248,7 +1248,11 @@ assignment_statement: id_arr ASSIGN conditional_expression
 				yyerror("we don't support assigning pointers");
 				$1->var->eletype = ERROR_TYPE;
 			}
-			if($1->var->eletype == VOID_TYPE){
+			if($3->type == FLOAT_ADDRESS_TYPE || $3->type == INT_ADDRESS_TYPE){
+				yyerror("we don't support assigning pointers");
+				$1->var->eletype = ERROR_TYPE;
+			}
+			if($1->var->eletype == VOID_TYPE || $3->type == VOID_TYPE){
 				yyerror("Trying to assign a void type");
 				$1->var->eletype = ERROR_TYPE;
 			}
@@ -1261,17 +1265,51 @@ assignment_statement: id_arr ASSIGN conditional_expression
 			}
 			else{
 				if($1->var->type == SIMPLE){
-					intermediate_output.gen_special("=",$3->temporary_name,"---",$1->var->name+"_"+to_string($1->var->offset));
+					if($1->var->eletype == $3->type){
+						intermediate_output.gen_special("=",$3->temporary_name,"---",$1->var->name+"_"+to_string($1->var->offset));
+					}
+					else{
+					 	string temp;
+						if($1->var->eletype == FLOAT_TYPE && $3->type == INT_TYPE){
+						 	temp = "F" + to_string(global_temp);
+							global_temp++;
+						}
+						if($1->var->eletype == INT_TYPE && $3->type == FLOAT_TYPE){
+						 	temp = "T" + to_string(global_temp);
+							global_temp++;
+						}
+						intermediate_output.gen_special("=",$3->temporary_name,"---",temp);
+						intermediate_output.gen_special("=",temp,"---",$1->var->name+"_"+to_string($1->var->offset));
+					}
+					//intermediate_output.gen_special("=",$3->temporary_name,"---",$1->var->name+"_"+to_string($1->var->offset));
 				}
 				else{
 					std::ostringstream out;
 					string temp_address = "T" + to_string(global_temp);
 					global_temp ++;
-					intermediate_output.gen_special("addr",$1->var->name+"_"+to_string($1->var->offset),"---",temp_address);
-					out << "= " << $3->temporary_name <<" " << temp_address<< "["<<$1->offset_temp<<"] " ;
-					string s_1 = out.str();
-					intermediate_output.gen(s_1);
-				}
+					if($1->var->eletype == $3->type){
+						intermediate_output.gen_special("addr",$1->var->name+"_"+to_string($1->var->offset),"---",temp_address);
+						out << "= " << $3->temporary_name <<" " << temp_address<< "["<<$1->offset_temp<<"] " ;
+						string s_1 = out.str();
+						intermediate_output.gen(s_1);
+					}
+					else{
+						string temp;
+						if($1->var->eletype == FLOAT_TYPE && $3->type == INT_TYPE){
+							temp = "F" + to_string(global_temp);
+							global_temp++;
+						}
+						if($1->var->eletype == INT_TYPE && $3->type == FLOAT_TYPE){
+							temp = "T" + to_string(global_temp);
+							global_temp++;
+						}
+						intermediate_output.gen_special("=",$3->temporary_name,"---",temp);
+						intermediate_output.gen_special("addr",$1->var->name+"_"+to_string($1->var->offset),"---",temp_address);
+						out << "= " << temp <<" " << temp_address<< "["<<$1->offset_temp<<"] " ;
+						string s_1 = out.str();
+						intermediate_output.gen(s_1);
+					}
+			 }
 				$$ = new assignment_statement_(temp_type,"ERR");
 			}
 	}
@@ -1569,5 +1607,5 @@ int main(){
 	}
 	if(total_error == false){
 		intermediate_output.print();
-	}	
+	}
 }
