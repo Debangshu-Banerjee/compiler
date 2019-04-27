@@ -50,25 +50,100 @@ void genarate_micro_op_float_int(string op,string opr1,string opr2,string result
   mipsfile<<"s.s $f"<<sixth<<", 0($t"<<thrd<<")"<<endl;
 }
 void handle_num_assignment(vector<string> linevec){
-
+  if(linevec[4][0]!= '_'){
+    cout<<"ERROR : problem in intermediate\n";
+    exit(0);
+  }
+  if(linevec[4][1]== 'F'){
+    mipsfile<<"la $t0, "<<linevec[4]<<endl;
+    mipsfile<<"li.s $f0, "<<linevec[2]<<endl;
+    mipsfile<<"s.s $f0, "<<"0($t0)"<<endl;
+  }
+  if(linevec[4][1] == 'T'){
+    mipsfile<<"la $t0, "<<linevec[4]<<endl;
+    mipsfile<<"li $t1, "<<linevec[2]<<endl;
+    mipsfile<<"sw $t1, "<<"0($t0)"<<endl;
+  }
 }
 void handle_id_first_assignment(vector<string> linevec){
-
+  if(linevec[4][0]!= '_'){
+    cout<<"ERROR : problem in intermediate\n";
+    exit(0);
+  }
+  if(linevec[4][1]== 'F'){
+    mipsfile<<"la $t0, "<<linevec[2]<<endl;
+    mipsfile<<"la $t1, "<<linevec[4]<<endl;
+    mipsfile<<"l.s $f0, "<<"0($t0)"<<endl;
+    mipsfile<<"s.s $f0, "<<"0($t1)"<<endl;
+  }
+  if(linevec[4][1]== 'T'){
+    mipsfile<<"la $t0, "<<linevec[2]<<endl;
+    mipsfile<<"la $t1, "<<linevec[4]<<endl;
+    mipsfile<<"lw $t2, "<<"0($t0)"<<endl;
+    mipsfile<<"sw $t2, "<<"0($t1)"<<endl;
+  }
 }
 void handle_id_second_assignment(vector<string> linevec){
-
+  if(linevec[2][0]!= '_'){
+    cout<<"ERROR : problem in intermediate\n";
+    exit(0);
+  }
+  if(linevec[2][1]== 'F'){
+    mipsfile<<"la $t0, "<<linevec[2]<<endl;
+    mipsfile<<"la $t1, "<<linevec[4]<<endl;
+    mipsfile<<"l.s $f0, "<<"0($t0)"<<endl;
+    mipsfile<<"s.s $f0, "<<"0($t1)"<<endl;
+  }
+  if(linevec[2][1]== 'T'){
+    mipsfile<<"la $t0, "<<linevec[2]<<endl;
+    mipsfile<<"la $t1, "<<linevec[4]<<endl;
+    mipsfile<<"lw $t2, "<<"0($t0)"<<endl;
+    mipsfile<<"sw $t2, "<<"0($t1)"<<endl;
+  }
 }
 void handle_temp_to_temp_assignment(vector<string> linevec){
-
+  if(linevec[2][0]!= '_' || linevec[4][0]!= '_' ){
+    cout<<"ERROR : problem in intermediate\n";
+    exit(0);
+  }
+  if(linevec[2][1]== 'F' && linevec[4][1]== 'F'){
+    cout<<"ERROR : problem in intermediate\n";
+    exit(0);
+  }
+  if(linevec[2][1]== 'T' && linevec[4][1]== 'T'){
+    cout<<"ERROR : problem in intermediate\n";
+    exit(0);
+  }
+  if(linevec[2][1]== 'T' && linevec[4][1] == 'F'){
+    mipsfile<<"la $t0, "<<linevec[2]<<endl;
+    mipsfile<<"la $t1, "<<linevec[4]<<endl;
+    mipsfile<<"lw $t2, "<<"0($t0)"<<endl;
+    mipsfile<<"mtc1 $t2, "<<"$f0"<<endl;
+    mipsfile<<"cvt.s.w $f0, "<<"$f0"<<endl;
+    mipsfile<<"s.s $f0, "<<"0$($t1)"<<endl;
+  }
+  if(linevec[2][1]!= 'F' && linevec[4][1]!= 'T'){
+    mipsfile<<"la $t0, "<<linevec[2]<<endl;
+    mipsfile<<"la $t1, "<<linevec[4]<<endl;
+    mipsfile<<"l.s $f0, "<<"0($t0)"<<endl;
+    mipsfile<<"cvt.w.s $f0, "<<"$f0"<<endl;
+    mipsfile<<"s.s $f0, "<<"0$($t1)"<<endl;
+  }
 }
 
 void handle_assignment(vector<string> linevec){
+  if(linevec.size() == 2){      // not working as there is problem in tokenising
+    if(linevec[1].empty()) return;
+    if(linevec[1][linevec.size()-1] == ':' ){
+      mipsfile<< linevec[1] << endl;
+    }
+  }
   if(linevec.size()<=4) return;
   if(linevec[1].empty() || linevec[2].empty() || linevec[3].empty() || linevec[4].empty()){
       return;
   }
-  if(isdidit(linevec[2][0])){
-    handle_num_assignment((linevec);
+  if(isdigit(linevec[2][0])){
+    handle_num_assignment(linevec);
   }
   else{
     if(linevec[2][0]!='_'){
@@ -85,6 +160,10 @@ void handle_assignment(vector<string> linevec){
   }
 }
 
+void handle_rel_op(vector<string> linevec){
+
+}
+
 vector<std::string> split(string line){
   // string tok;
   // stringstream ss(line);
@@ -96,7 +175,6 @@ vector<std::string> split(string line){
     do {
         string word;
         ss >> word;
-        linevec.push_back(word);
     } while (ss);
   return linevec;
 }
@@ -141,17 +219,27 @@ int tokenise_data_segment(){
 void generate_each_instruction(vector<string> linevec)
 {
   //mipsfile << text << endl;
+  if(linevec.size() == 2){
+    cout<< linevec[1] <<endl;
+    if(linevec[1].empty()) return;
+    if(linevec[1][linevec[1].size()-1] == ':'){
+      mipsfile<< linevec[1] << endl;
+    }
+  }
+  if(linevec.size() == 4){
+    /* handle arrary assignment */
+  }
   if(linevec.size()<=4) return;
   if(linevec[1].empty() || linevec[2].empty() || linevec[3].empty() || linevec[4].empty()){
       return;
   }
   if(linevec[1]=="+")
   {
-    if(linevec[2][0]=='T'&&linevec[3][0]=='T'&&linevec[4][0]=='T')
+    if(linevec[2][1]=='T'&&linevec[3][1]=='T'&&linevec[4][1]=='T')
     {
       genarate_micro_op_int("add",linevec[2],linevec[3],linevec[4]);
     }
-    else if(linevec[2][0]=='F'&&linevec[3][0]=='F'&&linevec[4][0]=='F')
+    else if(linevec[2][1]=='F'&&linevec[3][1]=='F'&&linevec[4][1]=='F')
     {
       genarate_micro_op_float("add.s",linevec[2],linevec[3],linevec[4]);
     }
@@ -161,11 +249,11 @@ void generate_each_instruction(vector<string> linevec)
   }
   if(linevec[1]=="-")
   {
-    if(linevec[2][0]=='T'&&linevec[3][0]=='T'&&linevec[4][0]=='T')
+    if(linevec[2][1]=='T'&&linevec[3][1]=='T'&&linevec[4][1]=='T')
     {
       genarate_micro_op_int("sub",linevec[2],linevec[3],linevec[4]);
     }
-    else if(linevec[2][0]=='F'&&linevec[3][0]=='F'&&linevec[4][0]=='F')
+    else if(linevec[2][1]=='F'&&linevec[3][1]=='F'&&linevec[4][1]=='F')
     {
       genarate_micro_op_float("sub.s",linevec[2],linevec[3],linevec[4]);
     }
@@ -175,11 +263,11 @@ void generate_each_instruction(vector<string> linevec)
   }
   if(linevec[1]=="*")
   {
-    if(linevec[2][0]=='T'&&linevec[3][0]=='T'&&linevec[4][0]=='T')
+    if(linevec[2][1]=='T'&&linevec[3][1]=='T'&&linevec[4][1]=='T')
     {
       genarate_micro_op_int("mul",linevec[2],linevec[3],linevec[4]);
     }
-    else if(linevec[2][0]=='F'&&linevec[3][0]=='F'&&linevec[4][0]=='F')
+    else if(linevec[2][1]=='F'&&linevec[3][1]=='F'&&linevec[4][1]=='F')
     {
       genarate_micro_op_float("mul.s",linevec[2],linevec[3],linevec[4]);
     }
@@ -189,11 +277,11 @@ void generate_each_instruction(vector<string> linevec)
   }
   if(linevec[1]=="/")
   {
-    if(linevec[2][0]=='T'&&linevec[3][0]=='T'&&linevec[4][0]=='T')
+    if(linevec[2][1]=='T'&&linevec[3][1]=='T'&&linevec[4][1]=='T')
     {
         genarate_micro_op_int_div("div",linevec[2],linevec[3],linevec[4]);
     }
-    else if(linevec[2][0]=='F'&&linevec[3][0]=='F'&&linevec[4][0]=='F')
+    else if(linevec[2][1]=='F'&&linevec[3][1]=='F'&&linevec[4][1]=='F')
     {
       genarate_micro_op_float("div.s",linevec[2],linevec[3],linevec[4]);
     }
@@ -201,12 +289,13 @@ void generate_each_instruction(vector<string> linevec)
       genarate_micro_op_float_int("div.s",linevec[2],linevec[3],linevec[4]);
     }
   }
-<<<<<<< HEAD
   if(linevec[1] == "="){
       handle_assignment(linevec);
   }
-=======
->>>>>>> 5470044553865d71be451fade001c32ee41af220
+  if(linevec[1] == "==" || linevec[1] == "!=" || linevec[1] == "<=" || linevec[1] == ">=" || linevec[1] == "<" || linevec[1] == ">"){
+      handle_rel_op(linevec);
+  }
+
 }
 
 void generate()

@@ -1,12 +1,7 @@
-int f(int ar[])
-{
-	int g;
-	g=ar[0];
-	return g;
-}
-
 int main(){
-	int a[7];
-	f(a);
-	return 0;
+	int a;
+	a = 5;
+	int b,c;
+	b = a * 5;
+	c= b + 6;
 }
