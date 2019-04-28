@@ -295,6 +295,31 @@ void generate_each_instruction(vector<string> linevec)
   if(linevec[1] == "==" || linevec[1] == "!=" || linevec[1] == "<=" || linevec[1] == ">=" || linevec[1] == "<" || linevec[1] == ">"){
       handle_rel_op(linevec);
   }
+  
+  
+  if(linevec[1]=="param")
+  {
+    string param_name=linevec[2];
+    mipsfile<<"sw "<<param_name<<"0($sp)"<<endl;
+    mipsfile<<"addiu $sp $sp - 4"<<endl;
+  }
+  if(linevec[1]=="refparam")
+  {
+
+  }
+  if(linevec[1]=="call")
+  {
+    string func_name=linevec[2];
+    string no_params=linevec[3];
+    int no_param=0;
+    stringstream temp(no_params);
+    temp>>no_param;
+    //cout<<no_param<<endl;
+    mipsfile<<"sw $fp 0($sp)"<<endl;
+    mipsfile<<"addiu $sp $sp - 4"<<endl;
+
+    mipsfile<<"jal "<<func_name<<":"<<endl;
+  }
 
 }
 
