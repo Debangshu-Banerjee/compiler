@@ -9,6 +9,7 @@ gloabal_offset_structure global_offset;
 extern void yyerror(string s);
 extern code_output intermediate_output;
 extern user_define_data total_user_variable;
+extern int max_param;
 int get_compatible_type_non_bool(int type1 ,int type2){
 	if(type1 == ERROR_TYPE || type2 == ERROR_TYPE){
 		return ERROR_TYPE;
@@ -122,8 +123,20 @@ variable * sym_tab ::search_variable_global(int active_function_index,string nam
 			}
 			vector<int> dimlist;
 			dimlist.push_back(1);
-			index = new variable("_param",global_sym_tab[active_function_index]->param_list[parameter_index]->type, global_sym_tab[active_function_index]->param_list[parameter_index]->eletype,dimlist,1);
-			index->offset = parameter_index;
+			if(global_sym_tab[active_function_index]->param_list[parameter_index]->type == ARRAY){
+				index = new variable("_Tparam",global_sym_tab[active_function_index]->param_list[parameter_index]->type, global_sym_tab[active_function_index]->param_list[parameter_index]->eletype,dimlist,1);
+				index->offset = parameter_index;
+			}
+			else{
+				if(global_sym_tab[active_function_index]->param_list[parameter_index]->eletype == FLOAT_TYPE){
+					index = new variable("_Fparam",global_sym_tab[active_function_index]->param_list[parameter_index]->type, global_sym_tab[active_function_index]->param_list[parameter_index]->eletype,dimlist,1);
+					index->offset = parameter_index;
+				}
+				if(global_sym_tab[active_function_index]->param_list[parameter_index]->eletype == INT_TYPE){
+					index = new variable("_Tparam",global_sym_tab[active_function_index]->param_list[parameter_index]->type, global_sym_tab[active_function_index]->param_list[parameter_index]->eletype,dimlist,1);
+					index->offset = parameter_index;
+				}
+			}
 			return index;
 		}
 
@@ -274,11 +287,17 @@ string sym_tab :: genarate_function_call(int call_function_index,elist_func_call
 		temporary_name = temporary_name + t;
 		total_temp_data.temp_variable.push_back(temporary_name);
 		intermediate_output.gen_special("refparam",temporary_name,"---","---");
-		intermediate_output.gen_special("call",this->global_sym_tab[call_function_index]->function_name,to_string(temp->type_list.size()+1),"---");
+		intermediate_output.gen_special("call",this->global_sym_tab[call_function_index]->function_name,to_string(temp->type_list.size()),"---");
+		if(max_param < temp->type_list.size()){
+			 max_param = temp->type_list.size();
+		}
 		return temporary_name;
 	}
 	else{
 		intermediate_output.gen_special("call",this->global_sym_tab[call_function_index]->function_name,to_string(temp->type_list.size()),"---");
+		if(max_param < temp->type_list.size()){
+			 max_param = temp->type_list.size();
+		}
 		return "ERR";
 	}
 }

@@ -22,6 +22,8 @@ bool main_flag = false;
 bool total_error = false;
 user_define_data total_user_variable;
 temporary_data total_temp_data;
+string curr_function_name = "";
+int max_param = 0;
 void yyerror(string s){
 	total_error = true;
 	 cerr<< s <<" at line no "<< yylineno<< endl;
@@ -117,7 +119,13 @@ function_declaration: function_head first_curly statement_list last_curly
 	}
 	//intermediate_output.patch_tag_no_put(tag,$3->break_list,intermediate_output.get_next()-1);
 	intermediate_output.patch_tag_no_put(tag,$3->next,intermediate_output.get_next()-1);
-	intermediate_output.gen_special("func","end","---","---");
+	if(curr_function_name == ""){
+		intermediate_output.gen_special("func","end","---","---");
+	}
+	else{
+		intermediate_output.gen_special("func","end",curr_function_name,"---");
+		curr_function_name = "";
+	}
 	active_function_index = 0;
 }
 ;
@@ -153,6 +161,7 @@ res_id: type ID {
         string new_s = s + ":";
         intermediate_output.gen(new_s);
 				intermediate_output.gen_special("func","begin",s,"---");
+				curr_function_name = s;
     }
 }
         ;
@@ -1665,6 +1674,15 @@ int main(){
 	if(total_error == false){
 		total_user_variable.print();
 		total_temp_data.print();
+		cout<<"## all parameter list"<<endl<<endl;
+		for(int i=0;i<max_param;i++){
+			cout<<"# _Tparam_"<<i<<" "<<4<<endl;
+		}
+		for(int i=0;i<max_param;i++){
+			cout<<"# _Fparam_"<<i<<" "<<4<<endl;
+		}
+		cout<<endl<<endl;
 		intermediate_output.print();
+
 	}
 }
