@@ -8,8 +8,23 @@ vector<string> lines;  //3AC code lines
 vector<string> data_items;
 vector<string> data_size;
 ofstream mipsfile;
+ofstream mipsfile1;  //for .data
 
 vector<string> parameter_mips;
+class float_count{
+public:
+  int count;
+  float_count(){
+    count = 0;
+  }
+  string get_count(string t){
+        string s = "float_const" + to_string(count);
+        count++;
+        mipsfile1<<s<<": .float "<<t<<endl;
+        return s;
+  }
+};
+float_count f_const;
 
 void handle_param(vector<string> linevec)
 {
@@ -95,7 +110,8 @@ void handle_num_assignment(vector<string> linevec){
   }
   if(linevec[4][1]== 'F'){
     mipsfile<<"la $t0, "<<linevec[4]<<endl;
-    mipsfile<<"li.s $f0, "<<linevec[2]<<endl;
+    string s = f_const.get_count(linevec[2]);
+    mipsfile<<"l.s $f0, "<<s<<endl;
     mipsfile<<"s.s $f0, "<<"0($t0)"<<endl;
   }
   if(linevec[4][1] == 'T'){
@@ -163,14 +179,14 @@ void handle_temp_to_temp_assignment(vector<string> linevec){
     mipsfile<<"lw $t2, "<<"0($t0)"<<endl;
     mipsfile<<"mtc1 $t2, "<<"$f0"<<endl;
     mipsfile<<"cvt.s.w $f0, "<<"$f0"<<endl;
-    mipsfile<<"s.s $f0, "<<"0$($t1)"<<endl;
+    mipsfile<<"s.s $f0, "<<"0($t1)"<<endl;
   }
   if(linevec[2][1]!= 'F' && linevec[4][1]!= 'T'){
     mipsfile<<"la $t0, "<<linevec[2]<<endl;
     mipsfile<<"la $t1, "<<linevec[4]<<endl;
     mipsfile<<"l.s $f0, "<<"0($t0)"<<endl;
     mipsfile<<"cvt.w.s $f0, "<<"$f0"<<endl;
-    mipsfile<<"s.s $f0, "<<"0$($t1)"<<endl;
+    mipsfile<<"s.s $f0, "<<"0($t1)"<<endl;
   }
 }
 
@@ -323,10 +339,10 @@ void readfile(string filename){
   fin.close();
 }
 
-void generate_data_segment(){
-    mipsfile<<".data"<< endl;
+void generate_data_segment(){  //in mipsfile1 --output1.mips
+    mipsfile1<<".data"<< endl;
     for(int i=0;i< data_items.size();i++){
-        mipsfile<< data_items[i] <<":"<< " .space " <<data_size[i]<<endl; // needs attention fora array declaration
+        mipsfile1<< data_items[i] <<":"<< " .space " <<data_size[i]<<endl; // needs attention fora array declaration
     }
 }
 int tokenise_data_segment(){
@@ -570,8 +586,25 @@ int main(int argc, char** argv)
     exit(1);
   }
   readfile(argv[1]);  //input 3AC file
-  mipsfile.open ("output.mips", ios::out | ios::trunc);
+  mipsfile.open ("output1.mips", ios::out | ios::trunc);
+  mipsfile1.open ("output.mips", ios::out | ios::trunc);
   generate();
   mipsfile.close();
+  mipsfile1.close();
+  std::ifstream ifile("output1.mips");
+  std::ofstream ofile("output.mips", std::ios::app);
+  if (!ifile.is_open()) {
+    cout<< "could not open file \n";
+    exit(1);
+  }
+  else if (!ofile.is_open()) {
+    cout<< "could not open file \n";
+    exit(1);
+  }
+  else {
+    ofile << ifile.rdbuf();
+  }
+  ifile.close();
+  ofile.close();
   return 0;
 }

@@ -1300,6 +1300,9 @@ assignment_statement: id_arr ASSIGN conditional_expression
 				$1->var->eletype = ERROR_TYPE;
 			}
 			int temp_type = get_compatible_type_non_bool($1->var->eletype,$3->type);
+			if($1->var->eletype == INT_TYPE && $3->type == BOOL_TYPE){
+				temp_type = INT_TYPE;
+			}
 			if(temp_type == ERROR_TYPE){
 				if($1->var->type != ERROR_TYPE && $3->type != ERROR_TYPE){
 						yyerror("Incompatible data types are used for assignment");
