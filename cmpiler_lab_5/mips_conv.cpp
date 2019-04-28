@@ -336,6 +336,71 @@ int tokenise_data_segment(){
   }
   return lines.size();
 }
+bool check_array(string s){
+    bool x =false;
+    for(int i=0;i<s.size();i++){
+      if(s[i]=='[') x=true;
+    }
+    return x;
+}
+void extract_op_array(string input,string &address,string &offset){
+    string temp;
+    for(int i=0;i<input.size();i++){
+        if(input[i] == '['){
+          address = temp;
+          temp.clear();
+          continue;
+        }
+        if(input[i] == ']') break;
+        temp = temp + input[i];
+    }
+    offset = temp;
+}
+void handle_array_assignment(vector<string> linevec){
+  if(linevec[1].empty() || linevec[2].empty() || linevec[3].empty()){
+      return;
+  }
+  if(linevec[1] != "="){
+    cout<<"problem in intermediate code\n";
+    exit(1);
+  }
+  bool first = check_array(linevec[2]);
+  bool second = check_array(linevec[3]);
+  if(first && second){
+    cout<<"problem in intermediate code\n";
+    exit(1);
+  }
+  if(first){
+     string address,offset;
+     extract_op_array(linevec[2],address,offset);
+     if(address.empty() || offset.empty()) return;
+     mipsfile<<"la $t0, "<<address<<endl;
+     mipsfile<<"lw $t1, "<<"0($t0)"<<endl;
+     mipsfile<<"la $t2, "<<offset<<endl;
+     mipsfile<<"lw $t3, "<<"0($t2)"<<endl;
+     mipsfile<<"add $t4, $t1, $t3"<<endl;
+     mipsfile<<"l.s $f0, "<<"0($t4)"<<endl;
+     mipsfile<<"la $t5, "<<linevec[3]<<endl;
+     mipsfile<<"s.s $f0, "<<"0($t5)"<<endl;
+      return;
+  }
+  if(second){
+      string address,offset;
+      extract_op_array(linevec[3],address,offset);
+      if(address.empty() || offset.empty()) return;
+      mipsfile<<"la $t0, "<<address<<endl;
+      mipsfile<<"lw $t1, "<<"0($t0)"<<endl;
+      mipsfile<<"la $t2, "<<offset<<endl;
+      mipsfile<<"lw $t3, "<<"0($t2)"<<endl;
+      mipsfile<<"add $t4, $t1, $t3"<<endl;
+      mipsfile<<"la $t5, "<<linevec[2]<<endl;
+      mipsfile<<"l.s $f0, "<<"0($t5)"<<endl;
+      mipsfile<<"s.s $f0, "<<"0($t4)"<<endl;
+      return;
+  }
+    cout<<"problem in intermediate code\n";
+    exit(1);
+}
 
 void handle_bool_op(string op,string opr1,string opr2,string result){
   mipsfile<<"la $t0, "<<opr1<<endl;
@@ -368,7 +433,7 @@ void generate_each_instruction(vector<string> linevec)
     }
   }
   if(linevec.size() == 5){
-    /* handle arrary assignment */
+     handle_array_assignment(linevec);
   }
   if(linevec.size()<=4) return;
   if(linevec[1].empty() || linevec[2].empty() || linevec[3].empty() || linevec[4].empty()){
@@ -458,6 +523,20 @@ void generate_each_instruction(vector<string> linevec)
       exit(1);
     }
       handle_bool_op(linevec[1],linevec[2],linevec[3],linevec[4]);
+  }
+  if(linevec[1] == "goto"){
+    if(linevec[4].empty()){
+      cout<<"problem in intermediate\n"<< endl;
+      exit(1);
+    }
+    if(linevec[4][linevec[4].size()-1] != ':'){
+      cout<<"problem in intermediate\n"<< endl;
+      exit(0);
+    }
+    else{
+      linevec[4][linevec[4].size()-1] = ' ';
+    }
+    mipsfile<<"j "<<linevec[4]<<endl;
   }
 }
 

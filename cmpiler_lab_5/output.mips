@@ -1,69 +1,30 @@
 .data
-a_0: .space 4
-c_4: .space 4
-b_8: .space 4
+x_0: .space 4
 _T0: .space 4
 _T1: .space 4
 _T2: .space 4
 _T3: .space 4
 _T4: .space 4
-_T5: .space 4
-_T6: .space 4
-_T7: .space 4
 .text
+foo:
+la $t0, _T0
+li $t1, 6
+sw $t1, 0($t0)
+la $t0, _T0
+la $t1, _T1
+la $t2, _T2
+lw $t3, 0($t0)
+lw $t4, 0($t1)
+add $t5, $t3, $t4
+sw $t5, 0($t2)
+func_end0:
 .globl main
 main:
-la $t0, _T0
-li $t1, 7
-sw $t1, 0($t0)
-la $t0, _T0
-la $t1, b_8
-lw $t2, 0($t0)
-sw $t2, 0($t1)
-la $t0, b_8
-la $t1, _T1
-lw $t2, 0($t0)
-sw $t2, 0($t1)
-la $t0, _T2
-li $t1, 5
-sw $t1, 0($t0)
 la $t0, _T3
-li $t1, 1
+li $t1, 6
 sw $t1, 0($t0)
-la $t0, _T1
-la $t1, _T2
-lw $t2, 0($t0)
-lw $t3, 0($t1)
-blt $t2, $t3, REL0 
-la $t0, _T3
-li $t1, 0
-sw $t1, 0($t0)
-REL0:
 la $t0, _T4
-li $t1, 0
-sw $t1, 0($t0)
-la $t0, _T3
-la $t1, _T4
-lw $t2, 0($t0)
-lw $t3, 0($t1)
-beq $t2, $t3, COND0 
-la $t0, _T5
-li $t1, 5
-sw $t1, 0($t0)
-la $t0, _T5
-la $t1, b_8
+la $t1, x_0
 lw $t2, 0($t0)
 sw $t2, 0($t1)
-COND0:
-la $t0, _T6
-li $t1, 8
-sw $t1, 0($t0)
-la $t0, _T6
-la $t1, b_8
-lw $t2, 0($t0)
-sw $t2, 0($t1)
-COND1:
-la $t0, _T7
-li $t1, 0
-sw $t1, 0($t0)
-func_end0:
+func_end1:
