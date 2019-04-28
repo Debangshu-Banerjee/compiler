@@ -42,6 +42,11 @@ void handle_call(vector<string> linevec)
   mipsfile<<"jal "<<func_name<<":"<<endl;
   parameter_mips.clear();
 }
+void handle_func_def(vector<string> linevec)
+{
+  string func_name=linevec[3];
+  mipsfile<<func_name<<":"<<endl;
+}
 
 void genarate_micro_op_int(string op,string opr1,string opr2,string result){
   int first=0;mipsfile<<"la $t"<<first<<", "<<opr1<<endl;
