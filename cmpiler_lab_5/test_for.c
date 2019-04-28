@@ -1,12 +1,11 @@
 int main(){
 	int a,c;
 	int b;
-	b=7;
-	if(b<5){
-		b=5;
+	b=4;
+	int i;
+	for(i = 0;i<5;i=i+1){
+		b = b+5;
 	}
-	else{
-		b=8;
-	}
+
 	return 0;
 }

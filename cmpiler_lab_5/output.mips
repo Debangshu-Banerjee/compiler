@@ -1,30 +1,30 @@
 .data
-x_0: .space 4
+a_0: .space 4
 _T0: .space 4
 _T1: .space 4
 _T2: .space 4
 _T3: .space 4
-_T4: .space 4
 .text
-foo:
+.globl main
+main:
 la $t0, _T0
-li $t1, 6
+li $t1, 7
 sw $t1, 0($t0)
 la $t0, _T0
+la $t1, a_0
+lw $t2, 0($t0)
+sw $t2, 0($t1)
+la $t0, a_0
 la $t1, _T1
+lw $t2, 0($t0)
+sw $t2, 0($t1)
+la $t0, _T3
+li $t1, 1
+sw $t1, 0($t0)
+la $t0, _T1
+la $t1, _T3
 la $t2, _T2
 lw $t3, 0($t0)
 lw $t4, 0($t1)
 add $t5, $t3, $t4
 sw $t5, 0($t2)
-func_end0:
-.globl main
-main:
-la $t0, _T3
-li $t1, 6
-sw $t1, 0($t0)
-la $t0, _T4
-la $t1, x_0
-lw $t2, 0($t0)
-sw $t2, 0($t1)
-func_end1:

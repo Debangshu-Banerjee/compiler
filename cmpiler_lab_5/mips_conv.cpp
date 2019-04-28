@@ -146,12 +146,16 @@ void handle_temp_to_temp_assignment(vector<string> linevec){
     exit(0);
   }
   if(linevec[2][1]== 'F' && linevec[4][1]== 'F'){
-    cout<<"ERROR : problem in intermediate\n";
-    exit(0);
+    mipsfile<<"la $t0, "<<linevec[2]<<endl;
+    mipsfile<<"la $t1, "<<linevec[4]<<endl;
+    mipsfile<<"l.s $f0, "<<"0($t0)"<<endl;
+    mipsfile<<"sw $f0, "<<"0($t1)"<<endl;
   }
+  mipsfile<<"la $t0, "<<linevec[2]<<endl;
+  mipsfile<<"la $t1, "<<linevec[4]<<endl;
+  mipsfile<<"lw $t2, "<<"0($t0)"<<endl;
+  mipsfile<<"sw $t2, "<<"0($t1)"<<endl;
   if(linevec[2][1]== 'T' && linevec[4][1]== 'T'){
-    cout<<"ERROR : problem in intermediate\n";
-    exit(0);
   }
   if(linevec[2][1]== 'T' && linevec[4][1] == 'F'){
     mipsfile<<"la $t0, "<<linevec[2]<<endl;
