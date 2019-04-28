@@ -250,6 +250,8 @@ int tokenise_data_segment(){
 }
 
 
+
+
 void generate_each_instruction(vector<string> linevec)
 {
   //mipsfile << text << endl;
@@ -323,46 +325,14 @@ void generate_each_instruction(vector<string> linevec)
       genarate_micro_op_float_int("div.s",linevec[2],linevec[3],linevec[4]);
     }
   }
-  if(linevec[1] == "="){vector<string> parameter_mips;
-
-void handle_param(vector<string> linevec)
-{
-  string param_name=linevec[2];
-  parameter_mips.push_back(param_name);
-  // mipsfile<<"sw "<<param_name<<"0($sp)"<<endl;
-  // mipsfile<<"addiu $sp $sp - 4"<<endl;
-}
-void handle_refparam(vector<string> linevec)
-{
-  return;
-}
-void handle_call(vector<string> linevec)
-{
-  string func_name=linevec[2];
-  string no_params=linevec[3];
-  int no_param=0;
-  stringstream temp(no_params);
-  temp>>no_param;
-  //cout<<no_param<<endl;
-  mipsfile<<"sw $fp 0($sp)"<<endl;
-  mipsfile<<"addiu $sp $sp - 4"<<endl;
-
-  for(auto &p:parameter_mips)  //all parameters for this function
-  {
-    mipsfile<<"sw "<<p<<"0($sp)"<<endl;
-    mipsfile<<"addiu $sp $sp - 4"<<endl;
-  }
-
-  mipsfile<<"jal "<<func_name<<":"<<endl;
-  parameter_mips.clear();
-}
+  if(linevec[1] == "="){
       handle_assignment(linevec);
   }
   if(linevec[1] == "==" || linevec[1] == "!=" || linevec[1] == "<=" || linevec[1] == ">=" || linevec[1] == "<" || linevec[1] == ">"){
       handle_rel_op(linevec);
   }
-  
-  
+
+
   if(linevec[1]=="param")
   {
     handle_param(linevec);
