@@ -9,6 +9,40 @@ vector<string> data_items;
 vector<string> data_size;
 ofstream mipsfile;
 
+vector<string> parameter_mips;
+
+void handle_param(vector<string> linevec)
+{
+  string param_name=linevec[2];
+  parameter_mips.push_back(param_name);
+  // mipsfile<<"sw "<<param_name<<"0($sp)"<<endl;
+  // mipsfile<<"addiu $sp $sp - 4"<<endl;
+}
+void handle_refparam(vector<string> linevec)
+{
+  return;
+}
+void handle_call(vector<string> linevec)
+{
+  string func_name=linevec[2];
+  string no_params=linevec[3];
+  int no_param=0;
+  stringstream temp(no_params);
+  temp>>no_param;
+  //cout<<no_param<<endl;
+  mipsfile<<"sw $fp 0($sp)"<<endl;
+  mipsfile<<"addiu $sp $sp - 4"<<endl;
+
+  for(auto &p:parameter_mips)  //all parameters for this function
+  {
+    mipsfile<<"sw "<<p<<"0($sp)"<<endl;
+    mipsfile<<"addiu $sp $sp - 4"<<endl;
+  }
+
+  mipsfile<<"jal "<<func_name<<":"<<endl;
+  parameter_mips.clear();
+}
+
 void genarate_micro_op_int(string op,string opr1,string opr2,string result){
   int first=0;mipsfile<<"la $t"<<first<<", "<<opr1<<endl;
   int secnd=1;mipsfile<<"la $t"<<secnd<<", "<<opr2<<endl;
@@ -318,6 +352,8 @@ void handle_bool_op(string op,string opr1,string opr2,string result){
 
   mipsfile<<"sw $t5, "<<"0($t2)"<<endl;
 }
+
+
 
 void generate_each_instruction(vector<string> linevec)
 {
