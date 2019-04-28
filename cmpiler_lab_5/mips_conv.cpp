@@ -132,12 +132,7 @@ void handle_temp_to_temp_assignment(vector<string> linevec){
 }
 
 void handle_assignment(vector<string> linevec){
-  if(linevec.size() == 2){      // not working as there is problem in tokenising
-    if(linevec[1].empty()) return;
-    if(linevec[1][linevec.size()-1] == ':' ){
-      mipsfile<< linevec[1] << endl;
-    }
-  }
+
   if(linevec.size()<=4) return;
   if(linevec[1].empty() || linevec[2].empty() || linevec[3].empty() || linevec[4].empty()){
       return;
@@ -159,9 +154,101 @@ void handle_assignment(vector<string> linevec){
     }
   }
 }
+void handle_rel_op_float(string op,string opr1,string opr2,string result){
+  if(op == "==" || op == "!="){
+    mipsfile<<"c.eq.s "<<opr1<<", "<<opr2<<endl;
+    if(op == "=="){
+      mipsfile<<"bc1t "<<result<<endl;
+    }
+    if(op == "!="){
+      mipsfile<<"bc1f "<<result<<endl;
+    }
+  }
+  if(op == ">" || op == "<"){
+    if(op == ">"){
+      mipsfile<<"c.lt.s "<<opr2<<", "<<opr1<<endl;
+      mipsfile<<"bc1t "<<result<<endl;
+    }
+    if(op == "<" ){
+      mipsfile<<"c.lt.s "<<opr1<<", "<<opr2<<endl;
+      mipsfile<<"bc1t "<<result<<endl;
+
+    }
+  }
+  if(op == ">=" || op == "<="){
+    if(op == ">="){
+      mipsfile<<"c.le.s "<<opr2<<", "<<opr1<<endl;
+      mipsfile<<"bc1t "<<result<<endl;
+    }
+    if(op == "<=" ){
+      mipsfile<<"c.le.s "<<opr1<<", "<<opr2<<endl;
+      mipsfile<<"bc1t "<<result<<endl;
+    }
+  }
+}
+void handle_rel_op_int(string op,string opr1,string opr2,string result){
+    if(op == "=="){
+      mipsfile<<"beq "<<opr1<<", "<<opr2<<", "<<result<<endl;
+    }
+   if(op == "!="){
+     mipsfile<<"bne "<<opr1<<", "<<opr2<<", "<<result<<endl;
+   }
+   if(op == "<="){
+     mipsfile<<"ble "<<opr1<<", "<<opr2<<", "<<result<<endl;
+   }
+   if(op == ">="){
+     mipsfile<<"bge "<<opr1<<", "<<opr2<<", "<<result<<endl;
+   }
+   if(op == "<"){
+     mipsfile<<"blt "<<opr1<<", "<<opr2<<", "<<result<<endl;
+   }
+   if(op == ">"){
+     mipsfile<<"bgt "<<opr1<<", "<<opr2<<", "<<result<<endl;
+   }
+}
 
 void handle_rel_op(vector<string> linevec){
-
+  if(linevec[4].empty()){
+    cout<<"problem in intermediate\n"<< endl;
+    exit(1);
+  }
+  if(linevec[4][linevec[4].size()-1] != ':'){
+    cout<<"problem in intermediate\n"<< endl;
+    exit(0);
+  }
+  else{
+    linevec[4][linevec[4].size()-1] = ' ';
+  }
+  if(linevec[2][1]== 'F' && linevec[3][1]== 'F'){
+    mipsfile<<"la $t0, "<<linevec[2]<<endl;
+    mipsfile<<"la $t1, "<<linevec[3]<<endl;
+    mipsfile<<"l.s $f0, "<<"0($t0)"<<endl;
+    mipsfile<<"l.s $f1, "<<"0($t1)"<<endl;
+    handle_rel_op_float(linevec[1],"$f0","$f1",linevec[4]);
+  }
+  if(linevec[2][1]== 'T' && linevec[3][1]== 'T'){
+    mipsfile<<"la $t0, "<<linevec[2]<<endl;
+    mipsfile<<"la $t1, "<<linevec[3]<<endl;
+    mipsfile<<"lw $t2, "<<"0($t0)"<<endl;
+    mipsfile<<"lw $t3, "<<"0($t1)"<<endl;
+    handle_rel_op_int(linevec[1],"$t2","$t3",linevec[4]);
+  }
+  if(linevec[2][1]== 'T' && linevec[3][1]== 'F'){
+    mipsfile<<"la $t0, "<<linevec[2]<<endl;
+    mipsfile<<"la $t1, "<<linevec[3]<<endl;
+    mipsfile<<"l.s $f0, "<<"0($t0)"<<endl;
+    mipsfile<<"cvt.s.w $f0, "<<"$f0"<<endl;
+    mipsfile<<"l.s $f1, "<<"0($t1)"<<endl;
+    handle_rel_op_float(linevec[1],"$f0","$f1",linevec[4]);
+  }
+  if(linevec[2][1]== 'F' && linevec[3][1]== 'T'){
+    mipsfile<<"la $t0, "<<linevec[2]<<endl;
+    mipsfile<<"la $t1, "<<linevec[3]<<endl;
+    mipsfile<<"l.s $f0, "<<"0($t0)"<<endl;
+    mipsfile<<"l.s $f1, "<<"0($t1)"<<endl;
+    mipsfile<<"cvt.s.w $f1, "<<"$f1"<<endl;
+    handle_rel_op_float(linevec[1],"$f0","$f1",linevec[4]);
+  }
 }
 
 vector<std::string> split(string line){
@@ -175,6 +262,7 @@ vector<std::string> split(string line){
     do {
         string word;
         ss >> word;
+        linevec.push_back(word);
     } while (ss);
   return linevec;
 }
@@ -215,18 +303,35 @@ int tokenise_data_segment(){
   return lines.size();
 }
 
+void handle_bool_op(string op,string opr1,string opr2,string result){
+  mipsfile<<"la $t0, "<<opr1<<endl;
+  mipsfile<<"la $t1, "<<opr2<<endl;
+  mipsfile<<"la $t2, "<<result<<endl;
+  mipsfile<<"lw $t3, "<<"0($t0)"<<endl;
+  mipsfile<<"lw $t4, "<<"0($t1)"<<endl;
+  if(op == "AND"){
+    mipsfile<<"and $t5, $t3, $t4"<<endl;
+  }
+  if(op == "OR"){
+      mipsfile<<"or $t5, $t3, $t4"<<endl;
+  }
+
+  mipsfile<<"sw $t5, "<<"0($t2)"<<endl;
+}
 
 void generate_each_instruction(vector<string> linevec)
 {
   //mipsfile << text << endl;
-  if(linevec.size() == 2){
-    cout<< linevec[1] <<endl;
+  if(linevec.size() == 3){            // change if the tokeniser become correct
     if(linevec[1].empty()) return;
     if(linevec[1][linevec[1].size()-1] == ':'){
+      if(linevec[1] == "main:"){
+          mipsfile<< ".globl main"<< endl;
+      }
       mipsfile<< linevec[1] << endl;
     }
   }
-  if(linevec.size() == 4){
+  if(linevec.size() == 5){
     /* handle arrary assignment */
   }
   if(linevec.size()<=4) return;
@@ -295,7 +400,29 @@ void generate_each_instruction(vector<string> linevec)
   if(linevec[1] == "==" || linevec[1] == "!=" || linevec[1] == "<=" || linevec[1] == ">=" || linevec[1] == "<" || linevec[1] == ">"){
       handle_rel_op(linevec);
   }
-
+  if(linevec[1]== "addr"){
+      mipsfile<<"la $t0, "<<linevec[2]<<endl;
+      mipsfile <<"la $t1, "<<linevec[4]<<endl;
+      mipsfile <<"sw $t0, "<<"0($t1)"<<endl;
+  }
+  if(linevec[1] == "NOT"){
+    if(linevec[2][1]!= 'T' || linevec[4][1]!= 'T' ){
+      cout<<"problem in intermediate\n";
+      exit(1);
+    }
+    mipsfile<<"la $t0, "<<linevec[2]<<endl;
+    mipsfile<<"la $t3, "<<linevec[4]<<endl;
+    mipsfile<<"lw $t1, "<<"0($t0)"<<endl;
+    mipsfile<<"xori $t2, $t1, 1"<<endl;
+    mipsfile<<"sw $t2, "<<"0($t3)"<<endl;
+  }
+  if(linevec[1] == "AND" || linevec[1] == "OR"){
+    if(linevec[2][1]!= 'T' || linevec[3][1]!= 'T' || linevec[4][1]!= 'T'){
+      cout<<"problem in intermediate\n";
+      exit(1);
+    }
+      handle_bool_op(linevec[1],linevec[2],linevec[3],linevec[4]);
+  }
 }
 
 void generate()

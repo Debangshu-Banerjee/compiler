@@ -1,7 +1,5 @@
 int main(){
-	int a;
-	a = 5;
-	int b,c;
-	b = a * 5;
-	c= b + 6;
+	int a ;
+	a= 5;
+	a = a* 5;		
 }

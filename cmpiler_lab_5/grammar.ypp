@@ -150,7 +150,7 @@ res_id: type ID {
         $$ = new result_($1->type);
         active_function_index = symbol_table.add_function(s,$1->type);
         level = 1;
-        string new_s = "func_" + s + ":";
+        string new_s = s + ":";
         intermediate_output.gen(new_s);
 				intermediate_output.gen_special("func","begin",s,"---");
     }
@@ -433,11 +433,11 @@ case_name : CASE
 ifexp: IF OPEN_BRACKET assignment_statement CLOSE_BRACKET
 {
 	if($3->type!= ERROR_TYPE){
-		$$ = new ifexp_(intermediate_output.get_next());
 		string temp = "_T" + to_string(global_temp);
 		global_temp++;
 		total_temp_data.temp_variable.push_back(temp);
 		intermediate_output.gen_special("=","0","---",temp);
+		$$ = new ifexp_(intermediate_output.get_next());
 		intermediate_output.gen_special("==",$3->temporary_var_name,temp,"---");
 	}
 	else{
@@ -496,11 +496,12 @@ whileexp: WHILE M OPEN_BRACKET assignment_statement CLOSE_BRACKET
 		exit(1);
 	}
 	if($4->type != ERROR_TYPE){
-		$$ = new loopexp_(intermediate_output.get_next(),$2->position);
+
 		string temp = "_T" + to_string(global_temp);
 		global_temp++;
 		total_temp_data.temp_variable.push_back(temp);
 		intermediate_output.gen_special("=","0","---",temp);
+		$$ = new loopexp_(intermediate_output.get_next(),$2->position);
 		intermediate_output.gen_special("==",$4->temporary_var_name,temp,"---");
 	}
 	else{
@@ -517,11 +518,11 @@ forexp: FOR OPEN_BRACKET assignment_statement SEMI M assignment_statement SEMI
 		exit(1);
 	}
 	if($3->type != ERROR_TYPE && $6->type != ERROR_TYPE){
-		$$ = new loopexp_ (intermediate_output.get_next(),$5->position);
 		string temp = "_T" + to_string(global_temp);
 		global_temp++;
 		total_temp_data.temp_variable.push_back(temp);
 		intermediate_output.gen_special("=","0","---",temp);
+		$$ = new loopexp_ (intermediate_output.get_next(),$5->position);
 		intermediate_output.gen_special("==",$6->temporary_var_name,temp,"---");
 		intermediate_output.gen_special("goto","---","---","---");
 	}
@@ -575,7 +576,7 @@ if($3->type == FLOAT_ADDRESS_TYPE || $3->type == INT_ADDRESS_TYPE){
  	$$ = new conditional_expression_(temp_type);
  	std::ostringstream out;
  	if(temp_type != ERROR_TYPE){
-		intermediate_output.gen_special("&&",$1->temporary_name,$3->temporary_name,$$->temporary_name);
+		intermediate_output.gen_special("AND",$1->temporary_name,$3->temporary_name,$$->temporary_name);
  	}
 	else{
 		if($1->type != ERROR_TYPE && $3->type != ERROR_TYPE){
@@ -605,7 +606,7 @@ if($3->type == FLOAT_ADDRESS_TYPE || $3->type == INT_ADDRESS_TYPE){
  	$$ = new conditional_expression_(temp_type);
  	std::ostringstream out;
  	if(temp_type != ERROR_TYPE){
-	 	intermediate_output.gen_special("&&",$1->temporary_name,$3->temporary_name,$$->temporary_name);
+	 	intermediate_output.gen_special("OR",$1->temporary_name,$3->temporary_name,$$->temporary_name);
  	}
 	else{
 		if($1->type != ERROR_TYPE && $3->type != ERROR_TYPE){
