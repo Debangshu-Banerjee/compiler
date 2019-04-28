@@ -3035,7 +3035,7 @@ else{
 						intermediate_output.gen_special("+",temp_index_new_1,(yyvsp[0].elist_s)->name_list[i],temp_index_new_2);
 						prev_index = temp_index_new_2;
 					}
-					string final_index = "_T" + to_string(global_temp);
+					/*string final_index = "_T" + to_string(global_temp);
 					global_temp++;
 					total_temp_data.temp_variable.push_back(final_index);
 					string temp_final_result = "_T" + to_string(global_temp);
@@ -3046,8 +3046,8 @@ else{
 					}
 					else {
 						intermediate_output.gen_special("*",prev_index,to_string(INT_TYPE_SIZE),final_index);
-					}
-						offset_temp = final_index;
+					}*/
+						offset_temp = prev_index;
 			}
 		}
 			(yyval.id_arr_s) = new id_arr_(var,offset_temp);

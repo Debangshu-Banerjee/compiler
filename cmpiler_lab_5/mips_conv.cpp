@@ -98,8 +98,12 @@ void genarate_micro_op_float_int(string op,string opr1,string opr2,string result
   int thrd=2;mipsfile<<"la $t"<<thrd<<", "<<result<<endl;
   int frth=3;mipsfile<<"l.s $f"<<frth<<", "<<"0($t"<<first<<")"<<endl;
   int fifth=4;mipsfile<<"l.s $f"<<fifth<<", "<<"0($t"<<secnd<<")"<<endl;
-  mipsfile<<"cvt.s.w $f"<<frth<<", "<<"$f"<<frth<<endl;
-  mipsfile<<"cvt.s.w $f"<<fifth<<", "<<"$f"<<fifth<<endl;
+  if(opr1[1] == 'T'){
+    mipsfile<<"cvt.s.w $f"<<frth<<", "<<"$f"<<frth<<endl;
+  }
+  if(opr2[1] == 'T'){
+    mipsfile<<"cvt.s.w $f"<<fifth<<", "<<"$f"<<fifth<<endl;
+  }
   int sixth=5;mipsfile<<op<<" $f"<<sixth<<", "<<"$f"<<frth<<", "<<"$f"<<fifth<<endl;
   mipsfile<<"s.s $f"<<sixth<<", 0($t"<<thrd<<")"<<endl;
 }
@@ -165,13 +169,14 @@ void handle_temp_to_temp_assignment(vector<string> linevec){
     mipsfile<<"la $t0, "<<linevec[2]<<endl;
     mipsfile<<"la $t1, "<<linevec[4]<<endl;
     mipsfile<<"l.s $f0, "<<"0($t0)"<<endl;
-    mipsfile<<"sw $f0, "<<"0($t1)"<<endl;
+    mipsfile<<"s.s $f0, "<<"0($t1)"<<endl;
   }
-  mipsfile<<"la $t0, "<<linevec[2]<<endl;
-  mipsfile<<"la $t1, "<<linevec[4]<<endl;
-  mipsfile<<"lw $t2, "<<"0($t0)"<<endl;
-  mipsfile<<"sw $t2, "<<"0($t1)"<<endl;
+
   if(linevec[2][1]== 'T' && linevec[4][1]== 'T'){
+    mipsfile<<"la $t0, "<<linevec[2]<<endl;
+    mipsfile<<"la $t1, "<<linevec[4]<<endl;
+    mipsfile<<"lw $t2, "<<"0($t0)"<<endl;
+    mipsfile<<"sw $t2, "<<"0($t1)"<<endl;
   }
   if(linevec[2][1]== 'T' && linevec[4][1] == 'F'){
     mipsfile<<"la $t0, "<<linevec[2]<<endl;
@@ -181,7 +186,7 @@ void handle_temp_to_temp_assignment(vector<string> linevec){
     mipsfile<<"cvt.s.w $f0, "<<"$f0"<<endl;
     mipsfile<<"s.s $f0, "<<"0($t1)"<<endl;
   }
-  if(linevec[2][1]!= 'F' && linevec[4][1]!= 'T'){
+  if(linevec[2][1]== 'F' && linevec[4][1]== 'T'){
     mipsfile<<"la $t0, "<<linevec[2]<<endl;
     mipsfile<<"la $t1, "<<linevec[4]<<endl;
     mipsfile<<"l.s $f0, "<<"0($t0)"<<endl;
@@ -403,6 +408,8 @@ void handle_array_assignment(vector<string> linevec){
      mipsfile<<"lw $t1, "<<"0($t0)"<<endl;
      mipsfile<<"la $t2, "<<offset<<endl;
      mipsfile<<"lw $t3, "<<"0($t2)"<<endl;
+     mipsfile<<"add $t3, $t3, $t3"<<endl;
+     mipsfile<<"add $t3, $t3, $t3"<<endl;
      mipsfile<<"add $t4, $t1, $t3"<<endl;
      mipsfile<<"l.s $f0, "<<"0($t4)"<<endl;
      mipsfile<<"la $t5, "<<linevec[3]<<endl;
@@ -417,6 +424,8 @@ void handle_array_assignment(vector<string> linevec){
       mipsfile<<"lw $t1, "<<"0($t0)"<<endl;
       mipsfile<<"la $t2, "<<offset<<endl;
       mipsfile<<"lw $t3, "<<"0($t2)"<<endl;
+      mipsfile<<"add $t3, $t3, $t3"<<endl;
+      mipsfile<<"add $t3, $t3, $t3"<<endl;
       mipsfile<<"add $t4, $t1, $t3"<<endl;
       mipsfile<<"la $t5, "<<linevec[2]<<endl;
       mipsfile<<"l.s $f0, "<<"0($t5)"<<endl;
@@ -442,7 +451,28 @@ void handle_bool_op(string op,string opr1,string opr2,string result){
 
   mipsfile<<"sw $t5, "<<"0($t2)"<<endl;
 }
-
+void handle_digit_multiply(vector<string> linevec){
+  if(isdigit(linevec[2][0]) && isdigit(linevec[3][0])){
+    cout<<"problem in intermediate\n";
+    exit(1);
+  }
+  if(isdigit(linevec[2][0])){
+    mipsfile<<"la $t0, "<<linevec[3]<<endl;
+    mipsfile<<"li $t1, "<<linevec[2]<<endl;
+    mipsfile<<"lw $t2, "<<"0($t0)"<<endl;
+    mipsfile<<"mul $t3, $t1, $t2"<<endl;
+    mipsfile<<"la $t4, "<<linevec[4]<<endl;
+    mipsfile<<"sw $t3, "<<"0($t4)"<<endl;
+  }
+  if(isdigit(linevec[3][0])){
+    mipsfile<<"la $t0, "<<linevec[2]<<endl;
+    mipsfile<<"li $t1, "<<linevec[3]<<endl;
+    mipsfile<<"lw $t2, "<<"0($t0)"<<endl;
+    mipsfile<<"mul $t3, $t1, $t2"<<endl;
+    mipsfile<<"la $t4, "<<linevec[4]<<endl;
+    mipsfile<<"sw $t3, "<<"0($t4)"<<endl;
+  }
+}
 
 
 void generate_each_instruction(vector<string> linevec)
@@ -503,7 +533,12 @@ void generate_each_instruction(vector<string> linevec)
       genarate_micro_op_float("mul.s",linevec[2],linevec[3],linevec[4]);
     }
     else{
-      genarate_micro_op_float_int("mul.s",linevec[2],linevec[3],linevec[4]);
+      if(isdigit(linevec[2][0]) || isdigit(linevec[3][0]) ){
+        handle_digit_multiply(linevec);
+      }
+      else{
+        genarate_micro_op_float_int("mul.s",linevec[2],linevec[3],linevec[4]);
+      }
     }
   }
   if(linevec[1]=="/")
@@ -522,6 +557,7 @@ void generate_each_instruction(vector<string> linevec)
   }
   if(linevec[1] == "="){
       handle_assignment(linevec);
+
   }
   if(linevec[1] == "==" || linevec[1] == "!=" || linevec[1] == "<=" || linevec[1] == ">=" || linevec[1] == "<" || linevec[1] == ">"){
       handle_rel_op(linevec);
@@ -562,6 +598,26 @@ void generate_each_instruction(vector<string> linevec)
       linevec[4][linevec[4].size()-1] = ' ';
     }
     mipsfile<<"j "<<linevec[4]<<endl;
+  }
+  if(linevec[1] == "UMINUS"){
+    if(linevec[2][1] == 'F'){
+      mipsfile<<"la $t0, "<<linevec[2]<<endl;
+      mipsfile<<"l.s $f1, "<<"0($t0)"<<endl;
+      mipsfile<<"l.s $f2, "<<"0($t0)"<<endl;
+      mipsfile<<"add.s $f2, $f2, $f2"<<endl;
+      mipsfile<<"sub.s $f1, $f1, $f2"<<endl;
+      mipsfile<<"la $t3, "<<linevec[4]<<endl;
+      mipsfile<<"s.s $f1, "<<"0($t3)"<<endl;
+    }
+    if(linevec[2][1] == 'T'){
+        mipsfile<<"la $t0, "<<linevec[2]<<endl;
+        mipsfile<<"lw $t1, "<<"0($t0)"<<endl;
+        mipsfile<<"lw $t2, "<<"0($t0)"<<endl;
+        mipsfile<<"add $t2, $t2, $t2"<<endl;
+        mipsfile<<"sub $t1, $t1, $t2"<<endl;
+        mipsfile<<"la $t3, "<<linevec[4]<<endl;
+        mipsfile<<"sw $t1, "<<"0($t3)"<<endl;
+    }
   }
 }
 
