@@ -42,6 +42,11 @@ void handle_call(vector<string> linevec)
   mipsfile<<"jal "<<func_name<<":"<<endl;
   parameter_mips.clear();
 }
+void handle_func_def(vector<string> linevec)
+{
+  string func_name=linevec[3];
+  mipsfile<<func_name<<":"<<endl;
+}
 
 void genarate_micro_op_int(string op,string opr1,string opr2,string result){
   int first=0;mipsfile<<"la $t"<<first<<", "<<opr1<<endl;
@@ -458,6 +463,22 @@ void generate_each_instruction(vector<string> linevec)
       exit(1);
     }
       handle_bool_op(linevec[1],linevec[2],linevec[3],linevec[4]);
+  }
+  if(linevec[1]=="param")
+  {
+    handle_param(linevec);
+  }
+  if(linevec[1]=="refparam")
+  {
+    handle_refparam(linevec);
+  }
+  if(linevec[1]=="call")
+  {
+    handle_call(linevec);
+  }
+  if(linevec[1]=="func"&&linevec[2]=="begin")
+  {
+    handle_func_def(linevec);
   }
 }
 
