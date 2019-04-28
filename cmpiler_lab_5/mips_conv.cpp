@@ -8,6 +8,7 @@ vector<string> lines;  //3AC code lines
 vector<string> data_items;
 vector<string> data_size;
 ofstream mipsfile;
+ofstream mipsfile1;  //for .data
 
 vector<string> parameter_mips;
 
@@ -323,10 +324,10 @@ void readfile(string filename){
   fin.close();
 }
 
-void generate_data_segment(){
-    mipsfile<<".data"<< endl;
+void generate_data_segment(){  //in mipsfile1 --output1.mips
+    mipsfile1<<".data"<< endl;
     for(int i=0;i< data_items.size();i++){
-        mipsfile<< data_items[i] <<":"<< " .space " <<data_size[i]<<endl; // needs attention fora array declaration
+        mipsfile1<< data_items[i] <<":"<< " .space " <<data_size[i]<<endl; // needs attention fora array declaration
     }
 }
 int tokenise_data_segment(){
@@ -571,6 +572,7 @@ int main(int argc, char** argv)
   }
   readfile(argv[1]);  //input 3AC file
   mipsfile.open ("output.mips", ios::out | ios::trunc);
+  mipsfile1.open ("output1.mips", ios::out | ios::trunc);
   generate();
   mipsfile.close();
   return 0;
