@@ -38,6 +38,7 @@ break                           { return(BREAK);}
 continue                        { return(CONTINUE); }
 float                           { yylval.type = FLOAT; return(FLOAT); }
 for                             { return(FOR); }
+print                           { return(PRINT);}
 if                              { return(IF); }
 switch                          {return(SWITCH); }
 case                            { return(CASE);}

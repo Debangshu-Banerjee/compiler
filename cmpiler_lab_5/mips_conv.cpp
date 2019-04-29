@@ -369,6 +369,7 @@ void generate_data_segment(){  //in mipsfile1 --output1.mips
     for(int i=0;i< data_items.size();i++){
         mipsfile1<< data_items[i] <<":"<< " .space " <<data_size[i]<<endl; // needs attention fora array declaration
     }
+     mipsfile1<<"newline:"<<" .asciiz "<<"\""<<"\\"<<"n"<<"\""<<endl;
 }
 int tokenise_data_segment(){
   for(int i=0;i<lines.size();i++){
@@ -700,6 +701,24 @@ void generate_each_instruction(vector<string> linevec)
         mipsfile<<"l.s $f11, "<<"0($t0)"<<endl;
     }
     handle_func_end(linevec);
+  }
+  if(linevec[1] == "print"){
+    if(linevec[2][1] == 'T'){
+      mipsfile<<"lw $a0, "<<linevec[2]<<endl;
+      mipsfile<<"li $v0, 1"<<endl;
+      mipsfile<<"syscall"<<endl;
+      mipsfile<<"li $v0, 4"<<endl;
+      mipsfile<<"la $a0 newline"<<endl;
+      mipsfile<<"syscall"<<endl;
+    }
+    if(linevec[2][1] == 'F'){
+      mipsfile<<"l.s $f12, "<<linevec[2]<<endl;
+      mipsfile<<"li $v0, 2"<<endl;
+      mipsfile<<"syscall"<<endl;
+      mipsfile<<"li $v0, 4"<<endl;
+      mipsfile<<"la $a0 newline"<<endl;
+      mipsfile<<"syscall"<<endl;
+    }
   }
 
 }

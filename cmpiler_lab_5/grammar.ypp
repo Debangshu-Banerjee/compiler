@@ -60,6 +60,7 @@ void yyerror(string s){
 %token NOT AMP TILDE STAR ASSIGN OPEN_BRACKET CLOSE_BRACKET OPEN_CURLY CLOSE_CURLY OPEN_SQUARE CLOSE_SQUARE
 %token SEMI COMMA DOT PLUS MINUS DIVIDE MODULUS PIPE XOR QUES COLON
 %token SWITCH CASE DEFAULT
+%token PRINT
 %token <name> ID
 %token <type> BOOL CHAR INT FLOAT VOID
 %token <integer_value> NUM
@@ -257,6 +258,17 @@ $$->break_list.clear();
 	$$->break_list.clear();
 	$$->continue_list.clear();
 }
+					| PRINT OPEN_BRACKET primary_expression CLOSE_BRACKET SEMI
+{
+	$$ = new statement_list_(0);
+	$$->next.clear();
+	$$->break_list.clear();
+	$$->continue_list.clear();
+	if($3->type != ERROR_TYPE && $3->temporary_name != "ERR"){
+		intermediate_output.gen_special("print",$3->temporary_name,"---","---");
+	}	
+}
+
           |first_curly statement_list last_curly
 {
 	$$ = new statement_list_(0);

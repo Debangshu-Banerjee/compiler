@@ -91,15 +91,16 @@ extern int yydebug;
     SWITCH = 301,
     CASE = 302,
     DEFAULT = 303,
-    ID = 304,
-    BOOL = 305,
-    CHAR = 306,
-    INT = 307,
-    FLOAT = 308,
-    VOID = 309,
-    NUM = 310,
-    REAL = 311,
-    UMINUS = 314
+    PRINT = 304,
+    ID = 305,
+    BOOL = 306,
+    CHAR = 307,
+    INT = 308,
+    FLOAT = 309,
+    VOID = 310,
+    NUM = 311,
+    REAL = 312,
+    UMINUS = 315
   };
 #endif
 
@@ -135,7 +136,7 @@ union YYSTYPE
 	case_list_ * case_list_s;
 	unary_expression_ * unary_expression_s;
 
-#line 139 "grammar.tab.hpp" /* yacc.c:1909  */
+#line 140 "grammar.tab.hpp" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;

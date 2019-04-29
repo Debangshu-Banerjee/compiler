@@ -33,6 +33,8 @@
 # _T24 4
 # _T25 4
 # _T26 4
+# _T27 4
+# _T28 4
 
 ## all parameter list
 
@@ -96,7 +98,11 @@
 54 = 0 --- _T26
 55 REL2:
 56 = _T26 --- d_4
-57 func_end1:
-58 func end main ---
+57 = c_0 --- _T27
+58 print _T27 --- ---
+59 = d_4 --- _T28
+60 print _T28 --- ---
+61 func_end1:
+62 func end main ---
 
 -----------------end------------------

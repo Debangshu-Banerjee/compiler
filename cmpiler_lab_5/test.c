@@ -11,4 +11,6 @@ int main(){
 	c = c+ 5;
 	int d;
 	d = (c > 5);
+	print(c);
+	print(d);
 }
