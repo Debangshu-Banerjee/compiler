@@ -1,314 +1,111 @@
 .data
-a_0: .space 4
-b_4: .space 4
-a_8: .space 4
-c_12: .space 4
-d_16: .space 4
-i_20: .space 4
-r_24: .space 4
-s_28: .space 4
+a_0: .space 28
+b_28: .space 4
 _T0: .space 4
-_F1: .space 4
+_T1: .space 4
 _T2: .space 4
 _T3: .space 4
 _T4: .space 4
 _T5: .space 4
 _T6: .space 4
-_F7: .space 4
-_F8: .space 4
+_T7: .space 4
+_T8: .space 4
 _T9: .space 4
-_F10: .space 4
-_F11: .space 4
+_T10: .space 4
+_T11: .space 4
 _T12: .space 4
-_F13: .space 4
-_F14: .space 4
+_T13: .space 4
+_T14: .space 4
 _T15: .space 4
 _T16: .space 4
-_F17: .space 4
-_F18: .space 4
-_T19: .space 4
-_T20: .space 4
-_T21: .space 4
-_T22: .space 4
-_T23: .space 4
-_T24: .space 4
-_T25: .space 4
-_T26: .space 4
-_T27: .space 4
-_F28: .space 4
-_T29: .space 4
-_F30: .space 4
-_T31: .space 4
-_T32: .space 4
-_T33: .space 4
-_T34: .space 4
-_T35: .space 4
-_T36: .space 4
+_T17: .space 4
+_T18: .space 4
 _Tparam_0: .space 4
-_Tparam_1: .space 4
 _Fparam_0: .space 4
-_Fparam_1: .space 4
-float_const0: .float 1.200000
 .text
 j main
-la $t0, _T0
-li $t1, 2
-sw $t1, 0($t0)
-la $t0, _T0
-la $t1, a_0
-lw $t2, 0($t0)
-sw $t2, 0($t1)
-la $t0, _F1
-l.s $f0, float_const0
-s.s $f0, 0($t0)
-la $t0, _F1
-la $t1, b_4
-l.s $f0, 0($t0)
-s.s $f0, 0($t1)
-sum:
+f:
 move $fp, $sp
 sw $ra, 0($sp)
 addiu $sp, $sp, -4
-la $t0, _T2
-li $t1, 10
+la $t0, _T0
+li $t1, 4
 sw $t1, 0($t0)
-la $t0, _T2
-la $t1, a_8
+la $t0, _T0
+la $t1, _T1
 lw $t2, 0($t0)
 sw $t2, 0($t1)
-func_end0:
-lw $ra, 0($fp)
-addiu $sp, $sp, 4
-la $t0, _Fparam_1
-addiu $sp, $sp, 4
-l.s $f0, 0($sp)
-s.s $f0, 0($t0)
-la $t0, _Fparam_0
-addiu $sp, $sp, 4
-l.s $f0, 0($sp)
-s.s $f0, 0($t0)
-la $t0, _Tparam_1
-addiu $sp, $sp, 4
-l.s $f0, 0($sp)
-s.s $f0, 0($t0)
-la $t0, _Tparam_0
-addiu $sp, $sp, 4
-l.s $f0, 0($sp)
-s.s $f0, 0($t0)
-la $t0, _T36
-addiu $sp, $sp, 4
-l.s $f0, 0($sp)
-s.s $f0, 0($t0)
-la $t0, _T35
-addiu $sp, $sp, 4
-l.s $f0, 0($sp)
-s.s $f0, 0($t0)
-la $t0, _T34
-addiu $sp, $sp, 4
-l.s $f0, 0($sp)
-s.s $f0, 0($t0)
-la $t0, _T33
-addiu $sp, $sp, 4
-l.s $f0, 0($sp)
-s.s $f0, 0($t0)
-la $t0, _T32
-addiu $sp, $sp, 4
-l.s $f0, 0($sp)
-s.s $f0, 0($t0)
-la $t0, _T31
-addiu $sp, $sp, 4
-l.s $f0, 0($sp)
-s.s $f0, 0($t0)
-la $t0, _F30
-addiu $sp, $sp, 4
-l.s $f0, 0($sp)
-s.s $f0, 0($t0)
-la $t0, _T29
-addiu $sp, $sp, 4
-l.s $f0, 0($sp)
-s.s $f0, 0($t0)
-la $t0, _F28
-addiu $sp, $sp, 4
-l.s $f0, 0($sp)
-s.s $f0, 0($t0)
-la $t0, _T27
-addiu $sp, $sp, 4
-l.s $f0, 0($sp)
-s.s $f0, 0($t0)
-la $t0, _T26
-addiu $sp, $sp, 4
-l.s $f0, 0($sp)
-s.s $f0, 0($t0)
-la $t0, _T25
-addiu $sp, $sp, 4
-l.s $f0, 0($sp)
-s.s $f0, 0($t0)
-la $t0, _T24
-addiu $sp, $sp, 4
-l.s $f0, 0($sp)
-s.s $f0, 0($t0)
-la $t0, _T23
-addiu $sp, $sp, 4
-l.s $f0, 0($sp)
-s.s $f0, 0($t0)
-la $t0, _T22
-addiu $sp, $sp, 4
-l.s $f0, 0($sp)
-s.s $f0, 0($t0)
-la $t0, _T21
-addiu $sp, $sp, 4
-l.s $f0, 0($sp)
-s.s $f0, 0($t0)
-la $t0, _T20
-addiu $sp, $sp, 4
-l.s $f0, 0($sp)
-s.s $f0, 0($t0)
-la $t0, _T19
-addiu $sp, $sp, 4
-l.s $f0, 0($sp)
-s.s $f0, 0($t0)
-la $t0, _F18
-addiu $sp, $sp, 4
-l.s $f0, 0($sp)
-s.s $f0, 0($t0)
-la $t0, _F17
-addiu $sp, $sp, 4
-l.s $f0, 0($sp)
-s.s $f0, 0($t0)
-la $t0, _T16
-addiu $sp, $sp, 4
-l.s $f0, 0($sp)
-s.s $f0, 0($t0)
-la $t0, _T15
-addiu $sp, $sp, 4
-l.s $f0, 0($sp)
-s.s $f0, 0($t0)
-la $t0, _F14
-addiu $sp, $sp, 4
-l.s $f0, 0($sp)
-s.s $f0, 0($t0)
-la $t0, _F13
-addiu $sp, $sp, 4
-l.s $f0, 0($sp)
-s.s $f0, 0($t0)
-la $t0, _T12
-addiu $sp, $sp, 4
-l.s $f0, 0($sp)
-s.s $f0, 0($t0)
-la $t0, _F11
-addiu $sp, $sp, 4
-l.s $f0, 0($sp)
-s.s $f0, 0($t0)
-la $t0, _F10
-addiu $sp, $sp, 4
-l.s $f0, 0($sp)
-s.s $f0, 0($t0)
-la $t0, _T9
-addiu $sp, $sp, 4
-l.s $f0, 0($sp)
-s.s $f0, 0($t0)
-la $t0, _F8
-addiu $sp, $sp, 4
-l.s $f0, 0($sp)
-s.s $f0, 0($t0)
-la $t0, _F7
-addiu $sp, $sp, 4
-l.s $f0, 0($sp)
-s.s $f0, 0($t0)
-la $t0, _T6
-addiu $sp, $sp, 4
-l.s $f0, 0($sp)
-s.s $f0, 0($t0)
-la $t0, _T5
-addiu $sp, $sp, 4
-l.s $f0, 0($sp)
-s.s $f0, 0($t0)
-la $t0, _T4
-addiu $sp, $sp, 4
-l.s $f0, 0($sp)
-s.s $f0, 0($t0)
-la $t0, _T3
-addiu $sp, $sp, 4
-l.s $f0, 0($sp)
-s.s $f0, 0($t0)
 la $t0, _T2
-addiu $sp, $sp, 4
-l.s $f0, 0($sp)
-s.s $f0, 0($t0)
-la $t0, _F1
-addiu $sp, $sp, 4
-l.s $f0, 0($sp)
-s.s $f0, 0($t0)
-la $t0, _T0
-addiu $sp, $sp, 4
-l.s $f0, 0($sp)
-s.s $f0, 0($t0)
-la $t0, s_28
-addiu $sp, $sp, 4
-l.s $f0, 0($sp)
-s.s $f0, 0($t0)
-la $t0, r_24
-addiu $sp, $sp, 4
-l.s $f0, 0($sp)
-s.s $f0, 0($t0)
-la $t0, i_20
-addiu $sp, $sp, 4
-l.s $f0, 0($sp)
-s.s $f0, 0($t0)
-la $t0, d_16
-addiu $sp, $sp, 4
-l.s $f0, 0($sp)
-s.s $f0, 0($t0)
-la $t0, c_12
-addiu $sp, $sp, 4
-l.s $f0, 0($sp)
-s.s $f0, 0($t0)
-la $t0, a_8
-addiu $sp, $sp, 4
-l.s $f0, 0($sp)
-s.s $f0, 0($t0)
-la $t0, b_4
-addiu $sp, $sp, 4
-l.s $f0, 0($sp)
-s.s $f0, 0($t0)
-la $t0, a_0
-addiu $sp, $sp, 4
-l.s $f0, 0($sp)
-s.s $f0, 0($t0)
-addiu $fp, $sp, 4
-jr $ra
-difference:
-move $fp, $sp
-sw $ra, 0($sp)
-addiu $sp, $sp, -4
-la $t0, _Tparam_0
+li $t1, 4
+sw $t1, 0($t0)
+la $t0, _T2
 la $t1, _T3
 lw $t2, 0($t0)
 sw $t2, 0($t1)
-la $t0, _Tparam_1
-la $t1, _T4
+la $t0, _Tparam_0
+la $t1, _T5
 lw $t2, 0($t0)
 sw $t2, 0($t1)
-la $t0, _T3
-la $t1, _T4
-la $t2, _T5
+la $t0, _T5
+lw $t1, 0($t0)
+la $t2, _T3
+lw $t3, 0($t2)
+add $t3, $t3, $t3
+add $t3, $t3, $t3
+add $t4, $t1, $t3
+l.s $f0, 0($t4)
+la $t5, _T4
+s.s $f0, 0($t5)
+la $t0, _T6
+li $t1, 6
+sw $t1, 0($t0)
+la $t0, _T4
+la $t1, _T6
+la $t2, _T7
 lw $t3, 0($t0)
 lw $t4, 0($t1)
-sub $t5, $t3, $t4
+mul $t5, $t3, $t4
 sw $t5, 0($t2)
-la $t0, _T5
+la $t0, _Tparam_0
+la $t1, _T8
+lw $t2, 0($t0)
+sw $t2, 0($t1)
+la $t0, _T8
+lw $t1, 0($t0)
+la $t2, _T1
+lw $t3, 0($t2)
+add $t3, $t3, $t3
+add $t3, $t3, $t3
+add $t4, $t1, $t3
+la $t5, _T7
+l.s $f0, 0($t5)
+s.s $f0, 0($t4)
+la $t0, _T9
+li $t1, 4
+sw $t1, 0($t0)
+la $t0, _T9
+la $t1, _T10
+lw $t2, 0($t0)
+sw $t2, 0($t1)
+la $t0, _Tparam_0
+la $t1, _T12
+lw $t2, 0($t0)
+sw $t2, 0($t1)
+la $t0, _T12
+lw $t1, 0($t0)
+la $t2, _T10
+lw $t3, 0($t2)
+add $t3, $t3, $t3
+add $t3, $t3, $t3
+add $t4, $t1, $t3
+l.s $f0, 0($t4)
+la $t5, _T11
+s.s $f0, 0($t5)
+la $t0, _T11
 l.s $f11, 0($t0)
 lw $ra, 0($fp)
 addiu $sp, $sp, 4
-la $t0, _Fparam_1
-addiu $sp, $sp, 4
-l.s $f0, 0($sp)
-s.s $f0, 0($t0)
 la $t0, _Fparam_0
-addiu $sp, $sp, 4
-l.s $f0, 0($sp)
-s.s $f0, 0($t0)
-la $t0, _Tparam_1
 addiu $sp, $sp, 4
 l.s $f0, 0($sp)
 s.s $f0, 0($t0)
@@ -316,83 +113,11 @@ la $t0, _Tparam_0
 addiu $sp, $sp, 4
 l.s $f0, 0($sp)
 s.s $f0, 0($t0)
-la $t0, _T36
+la $t0, _T18
 addiu $sp, $sp, 4
 l.s $f0, 0($sp)
 s.s $f0, 0($t0)
-la $t0, _T35
-addiu $sp, $sp, 4
-l.s $f0, 0($sp)
-s.s $f0, 0($t0)
-la $t0, _T34
-addiu $sp, $sp, 4
-l.s $f0, 0($sp)
-s.s $f0, 0($t0)
-la $t0, _T33
-addiu $sp, $sp, 4
-l.s $f0, 0($sp)
-s.s $f0, 0($t0)
-la $t0, _T32
-addiu $sp, $sp, 4
-l.s $f0, 0($sp)
-s.s $f0, 0($t0)
-la $t0, _T31
-addiu $sp, $sp, 4
-l.s $f0, 0($sp)
-s.s $f0, 0($t0)
-la $t0, _F30
-addiu $sp, $sp, 4
-l.s $f0, 0($sp)
-s.s $f0, 0($t0)
-la $t0, _T29
-addiu $sp, $sp, 4
-l.s $f0, 0($sp)
-s.s $f0, 0($t0)
-la $t0, _F28
-addiu $sp, $sp, 4
-l.s $f0, 0($sp)
-s.s $f0, 0($t0)
-la $t0, _T27
-addiu $sp, $sp, 4
-l.s $f0, 0($sp)
-s.s $f0, 0($t0)
-la $t0, _T26
-addiu $sp, $sp, 4
-l.s $f0, 0($sp)
-s.s $f0, 0($t0)
-la $t0, _T25
-addiu $sp, $sp, 4
-l.s $f0, 0($sp)
-s.s $f0, 0($t0)
-la $t0, _T24
-addiu $sp, $sp, 4
-l.s $f0, 0($sp)
-s.s $f0, 0($t0)
-la $t0, _T23
-addiu $sp, $sp, 4
-l.s $f0, 0($sp)
-s.s $f0, 0($t0)
-la $t0, _T22
-addiu $sp, $sp, 4
-l.s $f0, 0($sp)
-s.s $f0, 0($t0)
-la $t0, _T21
-addiu $sp, $sp, 4
-l.s $f0, 0($sp)
-s.s $f0, 0($t0)
-la $t0, _T20
-addiu $sp, $sp, 4
-l.s $f0, 0($sp)
-s.s $f0, 0($t0)
-la $t0, _T19
-addiu $sp, $sp, 4
-l.s $f0, 0($sp)
-s.s $f0, 0($t0)
-la $t0, _F18
-addiu $sp, $sp, 4
-l.s $f0, 0($sp)
-s.s $f0, 0($t0)
-la $t0, _F17
+la $t0, _T17
 addiu $sp, $sp, 4
 l.s $f0, 0($sp)
 s.s $f0, 0($t0)
@@ -404,11 +129,11 @@ la $t0, _T15
 addiu $sp, $sp, 4
 l.s $f0, 0($sp)
 s.s $f0, 0($t0)
-la $t0, _F14
+la $t0, _T14
 addiu $sp, $sp, 4
 l.s $f0, 0($sp)
 s.s $f0, 0($t0)
-la $t0, _F13
+la $t0, _T13
 addiu $sp, $sp, 4
 l.s $f0, 0($sp)
 s.s $f0, 0($t0)
@@ -416,11 +141,11 @@ la $t0, _T12
 addiu $sp, $sp, 4
 l.s $f0, 0($sp)
 s.s $f0, 0($t0)
-la $t0, _F11
+la $t0, _T11
 addiu $sp, $sp, 4
 l.s $f0, 0($sp)
 s.s $f0, 0($t0)
-la $t0, _F10
+la $t0, _T10
 addiu $sp, $sp, 4
 l.s $f0, 0($sp)
 s.s $f0, 0($t0)
@@ -428,11 +153,11 @@ la $t0, _T9
 addiu $sp, $sp, 4
 l.s $f0, 0($sp)
 s.s $f0, 0($t0)
-la $t0, _F8
+la $t0, _T8
 addiu $sp, $sp, 4
 l.s $f0, 0($sp)
 s.s $f0, 0($t0)
-la $t0, _F7
+la $t0, _T7
 addiu $sp, $sp, 4
 l.s $f0, 0($sp)
 s.s $f0, 0($t0)
@@ -456,7 +181,7 @@ la $t0, _T2
 addiu $sp, $sp, 4
 l.s $f0, 0($sp)
 s.s $f0, 0($t0)
-la $t0, _F1
+la $t0, _T1
 addiu $sp, $sp, 4
 l.s $f0, 0($sp)
 s.s $f0, 0($t0)
@@ -464,52 +189,38 @@ la $t0, _T0
 addiu $sp, $sp, 4
 l.s $f0, 0($sp)
 s.s $f0, 0($t0)
-la $t0, s_28
-addiu $sp, $sp, 4
-l.s $f0, 0($sp)
-s.s $f0, 0($t0)
-la $t0, r_24
-addiu $sp, $sp, 4
-l.s $f0, 0($sp)
-s.s $f0, 0($t0)
-la $t0, i_20
-addiu $sp, $sp, 4
-l.s $f0, 0($sp)
-s.s $f0, 0($t0)
-la $t0, d_16
-addiu $sp, $sp, 4
-l.s $f0, 0($sp)
-s.s $f0, 0($t0)
-la $t0, c_12
-addiu $sp, $sp, 4
-l.s $f0, 0($sp)
-s.s $f0, 0($t0)
-la $t0, a_8
-addiu $sp, $sp, 4
-l.s $f0, 0($sp)
-s.s $f0, 0($t0)
-la $t0, b_4
+la $t0, b_28
 addiu $sp, $sp, 4
 l.s $f0, 0($sp)
 s.s $f0, 0($t0)
 la $t0, a_0
+addiu $sp, $sp, 4
+l.s $f0, 0($sp)
+s.s $f0, 24($t0)
+addiu $sp, $sp, 4
+l.s $f0, 0($sp)
+s.s $f0, 20($t0)
+addiu $sp, $sp, 4
+l.s $f0, 0($sp)
+s.s $f0, 16($t0)
+addiu $sp, $sp, 4
+l.s $f0, 0($sp)
+s.s $f0, 12($t0)
+addiu $sp, $sp, 4
+l.s $f0, 0($sp)
+s.s $f0, 8($t0)
+addiu $sp, $sp, 4
+l.s $f0, 0($sp)
+s.s $f0, 4($t0)
 addiu $sp, $sp, 4
 l.s $f0, 0($sp)
 s.s $f0, 0($t0)
 addiu $fp, $sp, 4
 jr $ra
-func_end1:
+func_end0:
 lw $ra, 0($fp)
 addiu $sp, $sp, 4
-la $t0, _Fparam_1
-addiu $sp, $sp, 4
-l.s $f0, 0($sp)
-s.s $f0, 0($t0)
 la $t0, _Fparam_0
-addiu $sp, $sp, 4
-l.s $f0, 0($sp)
-s.s $f0, 0($t0)
-la $t0, _Tparam_1
 addiu $sp, $sp, 4
 l.s $f0, 0($sp)
 s.s $f0, 0($t0)
@@ -517,83 +228,11 @@ la $t0, _Tparam_0
 addiu $sp, $sp, 4
 l.s $f0, 0($sp)
 s.s $f0, 0($t0)
-la $t0, _T36
+la $t0, _T18
 addiu $sp, $sp, 4
 l.s $f0, 0($sp)
 s.s $f0, 0($t0)
-la $t0, _T35
-addiu $sp, $sp, 4
-l.s $f0, 0($sp)
-s.s $f0, 0($t0)
-la $t0, _T34
-addiu $sp, $sp, 4
-l.s $f0, 0($sp)
-s.s $f0, 0($t0)
-la $t0, _T33
-addiu $sp, $sp, 4
-l.s $f0, 0($sp)
-s.s $f0, 0($t0)
-la $t0, _T32
-addiu $sp, $sp, 4
-l.s $f0, 0($sp)
-s.s $f0, 0($t0)
-la $t0, _T31
-addiu $sp, $sp, 4
-l.s $f0, 0($sp)
-s.s $f0, 0($t0)
-la $t0, _F30
-addiu $sp, $sp, 4
-l.s $f0, 0($sp)
-s.s $f0, 0($t0)
-la $t0, _T29
-addiu $sp, $sp, 4
-l.s $f0, 0($sp)
-s.s $f0, 0($t0)
-la $t0, _F28
-addiu $sp, $sp, 4
-l.s $f0, 0($sp)
-s.s $f0, 0($t0)
-la $t0, _T27
-addiu $sp, $sp, 4
-l.s $f0, 0($sp)
-s.s $f0, 0($t0)
-la $t0, _T26
-addiu $sp, $sp, 4
-l.s $f0, 0($sp)
-s.s $f0, 0($t0)
-la $t0, _T25
-addiu $sp, $sp, 4
-l.s $f0, 0($sp)
-s.s $f0, 0($t0)
-la $t0, _T24
-addiu $sp, $sp, 4
-l.s $f0, 0($sp)
-s.s $f0, 0($t0)
-la $t0, _T23
-addiu $sp, $sp, 4
-l.s $f0, 0($sp)
-s.s $f0, 0($t0)
-la $t0, _T22
-addiu $sp, $sp, 4
-l.s $f0, 0($sp)
-s.s $f0, 0($t0)
-la $t0, _T21
-addiu $sp, $sp, 4
-l.s $f0, 0($sp)
-s.s $f0, 0($t0)
-la $t0, _T20
-addiu $sp, $sp, 4
-l.s $f0, 0($sp)
-s.s $f0, 0($t0)
-la $t0, _T19
-addiu $sp, $sp, 4
-l.s $f0, 0($sp)
-s.s $f0, 0($t0)
-la $t0, _F18
-addiu $sp, $sp, 4
-l.s $f0, 0($sp)
-s.s $f0, 0($t0)
-la $t0, _F17
+la $t0, _T17
 addiu $sp, $sp, 4
 l.s $f0, 0($sp)
 s.s $f0, 0($t0)
@@ -605,11 +244,11 @@ la $t0, _T15
 addiu $sp, $sp, 4
 l.s $f0, 0($sp)
 s.s $f0, 0($t0)
-la $t0, _F14
+la $t0, _T14
 addiu $sp, $sp, 4
 l.s $f0, 0($sp)
 s.s $f0, 0($t0)
-la $t0, _F13
+la $t0, _T13
 addiu $sp, $sp, 4
 l.s $f0, 0($sp)
 s.s $f0, 0($t0)
@@ -617,11 +256,11 @@ la $t0, _T12
 addiu $sp, $sp, 4
 l.s $f0, 0($sp)
 s.s $f0, 0($t0)
-la $t0, _F11
+la $t0, _T11
 addiu $sp, $sp, 4
 l.s $f0, 0($sp)
 s.s $f0, 0($t0)
-la $t0, _F10
+la $t0, _T10
 addiu $sp, $sp, 4
 l.s $f0, 0($sp)
 s.s $f0, 0($t0)
@@ -629,11 +268,11 @@ la $t0, _T9
 addiu $sp, $sp, 4
 l.s $f0, 0($sp)
 s.s $f0, 0($t0)
-la $t0, _F8
+la $t0, _T8
 addiu $sp, $sp, 4
 l.s $f0, 0($sp)
 s.s $f0, 0($t0)
-la $t0, _F7
+la $t0, _T7
 addiu $sp, $sp, 4
 l.s $f0, 0($sp)
 s.s $f0, 0($t0)
@@ -657,7 +296,7 @@ la $t0, _T2
 addiu $sp, $sp, 4
 l.s $f0, 0($sp)
 s.s $f0, 0($t0)
-la $t0, _F1
+la $t0, _T1
 addiu $sp, $sp, 4
 l.s $f0, 0($sp)
 s.s $f0, 0($t0)
@@ -665,35 +304,29 @@ la $t0, _T0
 addiu $sp, $sp, 4
 l.s $f0, 0($sp)
 s.s $f0, 0($t0)
-la $t0, s_28
-addiu $sp, $sp, 4
-l.s $f0, 0($sp)
-s.s $f0, 0($t0)
-la $t0, r_24
-addiu $sp, $sp, 4
-l.s $f0, 0($sp)
-s.s $f0, 0($t0)
-la $t0, i_20
-addiu $sp, $sp, 4
-l.s $f0, 0($sp)
-s.s $f0, 0($t0)
-la $t0, d_16
-addiu $sp, $sp, 4
-l.s $f0, 0($sp)
-s.s $f0, 0($t0)
-la $t0, c_12
-addiu $sp, $sp, 4
-l.s $f0, 0($sp)
-s.s $f0, 0($t0)
-la $t0, a_8
-addiu $sp, $sp, 4
-l.s $f0, 0($sp)
-s.s $f0, 0($t0)
-la $t0, b_4
+la $t0, b_28
 addiu $sp, $sp, 4
 l.s $f0, 0($sp)
 s.s $f0, 0($t0)
 la $t0, a_0
+addiu $sp, $sp, 4
+l.s $f0, 0($sp)
+s.s $f0, 24($t0)
+addiu $sp, $sp, 4
+l.s $f0, 0($sp)
+s.s $f0, 20($t0)
+addiu $sp, $sp, 4
+l.s $f0, 0($sp)
+s.s $f0, 16($t0)
+addiu $sp, $sp, 4
+l.s $f0, 0($sp)
+s.s $f0, 12($t0)
+addiu $sp, $sp, 4
+l.s $f0, 0($sp)
+s.s $f0, 8($t0)
+addiu $sp, $sp, 4
+l.s $f0, 0($sp)
+s.s $f0, 4($t0)
 addiu $sp, $sp, 4
 l.s $f0, 0($sp)
 s.s $f0, 0($t0)
@@ -704,209 +337,55 @@ main:
 move $fp, $sp
 sw $ra, 0($sp)
 addiu $sp, $sp, -4
-la $t0, a_0
-la $t1, _T6
+la $t0, _T13
+li $t1, 4
+sw $t1, 0($t0)
+la $t0, _T13
+la $t1, _T14
 lw $t2, 0($t0)
 sw $t2, 0($t1)
-la $t0, b_4
-la $t1, _F7
-l.s $f0, 0($t0)
-s.s $f0, 0($t1)
-la $t0, _T6
-la $t1, _F7
-la $t2, _F8
-l.s $f3, 0($t0)
-l.s $f4, 0($t1)
-cvt.s.w $f3, $f3
-add.s $f5, $f3, $f4
-s.s $f5, 0($t2)
-la $t0, _F8
-la $t1, c_12
-l.s $f0, 0($t0)
-s.s $f0, 0($t1)
-la $t0, a_0
-la $t1, _T9
-lw $t2, 0($t0)
-sw $t2, 0($t1)
-la $t0, b_4
-la $t1, _F10
-l.s $f0, 0($t0)
-s.s $f0, 0($t1)
-la $t0, _T9
-la $t1, _F10
-la $t2, _F11
-l.s $f3, 0($t0)
-l.s $f4, 0($t1)
-cvt.s.w $f3, $f3
-div.s $f5, $f3, $f4
-s.s $f5, 0($t2)
-la $t0, _F11
-la $t1, c_12
-l.s $f0, 0($t0)
-s.s $f0, 0($t1)
-la $t0, a_0
-la $t1, _T12
-lw $t2, 0($t0)
-sw $t2, 0($t1)
-la $t0, b_4
-la $t1, _F13
-l.s $f0, 0($t0)
-s.s $f0, 0($t1)
-la $t0, _T12
-la $t1, _F13
-la $t2, _F14
-l.s $f3, 0($t0)
-l.s $f4, 0($t1)
-cvt.s.w $f3, $f3
-sub.s $f5, $f3, $f4
-s.s $f5, 0($t2)
-la $t0, _F14
-la $t1, _T15
-l.s $f0, 0($t0)
-cvt.w.s $f0, $f0
-s.s $f0, 0($t1)
 la $t0, _T15
-la $t1, d_16
-lw $t2, 0($t0)
-sw $t2, 0($t1)
+li $t1, 11
+sw $t1, 0($t0)
 la $t0, a_0
 la $t1, _T16
-lw $t2, 0($t0)
-sw $t2, 0($t1)
-la $t0, b_4
-la $t1, _F17
-l.s $f0, 0($t0)
-s.s $f0, 0($t1)
+sw $t0, 0($t1)
 la $t0, _T16
-la $t1, _F17
-la $t2, _F18
-l.s $f3, 0($t0)
-l.s $f4, 0($t1)
-cvt.s.w $f3, $f3
-mul.s $f5, $f3, $f4
-s.s $f5, 0($t2)
-la $t0, _F18
-la $t1, _T19
-l.s $f0, 0($t0)
-cvt.w.s $f0, $f0
-s.s $f0, 0($t1)
-la $t0, _T19
-la $t1, d_16
-lw $t2, 0($t0)
-sw $t2, 0($t1)
-la $t0, _T20
-li $t1, 0
-sw $t1, 0($t0)
-la $t0, _T20
-la $t1, i_20
-lw $t2, 0($t0)
-sw $t2, 0($t1)
-LOOP1:
-la $t0, i_20
-la $t1, _T21
-lw $t2, 0($t0)
-sw $t2, 0($t1)
-la $t0, _T22
-li $t1, 5
-sw $t1, 0($t0)
-la $t0, _T23
-li $t1, 1
-sw $t1, 0($t0)
-la $t0, _T21
-la $t1, _T22
-lw $t2, 0($t0)
-lw $t3, 0($t1)
-blt $t2, $t3, REL0
-la $t0, _T23
-li $t1, 0
-sw $t1, 0($t0)
-REL0:
-la $t0, _T24
-li $t1, 0
-sw $t1, 0($t0)
-la $t0, _T23
-la $t1, _T24
-lw $t2, 0($t0)
-lw $t3, 0($t1)
-beq $t2, $t3, COND0
-j LOOP2
-LOOP0:
-la $t0, i_20
-la $t1, _T25
-lw $t2, 0($t0)
-sw $t2, 0($t1)
-la $t0, _T26
-li $t1, 1
-sw $t1, 0($t0)
-la $t0, _T25
-la $t1, _T26
-la $t2, _T27
-lw $t3, 0($t0)
-lw $t4, 0($t1)
-add $t5, $t3, $t4
-sw $t5, 0($t2)
-la $t0, _T27
-la $t1, i_20
-lw $t2, 0($t0)
-sw $t2, 0($t1)
-j LOOP1
-LOOP2:
-la $t0, b_4
-la $t1, _F28
-l.s $f0, 0($t0)
-s.s $f0, 0($t1)
-la $t0, _T29
-li $t1, 5
-sw $t1, 0($t0)
-la $t0, _F28
-la $t1, _T29
-la $t2, _F30
-l.s $f3, 0($t0)
-l.s $f4, 0($t1)
-cvt.s.w $f4, $f4
-add.s $f5, $f3, $f4
-s.s $f5, 0($t2)
-la $t0, _F30
-la $t1, b_4
-l.s $f0, 0($t0)
-s.s $f0, 0($t1)
-j LOOP0
-COND0:
-la $t0, _T31
-li $t1, 5
-sw $t1, 0($t0)
-la $t0, _T32
-li $t1, 3
-sw $t1, 0($t0)
+lw $t1, 0($t0)
+la $t2, _T14
+lw $t3, 0($t2)
+add $t3, $t3, $t3
+add $t3, $t3, $t3
+add $t4, $t1, $t3
+la $t5, _T15
+l.s $f0, 0($t5)
+s.s $f0, 0($t4)
+la $t0, a_0
+la $t1, _T17
+sw $t0, 0($t1)
 la $t0, a_0
 l.s $f0, 0($t0)
 s.s $f0, 0($sp)
 addiu $sp, $sp, -4
-la $t0, b_4
-l.s $f0, 0($t0)
+l.s $f0, 4($t0)
 s.s $f0, 0($sp)
 addiu $sp, $sp, -4
-la $t0, a_8
-l.s $f0, 0($t0)
+l.s $f0, 8($t0)
 s.s $f0, 0($sp)
 addiu $sp, $sp, -4
-la $t0, c_12
-l.s $f0, 0($t0)
+l.s $f0, 12($t0)
 s.s $f0, 0($sp)
 addiu $sp, $sp, -4
-la $t0, d_16
-l.s $f0, 0($t0)
+l.s $f0, 16($t0)
 s.s $f0, 0($sp)
 addiu $sp, $sp, -4
-la $t0, i_20
-l.s $f0, 0($t0)
+l.s $f0, 20($t0)
 s.s $f0, 0($sp)
 addiu $sp, $sp, -4
-la $t0, r_24
-l.s $f0, 0($t0)
+l.s $f0, 24($t0)
 s.s $f0, 0($sp)
 addiu $sp, $sp, -4
-la $t0, s_28
+la $t0, b_28
 l.s $f0, 0($t0)
 s.s $f0, 0($sp)
 addiu $sp, $sp, -4
@@ -914,7 +393,7 @@ la $t0, _T0
 l.s $f0, 0($t0)
 s.s $f0, 0($sp)
 addiu $sp, $sp, -4
-la $t0, _F1
+la $t0, _T1
 l.s $f0, 0($t0)
 s.s $f0, 0($sp)
 addiu $sp, $sp, -4
@@ -938,11 +417,11 @@ la $t0, _T6
 l.s $f0, 0($t0)
 s.s $f0, 0($sp)
 addiu $sp, $sp, -4
-la $t0, _F7
+la $t0, _T7
 l.s $f0, 0($t0)
 s.s $f0, 0($sp)
 addiu $sp, $sp, -4
-la $t0, _F8
+la $t0, _T8
 l.s $f0, 0($t0)
 s.s $f0, 0($sp)
 addiu $sp, $sp, -4
@@ -950,11 +429,11 @@ la $t0, _T9
 l.s $f0, 0($t0)
 s.s $f0, 0($sp)
 addiu $sp, $sp, -4
-la $t0, _F10
+la $t0, _T10
 l.s $f0, 0($t0)
 s.s $f0, 0($sp)
 addiu $sp, $sp, -4
-la $t0, _F11
+la $t0, _T11
 l.s $f0, 0($t0)
 s.s $f0, 0($sp)
 addiu $sp, $sp, -4
@@ -962,11 +441,11 @@ la $t0, _T12
 l.s $f0, 0($t0)
 s.s $f0, 0($sp)
 addiu $sp, $sp, -4
-la $t0, _F13
+la $t0, _T13
 l.s $f0, 0($t0)
 s.s $f0, 0($sp)
 addiu $sp, $sp, -4
-la $t0, _F14
+la $t0, _T14
 l.s $f0, 0($t0)
 s.s $f0, 0($sp)
 addiu $sp, $sp, -4
@@ -978,83 +457,11 @@ la $t0, _T16
 l.s $f0, 0($t0)
 s.s $f0, 0($sp)
 addiu $sp, $sp, -4
-la $t0, _F17
+la $t0, _T17
 l.s $f0, 0($t0)
 s.s $f0, 0($sp)
 addiu $sp, $sp, -4
-la $t0, _F18
-l.s $f0, 0($t0)
-s.s $f0, 0($sp)
-addiu $sp, $sp, -4
-la $t0, _T19
-l.s $f0, 0($t0)
-s.s $f0, 0($sp)
-addiu $sp, $sp, -4
-la $t0, _T20
-l.s $f0, 0($t0)
-s.s $f0, 0($sp)
-addiu $sp, $sp, -4
-la $t0, _T21
-l.s $f0, 0($t0)
-s.s $f0, 0($sp)
-addiu $sp, $sp, -4
-la $t0, _T22
-l.s $f0, 0($t0)
-s.s $f0, 0($sp)
-addiu $sp, $sp, -4
-la $t0, _T23
-l.s $f0, 0($t0)
-s.s $f0, 0($sp)
-addiu $sp, $sp, -4
-la $t0, _T24
-l.s $f0, 0($t0)
-s.s $f0, 0($sp)
-addiu $sp, $sp, -4
-la $t0, _T25
-l.s $f0, 0($t0)
-s.s $f0, 0($sp)
-addiu $sp, $sp, -4
-la $t0, _T26
-l.s $f0, 0($t0)
-s.s $f0, 0($sp)
-addiu $sp, $sp, -4
-la $t0, _T27
-l.s $f0, 0($t0)
-s.s $f0, 0($sp)
-addiu $sp, $sp, -4
-la $t0, _F28
-l.s $f0, 0($t0)
-s.s $f0, 0($sp)
-addiu $sp, $sp, -4
-la $t0, _T29
-l.s $f0, 0($t0)
-s.s $f0, 0($sp)
-addiu $sp, $sp, -4
-la $t0, _F30
-l.s $f0, 0($t0)
-s.s $f0, 0($sp)
-addiu $sp, $sp, -4
-la $t0, _T31
-l.s $f0, 0($t0)
-s.s $f0, 0($sp)
-addiu $sp, $sp, -4
-la $t0, _T32
-l.s $f0, 0($t0)
-s.s $f0, 0($sp)
-addiu $sp, $sp, -4
-la $t0, _T33
-l.s $f0, 0($t0)
-s.s $f0, 0($sp)
-addiu $sp, $sp, -4
-la $t0, _T34
-l.s $f0, 0($t0)
-s.s $f0, 0($sp)
-addiu $sp, $sp, -4
-la $t0, _T35
-l.s $f0, 0($t0)
-s.s $f0, 0($sp)
-addiu $sp, $sp, -4
-la $t0, _T36
+la $t0, _T18
 l.s $f0, 0($t0)
 s.s $f0, 0($sp)
 addiu $sp, $sp, -4
@@ -1062,251 +469,20 @@ la $t0, _Tparam_0
 l.s $f0, 0($t0)
 s.s $f0, 0($sp)
 addiu $sp, $sp, -4
-la $t0, _Tparam_1
-l.s $f0, 0($t0)
-s.s $f0, 0($sp)
-addiu $sp, $sp, -4
 la $t0, _Fparam_0
 l.s $f0, 0($t0)
 s.s $f0, 0($sp)
 addiu $sp, $sp, -4
-la $t0, _Fparam_1
-l.s $f0, 0($t0)
-s.s $f0, 0($sp)
-addiu $sp, $sp, -4
-la $t0, _T31
+la $t0, _T17
 lw $t1, 0($t0)
 la $t2, _Tparam_0
 sw $t1, 0($t2)
-la $t0, _T32
-lw $t1, 0($t0)
-la $t2, _Tparam_1
-sw $t1, 0($t2)
-jal difference
-la $t0, _T33
+jal f
+la $t0, _T18
 s.s $f11, 0($t0)
 lw $ra, 4($sp)
-la $t0, _T33
-la $t1, r_24
+la $t0, _T18
+la $t1, b_28
 lw $t2, 0($t0)
 sw $t2, 0($t1)
-la $t0, _T34
-li $t1, 3
-sw $t1, 0($t0)
-la $t0, _T35
-li $t1, 5
-sw $t1, 0($t0)
-la $t0, a_0
-l.s $f0, 0($t0)
-s.s $f0, 0($sp)
-addiu $sp, $sp, -4
-la $t0, b_4
-l.s $f0, 0($t0)
-s.s $f0, 0($sp)
-addiu $sp, $sp, -4
-la $t0, a_8
-l.s $f0, 0($t0)
-s.s $f0, 0($sp)
-addiu $sp, $sp, -4
-la $t0, c_12
-l.s $f0, 0($t0)
-s.s $f0, 0($sp)
-addiu $sp, $sp, -4
-la $t0, d_16
-l.s $f0, 0($t0)
-s.s $f0, 0($sp)
-addiu $sp, $sp, -4
-la $t0, i_20
-l.s $f0, 0($t0)
-s.s $f0, 0($sp)
-addiu $sp, $sp, -4
-la $t0, r_24
-l.s $f0, 0($t0)
-s.s $f0, 0($sp)
-addiu $sp, $sp, -4
-la $t0, s_28
-l.s $f0, 0($t0)
-s.s $f0, 0($sp)
-addiu $sp, $sp, -4
-la $t0, _T0
-l.s $f0, 0($t0)
-s.s $f0, 0($sp)
-addiu $sp, $sp, -4
-la $t0, _F1
-l.s $f0, 0($t0)
-s.s $f0, 0($sp)
-addiu $sp, $sp, -4
-la $t0, _T2
-l.s $f0, 0($t0)
-s.s $f0, 0($sp)
-addiu $sp, $sp, -4
-la $t0, _T3
-l.s $f0, 0($t0)
-s.s $f0, 0($sp)
-addiu $sp, $sp, -4
-la $t0, _T4
-l.s $f0, 0($t0)
-s.s $f0, 0($sp)
-addiu $sp, $sp, -4
-la $t0, _T5
-l.s $f0, 0($t0)
-s.s $f0, 0($sp)
-addiu $sp, $sp, -4
-la $t0, _T6
-l.s $f0, 0($t0)
-s.s $f0, 0($sp)
-addiu $sp, $sp, -4
-la $t0, _F7
-l.s $f0, 0($t0)
-s.s $f0, 0($sp)
-addiu $sp, $sp, -4
-la $t0, _F8
-l.s $f0, 0($t0)
-s.s $f0, 0($sp)
-addiu $sp, $sp, -4
-la $t0, _T9
-l.s $f0, 0($t0)
-s.s $f0, 0($sp)
-addiu $sp, $sp, -4
-la $t0, _F10
-l.s $f0, 0($t0)
-s.s $f0, 0($sp)
-addiu $sp, $sp, -4
-la $t0, _F11
-l.s $f0, 0($t0)
-s.s $f0, 0($sp)
-addiu $sp, $sp, -4
-la $t0, _T12
-l.s $f0, 0($t0)
-s.s $f0, 0($sp)
-addiu $sp, $sp, -4
-la $t0, _F13
-l.s $f0, 0($t0)
-s.s $f0, 0($sp)
-addiu $sp, $sp, -4
-la $t0, _F14
-l.s $f0, 0($t0)
-s.s $f0, 0($sp)
-addiu $sp, $sp, -4
-la $t0, _T15
-l.s $f0, 0($t0)
-s.s $f0, 0($sp)
-addiu $sp, $sp, -4
-la $t0, _T16
-l.s $f0, 0($t0)
-s.s $f0, 0($sp)
-addiu $sp, $sp, -4
-la $t0, _F17
-l.s $f0, 0($t0)
-s.s $f0, 0($sp)
-addiu $sp, $sp, -4
-la $t0, _F18
-l.s $f0, 0($t0)
-s.s $f0, 0($sp)
-addiu $sp, $sp, -4
-la $t0, _T19
-l.s $f0, 0($t0)
-s.s $f0, 0($sp)
-addiu $sp, $sp, -4
-la $t0, _T20
-l.s $f0, 0($t0)
-s.s $f0, 0($sp)
-addiu $sp, $sp, -4
-la $t0, _T21
-l.s $f0, 0($t0)
-s.s $f0, 0($sp)
-addiu $sp, $sp, -4
-la $t0, _T22
-l.s $f0, 0($t0)
-s.s $f0, 0($sp)
-addiu $sp, $sp, -4
-la $t0, _T23
-l.s $f0, 0($t0)
-s.s $f0, 0($sp)
-addiu $sp, $sp, -4
-la $t0, _T24
-l.s $f0, 0($t0)
-s.s $f0, 0($sp)
-addiu $sp, $sp, -4
-la $t0, _T25
-l.s $f0, 0($t0)
-s.s $f0, 0($sp)
-addiu $sp, $sp, -4
-la $t0, _T26
-l.s $f0, 0($t0)
-s.s $f0, 0($sp)
-addiu $sp, $sp, -4
-la $t0, _T27
-l.s $f0, 0($t0)
-s.s $f0, 0($sp)
-addiu $sp, $sp, -4
-la $t0, _F28
-l.s $f0, 0($t0)
-s.s $f0, 0($sp)
-addiu $sp, $sp, -4
-la $t0, _T29
-l.s $f0, 0($t0)
-s.s $f0, 0($sp)
-addiu $sp, $sp, -4
-la $t0, _F30
-l.s $f0, 0($t0)
-s.s $f0, 0($sp)
-addiu $sp, $sp, -4
-la $t0, _T31
-l.s $f0, 0($t0)
-s.s $f0, 0($sp)
-addiu $sp, $sp, -4
-la $t0, _T32
-l.s $f0, 0($t0)
-s.s $f0, 0($sp)
-addiu $sp, $sp, -4
-la $t0, _T33
-l.s $f0, 0($t0)
-s.s $f0, 0($sp)
-addiu $sp, $sp, -4
-la $t0, _T34
-l.s $f0, 0($t0)
-s.s $f0, 0($sp)
-addiu $sp, $sp, -4
-la $t0, _T35
-l.s $f0, 0($t0)
-s.s $f0, 0($sp)
-addiu $sp, $sp, -4
-la $t0, _T36
-l.s $f0, 0($t0)
-s.s $f0, 0($sp)
-addiu $sp, $sp, -4
-la $t0, _Tparam_0
-l.s $f0, 0($t0)
-s.s $f0, 0($sp)
-addiu $sp, $sp, -4
-la $t0, _Tparam_1
-l.s $f0, 0($t0)
-s.s $f0, 0($sp)
-addiu $sp, $sp, -4
-la $t0, _Fparam_0
-l.s $f0, 0($t0)
-s.s $f0, 0($sp)
-addiu $sp, $sp, -4
-la $t0, _Fparam_1
-l.s $f0, 0($t0)
-s.s $f0, 0($sp)
-addiu $sp, $sp, -4
-la $t0, _T34
-lw $t1, 0($t0)
-la $t2, _Tparam_0
-sw $t1, 0($t2)
-la $t0, _T35
-lw $t1, 0($t0)
-la $t2, _Tparam_1
-sw $t1, 0($t2)
-jal difference
-la $t0, _T36
-s.s $f11, 0($t0)
-lw $ra, 4($sp)
-la $t0, _T36
-la $t1, s_28
-lw $t2, 0($t0)
-sw $t2, 0($t1)
-func_end2:
-jr $ra
+func_end1:

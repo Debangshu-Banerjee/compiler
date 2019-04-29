@@ -1,8 +1,12 @@
+int f(int d[]){
+	d[4] = d[4] * 6;
+	return d[4];
+}
+
 
 int main(){
 	int a[7];
-	a[0] = 99;
-	float b;
-	b=9.0;
-	a[0]= a[0]*b;
+  int b;
+	 a[4] = 11;
+	 b= f(a);
 }

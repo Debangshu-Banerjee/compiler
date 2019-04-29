@@ -1,141 +1,69 @@
 
 
 ## user defined variable
-# a_0 4
-# b_4 4
-# a_8 4
-# c_12 4
-# d_16 4
-# i_20 4
-# r_24 4
-# s_28 4
+# a_0 28
+# b_28 4
 
 
 ## temp defined variable
 # _T0 4
-# _F1 4
+# _T1 4
 # _T2 4
 # _T3 4
 # _T4 4
 # _T5 4
 # _T6 4
-# _F7 4
-# _F8 4
+# _T7 4
+# _T8 4
 # _T9 4
-# _F10 4
-# _F11 4
+# _T10 4
+# _T11 4
 # _T12 4
-# _F13 4
-# _F14 4
+# _T13 4
+# _T14 4
 # _T15 4
 # _T16 4
-# _F17 4
-# _F18 4
-# _T19 4
-# _T20 4
-# _T21 4
-# _T22 4
-# _T23 4
-# _T24 4
-# _T25 4
-# _T26 4
-# _T27 4
-# _F28 4
-# _T29 4
-# _F30 4
-# _T31 4
-# _T32 4
-# _T33 4
-# _T34 4
-# _T35 4
-# _T36 4
+# _T17 4
+# _T18 4
 
 ## all parameter list
 
 # _Tparam_0 4
-# _Tparam_1 4
 # _Fparam_0 4
-# _Fparam_1 4
 
 
-1 = 2 --- _T0
-2 = _T0 --- a_0
-3 = 1.200000 --- _F1
-4 = _F1 --- b_4
-5 sum:
-6 func begin sum ---
-7 = 10 --- _T2
-8 = _T2 --- a_8
-9 func_end0:
-10 func end sum ---
-11 difference:
-12 func begin difference ---
-13 = _Tparam_0 --- _T3
-14 = _Tparam_1 --- _T4
-15 - _T3 _T4 _T5
-16 return _T5 --- ---
-17 func_end1:
-18 func end difference ---
-19 main:
-20 func begin main ---
-21 = a_0 --- _T6
-22 = b_4 --- _F7
-23 + _T6 _F7 _F8
-24 = _F8 --- c_12
-25 = a_0 --- _T9
-26 = b_4 --- _F10
-27 / _T9 _F10 _F11
-28 = _F11 --- c_12
-29 = a_0 --- _T12
-30 = b_4 --- _F13
-31 - _T12 _F13 _F14
-32 = _F14 --- _T15
-33 = _T15 --- d_16
-34 = a_0 --- _T16
-35 = b_4 --- _F17
-36 * _T16 _F17 _F18
-37 = _F18 --- _T19
-38 = _T19 --- d_16
-39 = 0 --- _T20
-40 = _T20 --- i_20
-41 LOOP1:
-42 = i_20 --- _T21
-43 = 5 --- _T22
-44 = 1 --- _T23
-45 < _T21 _T22 REL0:
-46 = 0 --- _T23
-47 REL0:
-48 = 0 --- _T24
-49 == _T23 _T24 COND0:
-50 goto --- --- LOOP2:
-51 LOOP0:
-52 = i_20 --- _T25
-53 = 1 --- _T26
-54 + _T25 _T26 _T27
-55 = _T27 --- i_20
-56 goto --- --- LOOP1:
-57 LOOP2:
-58 = b_4 --- _F28
-59 = 5 --- _T29
-60 + _F28 _T29 _F30
-61 = _F30 --- b_4
-62 goto --- --- LOOP0:
-63 COND0:
-64 = 5 --- _T31
-65 = 3 --- _T32
-66 param _T31 --- ---
-67 param _T32 --- ---
-68 refparam _T33 --- ---
-69 call difference 2 ---
-70 = _T33 --- r_24
-71 = 3 --- _T34
-72 = 5 --- _T35
-73 param _T34 --- ---
-74 param _T35 --- ---
-75 refparam _T36 --- ---
-76 call difference 2 ---
-77 = _T36 --- s_28
-78 func_end2:
-79 func end main ---
+1 f:
+2 func begin f ---
+3 = 4 --- _T0
+4 = _T0 --- _T1
+5 = 4 --- _T2
+6 = _T2 --- _T3
+7 addr _Tparam_0 --- _T5
+8 = _T5[_T3] _T4
+9 = 6 --- _T6
+10 * _T4 _T6 _T7
+11 addr _Tparam_0 --- _T8
+12 = _T7 _T8[_T1] 
+13 = 4 --- _T9
+14 = _T9 --- _T10
+15 addr _Tparam_0 --- _T12
+16 = _T12[_T10] _T11
+17 return _T11 --- ---
+18 func_end0:
+19 func end f ---
+20 main:
+21 func begin main ---
+22 = 4 --- _T13
+23 = _T13 --- _T14
+24 = 11 --- _T15
+25 addr a_0 --- _T16
+26 = _T15 _T16[_T14] 
+27 addr a_0 --- _T17
+28 refparam _T17 --- ---
+29 refparam _T18 --- ---
+30 call f 1 ---
+31 = _T18 --- b_28
+32 func_end1:
+33 func end main ---
 
 -----------------end------------------

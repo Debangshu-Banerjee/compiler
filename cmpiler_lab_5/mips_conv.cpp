@@ -608,9 +608,23 @@ void generate_each_instruction(vector<string> linevec)
       handle_rel_op(linevec);
   }
   if(linevec[1]== "addr"){
+    bool add_flag = true;
+    if(linevec[2].size() >=3 ){
+      if(linevec[2][2] == 'p'){
+        add_flag = false;
+      }
+    }
+    if(add_flag == true){
       mipsfile<<"la $t0, "<<linevec[2]<<endl;
       mipsfile <<"la $t1, "<<linevec[4]<<endl;
       mipsfile <<"sw $t0, "<<"0($t1)"<<endl;
+    }
+    else{
+      mipsfile<<"la $t0, "<<linevec[2]<<endl;
+      mipsfile <<"la $t1, "<<linevec[4]<<endl;
+      mipsfile <<"lw $t2, "<<"0($t0)"<<endl;
+      mipsfile<<"sw $t2, "<<"0($t1)"<<endl;
+    }
   }
   if(linevec[1] == "NOT"){
     if(linevec[2][1]!= 'T' || linevec[4][1]!= 'T' ){

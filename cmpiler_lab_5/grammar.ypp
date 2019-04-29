@@ -1415,13 +1415,15 @@ id_arr: ID
 				var = NULL;
 			}
 				if(var->eletype == FLOAT_TYPE){
-					var->eletype = FLOAT_ADDRESS_TYPE;
-					var->type = SIMPLE;
+					variable * v1= new variable(var->name,SIMPLE,FLOAT_ADDRESS_TYPE,var->dimlist,var->level_of_declaration);
+					v1->offset = var->offset;
+					var = v1;
 				}
 
 				if(var->eletype == INT_TYPE){
-					var->eletype = INT_ADDRESS_TYPE;
-					var->type = SIMPLE;
+				variable * v1= new variable(var->name,SIMPLE,INT_ADDRESS_TYPE,var->dimlist,var->level_of_declaration);
+				v1->offset = var->offset;
+				var = v1;
 				}
 			}
 		}
@@ -1443,7 +1445,8 @@ id_arr: ID
 
 		if(var != NULL){
 			if(var->type != ARRAY){
-				yyerror("variable "+ s + "is not array ");
+			  cout<<var->name<<" "<<var->type<<" "<<var->eletype<<endl;
+				yyerror("variable "+ s + " is not array ");
 				var = NULL;
 			}
 		}
