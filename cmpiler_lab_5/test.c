@@ -5,12 +5,10 @@ int f(int y){
 	return f(y-1)+ f(y-2);
 }
 int main(){
-	int c;
-	c =4;
-	c=f(4);
-	c = c+ 5;
-	int d;
-	d = (c > 5);
+	int c,i;
+	for(i=0;i<6;++i){
+		c= c+ 2;
+		if(c > 9 ) break;
+	}
 	print(c);
-	print(d);
 }
