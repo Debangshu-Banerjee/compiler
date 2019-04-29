@@ -1,8 +1,8 @@
 
 
 ## user defined variable
-# a_0 28
-# b_28 4
+# c_0 4
+# d_4 4
 
 
 ## temp defined variable
@@ -25,6 +25,14 @@
 # _T16 4
 # _T17 4
 # _T18 4
+# _T19 4
+# _T20 4
+# _T21 4
+# _T22 4
+# _T23 4
+# _T24 4
+# _T25 4
+# _T26 4
 
 ## all parameter list
 
@@ -34,36 +42,61 @@
 
 1 f:
 2 func begin f ---
-3 = 4 --- _T0
-4 = _T0 --- _T1
-5 = 4 --- _T2
-6 = _T2 --- _T3
-7 addr _Tparam_0 --- _T5
-8 = _T5[_T3] _T4
-9 = 6 --- _T6
-10 * _T4 _T6 _T7
-11 addr _Tparam_0 --- _T8
-12 = _T7 _T8[_T1] 
-13 = 4 --- _T9
-14 = _T9 --- _T10
-15 addr _Tparam_0 --- _T12
-16 = _T12[_T10] _T11
-17 return _T11 --- ---
-18 func_end0:
-19 func end f ---
-20 main:
-21 func begin main ---
-22 = 4 --- _T13
-23 = _T13 --- _T14
-24 = 11 --- _T15
-25 addr a_0 --- _T16
-26 = _T15 _T16[_T14] 
-27 addr a_0 --- _T17
-28 refparam _T17 --- ---
-29 refparam _T18 --- ---
-30 call f 1 ---
-31 = _T18 --- b_28
-32 func_end1:
-33 func end main ---
+3 = _Tparam_0 --- _T0
+4 = 0 --- _T1
+5 = 1 --- _T2
+6 == _T0 _T1 REL0:
+7 = 0 --- _T2
+8 REL0:
+9 = _Tparam_0 --- _T3
+10 = 1 --- _T4
+11 = 1 --- _T5
+12 == _T3 _T4 REL1:
+13 = 0 --- _T5
+14 REL1:
+15 OR _T2 _T5 _T6
+16 = 0 --- _T7
+17 == _T6 _T7 COND0:
+18 = _Tparam_0 --- _T8
+19 return _T8 --- ---
+20 COND0:
+21 = _Tparam_0 --- _T9
+22 = 1 --- _T10
+23 - _T9 _T10 _T11
+24 param _T11 --- ---
+25 refparam _T12 --- ---
+26 call f 1 ---
+27 = _Tparam_0 --- _T13
+28 = 2 --- _T14
+29 - _T13 _T14 _T15
+30 param _T15 --- ---
+31 refparam _T16 --- ---
+32 call f 1 ---
+33 + _T12 _T16 _T17
+34 return _T17 --- ---
+35 func_end0:
+36 func end f ---
+37 main:
+38 func begin main ---
+39 = 4 --- _T18
+40 = _T18 --- c_0
+41 = 4 --- _T19
+42 param _T19 --- ---
+43 refparam _T20 --- ---
+44 call f 1 ---
+45 = _T20 --- c_0
+46 = c_0 --- _T21
+47 = 5 --- _T22
+48 + _T21 _T22 _T23
+49 = _T23 --- c_0
+50 = c_0 --- _T24
+51 = 5 --- _T25
+52 = 1 --- _T26
+53 > _T24 _T25 REL2:
+54 = 0 --- _T26
+55 REL2:
+56 = _T26 --- d_4
+57 func_end1:
+58 func end main ---
 
 -----------------end------------------

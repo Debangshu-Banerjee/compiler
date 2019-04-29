@@ -474,7 +474,7 @@ iteration_statement: whileexp statement
                     |forexp M assignment_statement M M CLOSE_BRACKET statement
 {
 	if($3->type == ERROR_TYPE){
-		yyerror("unknown expression is used with while\nAborting");
+		yyerror("unknown expression is used with for\nAborting");
 		exit(1);
 	}
 	$$ = new statement_list_(1);
@@ -1335,9 +1335,15 @@ assignment_statement: id_arr ASSIGN conditional_expression
 							global_temp++;
 							total_temp_data.temp_variable.push_back(temp);
 						}
-						intermediate_output.gen_special("=",$3->temporary_name,"---",temp);
-						intermediate_output.gen_special("=",temp,"---",$1->var->name+"_"+to_string($1->var->offset));
+						if($1->var->eletype == INT_TYPE && $3->type == BOOL_TYPE){
+							intermediate_output.gen_special("=",$3->temporary_name,"---",$1->var->name+"_"+to_string($1->var->offset));
+						}
+						else{
+							intermediate_output.gen_special("=",$3->temporary_name,"---",temp);
+							intermediate_output.gen_special("=",temp,"---",$1->var->name+"_"+to_string($1->var->offset));
+						}
 					}
+
 					//intermediate_output.gen_special("=",$3->temporary_name,"---",$1->var->name+"_"+to_string($1->var->offset));
 				}
 				else{

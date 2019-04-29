@@ -546,9 +546,9 @@ static const yytype_uint16 yyrline[] =
      547,   553,   560,   566,   596,   627,   634,   638,   645,   682,
      720,   757,   793,   829,   866,   898,   929,   937,   967,   998,
     1007,  1014,  1020,  1044,  1070,  1104,  1141,  1149,  1156,  1196,
-    1201,  1210,  1226,  1243,  1265,  1272,  1279,  1287,  1296,  1380,
-    1385,  1392,  1401,  1433,  1500,  1535,  1573,  1579,  1586,  1591,
-    1596,  1610,  1623,  1637,  1653,  1659
+    1201,  1210,  1226,  1243,  1265,  1272,  1279,  1287,  1296,  1386,
+    1391,  1398,  1407,  1439,  1506,  1541,  1579,  1585,  1592,  1597,
+    1602,  1616,  1629,  1643,  1659,  1665
 };
 #endif
 
@@ -1919,7 +1919,7 @@ intermediate_output.gen_special("goto","---","---","---");
 #line 475 "grammar.ypp" /* yacc.c:1646  */
     {
 	if((yyvsp[-4].assignment_statement_s)->type == ERROR_TYPE){
-		yyerror("unknown expression is used with while\nAborting");
+		yyerror("unknown expression is used with for\nAborting");
 		exit(1);
 	}
 	(yyval.statement_list_s) = new statement_list_(1);
@@ -2892,9 +2892,15 @@ else{
 							global_temp++;
 							total_temp_data.temp_variable.push_back(temp);
 						}
-						intermediate_output.gen_special("=",(yyvsp[0].conditional_expression_s)->temporary_name,"---",temp);
-						intermediate_output.gen_special("=",temp,"---",(yyvsp[-2].id_arr_s)->var->name+"_"+to_string((yyvsp[-2].id_arr_s)->var->offset));
+						if((yyvsp[-2].id_arr_s)->var->eletype == INT_TYPE && (yyvsp[0].conditional_expression_s)->type == BOOL_TYPE){
+							intermediate_output.gen_special("=",(yyvsp[0].conditional_expression_s)->temporary_name,"---",(yyvsp[-2].id_arr_s)->var->name+"_"+to_string((yyvsp[-2].id_arr_s)->var->offset));
+						}
+						else{
+							intermediate_output.gen_special("=",(yyvsp[0].conditional_expression_s)->temporary_name,"---",temp);
+							intermediate_output.gen_special("=",temp,"---",(yyvsp[-2].id_arr_s)->var->name+"_"+to_string((yyvsp[-2].id_arr_s)->var->offset));
+						}
 					}
+
 					//intermediate_output.gen_special("=",$3->temporary_name,"---",$1->var->name+"_"+to_string($1->var->offset));
 				}
 				else{
@@ -2934,38 +2940,38 @@ else{
 			(yyval.assignment_statement_s) = new assignment_statement_(ERROR_TYPE,"ERR");
 	}
 }
-#line 2938 "grammar.tab.cpp" /* yacc.c:1646  */
+#line 2944 "grammar.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 79:
-#line 1381 "grammar.ypp" /* yacc.c:1646  */
+#line 1387 "grammar.ypp" /* yacc.c:1646  */
     {
 		(yyval.assignment_statement_s) = new assignment_statement_((yyvsp[0].conditional_expression_s)->type,(yyvsp[0].conditional_expression_s)->temporary_name);
 }
-#line 2946 "grammar.tab.cpp" /* yacc.c:1646  */
+#line 2952 "grammar.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 80:
-#line 1385 "grammar.ypp" /* yacc.c:1646  */
+#line 1391 "grammar.ypp" /* yacc.c:1646  */
     {
 // needs attention
 	(yyval.assignment_statement_s) = new assignment_statement_(VOID_TYPE,"ERR");
 }
-#line 2955 "grammar.tab.cpp" /* yacc.c:1646  */
+#line 2961 "grammar.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 81:
-#line 1393 "grammar.ypp" /* yacc.c:1646  */
+#line 1399 "grammar.ypp" /* yacc.c:1646  */
     {
 	if(active_function_index != -1 ){
 		symbol_table.patch_variable(active_function_index,(yyvsp[0].varlist_s)->list_of_indexes,(yyvsp[-1].type_s)->type);
  	}
 }
-#line 2965 "grammar.tab.cpp" /* yacc.c:1646  */
+#line 2971 "grammar.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 82:
-#line 1402 "grammar.ypp" /* yacc.c:1646  */
+#line 1408 "grammar.ypp" /* yacc.c:1646  */
     {
 	if(active_function_index != -1){
 		string s((yyvsp[0].name));
@@ -2997,11 +3003,11 @@ else{
 		(yyval.id_arr_s) = new id_arr_(var,"NONE");
 	}
 }
-#line 3001 "grammar.tab.cpp" /* yacc.c:1646  */
+#line 3007 "grammar.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 83:
-#line 1434 "grammar.ypp" /* yacc.c:1646  */
+#line 1440 "grammar.ypp" /* yacc.c:1646  */
     {
 	if(active_function_index != -1){
 		string s((yyvsp[-1].name));
@@ -3065,11 +3071,11 @@ else{
 			(yyval.id_arr_s) = new id_arr_(var,offset_temp);
 	}
 }
-#line 3069 "grammar.tab.cpp" /* yacc.c:1646  */
+#line 3075 "grammar.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 84:
-#line 1501 "grammar.ypp" /* yacc.c:1646  */
+#line 1507 "grammar.ypp" /* yacc.c:1646  */
     {
   if(active_function_index != -1){
       string s((yyvsp[0].name));
@@ -3104,11 +3110,11 @@ else{
       }
   }
 }
-#line 3108 "grammar.tab.cpp" /* yacc.c:1646  */
+#line 3114 "grammar.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 85:
-#line 1535 "grammar.ypp" /* yacc.c:1646  */
+#line 1541 "grammar.ypp" /* yacc.c:1646  */
     {
 if(active_function_index != -1){
       string s((yyvsp[-1].name));
@@ -3144,46 +3150,46 @@ if(active_function_index != -1){
       }
   }
 }
-#line 3148 "grammar.tab.cpp" /* yacc.c:1646  */
+#line 3154 "grammar.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 86:
-#line 1574 "grammar.ypp" /* yacc.c:1646  */
+#line 1580 "grammar.ypp" /* yacc.c:1646  */
     {
       (yyval.new_num_list_s)  = new new_num_list_();
       (yyval.new_num_list_s)->num_list.insert((yyval.new_num_list_s)->num_list.end(),(yyvsp[-3].new_num_list_s)->num_list.begin(),(yyvsp[-3].new_num_list_s)->num_list.end());
       (yyval.new_num_list_s)->num_list.push_back((yyvsp[-1].integer_value));
 }
-#line 3158 "grammar.tab.cpp" /* yacc.c:1646  */
+#line 3164 "grammar.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 87:
-#line 1580 "grammar.ypp" /* yacc.c:1646  */
+#line 1586 "grammar.ypp" /* yacc.c:1646  */
     {
     (yyval.new_num_list_s)  = new new_num_list_();
     (yyval.new_num_list_s)->num_list.push_back((yyvsp[-1].integer_value));
 }
-#line 3167 "grammar.tab.cpp" /* yacc.c:1646  */
+#line 3173 "grammar.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 88:
-#line 1587 "grammar.ypp" /* yacc.c:1646  */
+#line 1593 "grammar.ypp" /* yacc.c:1646  */
     { (yyval.parameter_list_s) = new parameter_list_((yyvsp[0].parameter_list_s)->no_of_parameter);
 								symbol_table.patch_function_parameter_no(active_function_index,(yyval.parameter_list_s)->no_of_parameter);
 							}
-#line 3175 "grammar.tab.cpp" /* yacc.c:1646  */
+#line 3181 "grammar.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 89:
-#line 1591 "grammar.ypp" /* yacc.c:1646  */
+#line 1597 "grammar.ypp" /* yacc.c:1646  */
     { (yyval.parameter_list_s) = new parameter_list_(0);
 							 symbol_table.patch_function_parameter_no(active_function_index,(yyval.parameter_list_s)->no_of_parameter);
 							}
-#line 3183 "grammar.tab.cpp" /* yacc.c:1646  */
+#line 3189 "grammar.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 90:
-#line 1598 "grammar.ypp" /* yacc.c:1646  */
+#line 1604 "grammar.ypp" /* yacc.c:1646  */
     {
 	if(active_function_index != -1){
 	 	if((yyvsp[0].unit_declaration_s)->type != ERROR_TYPE){
@@ -3194,11 +3200,11 @@ if(active_function_index != -1){
 	 	}
 	}
 }
-#line 3198 "grammar.tab.cpp" /* yacc.c:1646  */
+#line 3204 "grammar.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 91:
-#line 1611 "grammar.ypp" /* yacc.c:1646  */
+#line 1617 "grammar.ypp" /* yacc.c:1646  */
     {
 if(active_function_index != -1){
 	 if((yyvsp[0].unit_declaration_s)->type != ERROR_TYPE){
@@ -3209,11 +3215,11 @@ if(active_function_index != -1){
 	 }
 }
 }
-#line 3213 "grammar.tab.cpp" /* yacc.c:1646  */
+#line 3219 "grammar.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 92:
-#line 1624 "grammar.ypp" /* yacc.c:1646  */
+#line 1630 "grammar.ypp" /* yacc.c:1646  */
     {
 	if(active_function_index != -1){
 		string s((yyvsp[0].name));
@@ -3227,11 +3233,11 @@ if(active_function_index != -1){
 			}
 	}
 }
-#line 3231 "grammar.tab.cpp" /* yacc.c:1646  */
+#line 3237 "grammar.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 93:
-#line 1638 "grammar.ypp" /* yacc.c:1646  */
+#line 1644 "grammar.ypp" /* yacc.c:1646  */
     {
 if(active_function_index != -1){
 	string s((yyvsp[-2].name));
@@ -3245,30 +3251,30 @@ if(active_function_index != -1){
 	}
 }
 }
-#line 3249 "grammar.tab.cpp" /* yacc.c:1646  */
+#line 3255 "grammar.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 94:
-#line 1654 "grammar.ypp" /* yacc.c:1646  */
+#line 1660 "grammar.ypp" /* yacc.c:1646  */
     {
 	  (yyval.varlist_s) = new varlist_();
 		(yyval.varlist_s)->list_of_indexes.insert((yyval.varlist_s)->list_of_indexes.end(),(yyvsp[-2].varlist_s)->list_of_indexes.begin(),(yyvsp[-2].varlist_s)->list_of_indexes.end());
 		(yyval.varlist_s)->list_of_indexes.push_back((yyvsp[0].id_arr_declare_s)->index_in_sym_tab);
 }
-#line 3259 "grammar.tab.cpp" /* yacc.c:1646  */
+#line 3265 "grammar.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 95:
-#line 1660 "grammar.ypp" /* yacc.c:1646  */
+#line 1666 "grammar.ypp" /* yacc.c:1646  */
     {
     (yyval.varlist_s) = new varlist_();
 		(yyval.varlist_s)->list_of_indexes.push_back((yyvsp[0].id_arr_declare_s)->index_in_sym_tab);
 }
-#line 3268 "grammar.tab.cpp" /* yacc.c:1646  */
+#line 3274 "grammar.tab.cpp" /* yacc.c:1646  */
     break;
 
 
-#line 3272 "grammar.tab.cpp" /* yacc.c:1646  */
+#line 3278 "grammar.tab.cpp" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -3496,7 +3502,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 1667 "grammar.ypp" /* yacc.c:1906  */
+#line 1673 "grammar.ypp" /* yacc.c:1906  */
 
 #include <stdio.h>
 

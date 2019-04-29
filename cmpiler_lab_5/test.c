@@ -9,5 +9,6 @@ int main(){
 	c =4;
 	c=f(4);
 	c = c+ 5;
-
+	int d;
+	d = (c > 5);
 }
