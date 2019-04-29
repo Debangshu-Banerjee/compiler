@@ -30,13 +30,37 @@ void handle_param(vector<string> linevec)
 {
   string param_name=linevec[2];
   parameter_mips.push_back(param_name);
-  // mipsfile<<"sw "<<param_name<<"0($sp)"<<endl;
-  // mipsfile<<"addiu $sp $sp - 4"<<endl;
 }
-void handle_refparam(vector<string> linevec)
-{
-  return;
+void store_stack(){
+  for(int i=0;i<data_items.size();i++){
+    mipsfile<<"la $t0, "<<data_items[i]<<endl;
+    stringstream temp(data_size[i]);
+    int size = 0;
+    temp >> size;
+    for(int j=0;j<size;j= j+4){
+      mipsfile<<"l.s $f0, "<<to_string(j)<<"($t0)"<<endl;
+      mipsfile<<"s.s $f0, "<<"0($sp)"<<endl;
+      mipsfile<<"addiu $sp, $sp, -4"<<endl;
+    }
+  }
 }
+void copy_parameter(int no_param){
+  for(int i=0;i<no_param;i++){
+    if(parameter_mips[i][1] == 'T'){
+        mipsfile<<"la $t0, "<<parameter_mips[i]<<endl;
+        mipsfile<<"lw $t1, "<<"0($t0)"<<endl;
+        mipsfile<<"la $t2, "<<"_Tparam_"<<i<<endl;
+        mipsfile<<"sw $t1, "<<"0($t2)"<<endl;
+    }
+    if(parameter_mips[i][1] == 'F'){
+      mipsfile<<"la $t0, "<<parameter_mips[i]<<endl;
+      mipsfile<<"l.s $f1, "<<"0($t0)"<<endl;
+      mipsfile<<"la $t2, "<<"_Tparam_"<<i<<endl;
+      mipsfile<<"s.s $f1, "<<"0($t2)"<<endl;
+    }
+  }
+}
+
 void handle_call(vector<string> linevec)
 {
   string func_name=linevec[2];
@@ -44,23 +68,19 @@ void handle_call(vector<string> linevec)
   int no_param=0;
   stringstream temp(no_params);
   temp>>no_param;
-  //cout<<no_param<<endl;
-  mipsfile<<"sw $fp 0($sp)"<<endl;
-  mipsfile<<"addiu $sp $sp - 4"<<endl;
-
-  for(auto &p:parameter_mips)  //all parameters for this function
-  {
-    mipsfile<<"sw "<<p<<"0($sp)"<<endl;
-    mipsfile<<"addiu $sp $sp - 4"<<endl;
+  if(no_param > parameter_mips.size()){
+    cout<<"ERROR in mips"<<endl;
+    exit(1);
   }
-
-  mipsfile<<"jal "<<func_name<<":"<<endl;
+  store_stack();
+  copy_parameter(no_param);
+  mipsfile<<"jal "<<func_name<<endl;
+  if(no_param +1 == parameter_mips.size()){
+    mipsfile<<"la $t0, "<< parameter_mips[no_param]<<endl;
+    mipsfile<<"s.s $f11, "<<"0($t0)"<<endl;
+  }
+  mipsfile<<"lw $ra, "<<"4($sp)"<<endl;
   parameter_mips.clear();
-}
-void handle_func_def(vector<string> linevec)
-{
-  string func_name=linevec[3];
-  mipsfile<<func_name<<":"<<endl;
 }
 
 void genarate_micro_op_int(string op,string opr1,string opr2,string result){
@@ -473,7 +493,32 @@ void handle_digit_multiply(vector<string> linevec){
     mipsfile<<"sw $t3, "<<"0($t4)"<<endl;
   }
 }
-
+void restore_stack(){
+    for(int i=data_items.size()-1;i>=0;i--){
+      mipsfile<<"la $t0, "<<data_items[i]<<endl;
+      stringstream temp(data_size[i]);
+      int size = 0;
+      temp >> size;
+      for(int j=size-4;j>=0;j= j-4){
+        mipsfile<<"addiu $sp, $sp, 4"<<endl;
+        mipsfile<<"l.s $f0, "<<"0($sp)"<<endl;
+        mipsfile<<"s.s $f0, "<<to_string(j)<<"($t0)"<<endl;
+      }
+    }
+}
+void handle_func_begin(vector<string> linevec){
+  mipsfile<<"move $fp, $sp"<<endl;
+  mipsfile<<"sw $ra, 0($sp)"<<endl;
+  mipsfile<<"addiu $sp, $sp, -4"<<endl;
+}
+void handle_func_end(vector<string> linevec){
+  if(linevec[3] == "main") return;
+  mipsfile<<"lw $ra, 0($fp)"<<endl;
+  mipsfile<<"addiu $sp, $sp, 4"<<endl;
+  restore_stack();
+  mipsfile<<"addiu $fp, $sp, 4"<<endl;
+  mipsfile<<"jr $ra"<<endl;
+}
 
 void generate_each_instruction(vector<string> linevec)
 {
@@ -619,6 +664,30 @@ void generate_each_instruction(vector<string> linevec)
         mipsfile<<"sw $t1, "<<"0($t3)"<<endl;
     }
   }
+  if(linevec[1] == "func"){
+    if(linevec[2]== "begin"){
+      handle_func_begin(linevec);
+    }
+    if(linevec[2]=="end"){
+      if(linevec[3] != "main"){
+        handle_func_end(linevec);
+      }
+    }
+  }
+  if(linevec[1] == "param" || linevec[1] == "refparam"){
+    handle_param(linevec);
+  }
+  if(linevec[1]== "call"){
+    handle_call(linevec);
+  }
+  if(linevec[1] == "return"){
+    if(linevec[2][0] == '_'){
+        mipsfile<<"la $t0, "<< linevec[2]<<endl;
+        mipsfile<<"l.s $f11, "<<"0($t0)"<<endl;
+    }
+    handle_func_end(linevec);
+  }
+
 }
 
 void generate()
@@ -628,6 +697,7 @@ void generate()
   fstream file;
   int line;
   mipsfile<<".text"<<endl;
+  mipsfile<<"j main"<<endl;
   for(line = index; line < lines.size(); line++){
     vector<string> linevec = split(lines[line]);  //split
     generate_each_instruction(linevec);

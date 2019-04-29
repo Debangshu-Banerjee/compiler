@@ -235,7 +235,7 @@ int sym_tab :: check_param_compatible(int call_function_index,vector<int> type_l
 
 			if(type_list[i]!=FLOAT_ADDRESS_TYPE && type_list[i]!=INT_ADDRESS_TYPE){
 				if(type_list[i] != this->global_sym_tab[call_function_index]->param_list[i]->eletype){
-					yyerror( to_string(i+1)+to_string(type_list[i]) +" argument passed does not match defination of "+this->global_sym_tab[call_function_index]->function_name);
+					yyerror( to_string(i+1)+" argument passed does not match defination of "+this->global_sym_tab[call_function_index]->function_name);
 					flag = false;
 				}
 			}
